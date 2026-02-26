@@ -1,0 +1,131 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// NextAuth Models required for Google Login
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  
+  // Custom app fields
+  createdAt     DateTime  @default(now())
+  
+  accounts      Account[]
+  sessions      Session[]
+  shortLinks    ShortLink[] // Independent shortened URLs
+  microsites    Microsite[] // New: Multiple microsites per user
+}
+
+
+
+// For standalone URL Shortener
+model ShortLink {
+  id          String    @id @default(cuid())
+  userId      String?   // Optional: can be guest or tied to user
+  originalUrl String    @db.Text
+  shortCode   String    @unique // Random or Custom Alias
+  password    String?   // Hashed password if protected
+  expiresAt   DateTime?
+  createdAt   DateTime  @default(now())
+  
+  clicks      ShortLinkClick[]
+  user        User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  @@index([shortCode])
+}
+
+// ── Multi-Microsite (New Feature) ─────────────────────────────────────────────
+
+model Microsite {
+  id          String   @id @default(cuid())
+  slug        String   @unique // Public URL path: /webinar-asn
+  title       String
+  description String?
+  theme       String   @default("dark") // dark | light | gradient
+  coverImage  String?
+  avatarImage String?
+  isPublished Boolean  @default(true)
+
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  links       MicrositeLink[]
+  clicks      MicrositeClick[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([slug])
+}
+
+model MicrositeLink {
+  id          String   @id @default(cuid())
+  title       String
+  url         String   @db.Text
+  icon        String?
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+
+  micrositeId String
+  microsite   Microsite @relation(fields: [micrositeId], references: [id], onDelete: Cascade)
+  clicks      MicrositeClick[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model MicrositeClick {
+  id          String         @id @default(cuid())
+  micrositeId String
+  microsite   Microsite      @relation(fields: [micrositeId], references: [id], onDelete: Cascade)
+  linkId      String?
+  link        MicrositeLink? @relation(fields: [linkId], references: [id], onDelete: SetNull)
+  userAgent   String?
+  country     String?
+  createdAt   DateTime       @default(now())
+}
+
+
+
+model ShortLinkClick {
+  id        String   @id @default(cuid())
+  shortLinkId String
+  ipHash    String?
+  userAgent String?
+  country   String?
+  createdAt DateTime @default(now())
+  shortLink ShortLink @relation(fields: [shortLinkId], references: [id], onDelete: Cascade)
+}

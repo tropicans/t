@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: taut-app
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    environment:
+      # Database connection (matches the db service below)
+      - DATABASE_URL=postgresql://taut_admin:taut_password_123!@db:5432/taut_db?schema=public
+      # NextAuth
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:4000}
+      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-http://localhost:4000}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-changeme_in_production}
+      # Google OAuth
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - ALLOWED_EMAILS=${ALLOWED_EMAILS}
+      # UploadThing
+      - UPLOADTHING_TOKEN=${UPLOADTHING_TOKEN}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - taut-net
+
+  db:
+    image: postgres:15-alpine
+    container_name: taut-db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=taut_admin
+      - POSTGRES_PASSWORD=taut_password_123!
+      - POSTGRES_DB=taut_db
+    ports:
+      - "5436:5432"
+    volumes:
+      - taut-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U taut_admin -d taut_db" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - taut-net
+
+volumes:
+  taut-pgdata:
+
+
+networks:
+  taut-net:
+    driver: bridge
