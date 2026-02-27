@@ -77,7 +77,7 @@ export default async function MicrositesPage() {
                 <div>
                     <h1 className="text-3xl font-extrabold text-white tracking-tight">Microsites</h1>
                     <p className="text-zinc-400 mt-1 text-sm">
-                        Kelola dan pantau halaman link-in-bio campaign kamu
+                        Kelola dan pantau halaman microsite campaign kamu
                     </p>
                 </div>
                 <Link href="/dashboard/microsites/new">

@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Taut - Link in Bio & URL Shortener",
-  description: "Create beautiful bio pages and trackable short links.",
+  title: "Taut - Microsite & URL Shortener",
+  description: "Create beautiful microsites and trackable short links.",
 };
 
 export default function RootLayout({
