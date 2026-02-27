@@ -7,6 +7,7 @@ import { headers } from "next/headers";
 import { ExternalLink } from "lucide-react";
 import { PasswordForm } from "@/components/short-link/password-form";
 import { trackShortLinkClick } from "@/app/actions/short-link-redirect";
+import { ShareBar } from "@/components/share-bar";
 
 interface Props {
     params: Promise<{ username: string }>;
@@ -83,6 +84,8 @@ export default async function SlugPage({ params, searchParams }: Props) {
                 footer: "text-zinc-800",
                 footerBrand: "text-zinc-600",
                 divider: "bg-zinc-800",
+                share: "text-zinc-500 hover:text-white",
+                shareLabel: "text-zinc-600",
             },
             light: {
                 page: "bg-gray-50",
@@ -97,6 +100,8 @@ export default async function SlugPage({ params, searchParams }: Props) {
                 footer: "text-zinc-300",
                 footerBrand: "text-zinc-400",
                 divider: "bg-zinc-200",
+                share: "text-zinc-400 hover:text-zinc-800",
+                shareLabel: "text-zinc-400",
             },
             gradient: {
                 page: "bg-gradient-to-br from-blue-950 via-purple-950 to-zinc-950",
@@ -111,6 +116,8 @@ export default async function SlugPage({ params, searchParams }: Props) {
                 footer: "text-white/20",
                 footerBrand: "text-white/40",
                 divider: "bg-white/10",
+                share: "text-white/40 hover:text-white",
+                shareLabel: "text-white/30",
             },
         }[theme] ?? {
             page: "bg-zinc-950",
@@ -125,6 +132,8 @@ export default async function SlugPage({ params, searchParams }: Props) {
             footer: "text-zinc-800",
             footerBrand: "text-zinc-600",
             divider: "bg-zinc-800",
+            share: "text-zinc-500 hover:text-white",
+            shareLabel: "text-zinc-600",
         };
 
         const hasCover = !!microsite.coverImage;
@@ -205,6 +214,15 @@ export default async function SlugPage({ params, searchParams }: Props) {
                             )}
                         </div>
 
+                        {/* Share Buttons */}
+                        <ShareBar
+                            title={microsite.title}
+                            slug={microsite.slug}
+                            shareClass={styles.share}
+                            labelClass={styles.shareLabel}
+                            dividerClass={styles.divider}
+                        />
+
                         {/* Footer */}
                         <p className={`text-center text-[11px] mt-12 tracking-wide uppercase ${styles.footer}`}>
                             Powered by <span className={`font-semibold ${styles.footerBrand}`}>Taut</span>
@@ -218,4 +236,5 @@ export default async function SlugPage({ params, searchParams }: Props) {
     // ── 3. Not found ─────────────────────────────────────────────────────────────
     notFound();
 }
+
 
