@@ -4,18 +4,14 @@ import { useState } from "react";
 
 interface ShareBarProps {
     title: string;
-    slug: string;
+    pageUrl: string;
     shareClass: string;
     labelClass: string;
     dividerClass: string;
 }
 
-export function ShareBar({ title, slug, shareClass, labelClass, dividerClass }: ShareBarProps) {
+export function ShareBar({ title, pageUrl, shareClass, labelClass, dividerClass }: ShareBarProps) {
     const [copied, setCopied] = useState(false);
-
-    const pageUrl = typeof window !== "undefined"
-        ? `${window.location.origin}/${slug}`
-        : `/${slug}`;
 
     const shareText = `${title} — ${pageUrl}`;
 

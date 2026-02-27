@@ -217,7 +217,7 @@ export default async function SlugPage({ params, searchParams }: Props) {
                         {/* Share Buttons */}
                         <ShareBar
                             title={microsite.title}
-                            slug={microsite.slug}
+                            pageUrl={`${process.env.NEXT_PUBLIC_APP_URL || "https://t.ppkasn.id"}/${microsite.slug}`}
                             shareClass={styles.share}
                             labelClass={styles.shareLabel}
                             dividerClass={styles.divider}
