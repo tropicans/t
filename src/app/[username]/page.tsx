@@ -8,10 +8,51 @@ import { ExternalLink } from "lucide-react";
 import { PasswordForm } from "@/components/short-link/password-form";
 import { trackShortLinkClick } from "@/app/actions/short-link-redirect";
 import { ShareBar } from "@/components/share-bar";
+import type { Metadata } from "next";
 
 interface Props {
     params: Promise<{ username: string }>;
     searchParams: Promise<{ error?: string }>;
+}
+
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://t.ppkasn.id";
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+    const { username: slug } = await params;
+
+    // Check if it's a microsite (skip short links for OG)
+    const microsite = await prisma.microsite.findUnique({
+        where: { slug, isPublished: true },
+        select: { title: true, description: true, coverImage: true, avatarImage: true },
+    });
+
+    if (!microsite) {
+        return { title: "Taut" };
+    }
+
+    const title = microsite.title;
+    const description = microsite.description || `Kunjungi halaman ${microsite.title} di Taut`;
+    const ogImage = microsite.coverImage || microsite.avatarImage || null;
+    const pageUrl = `${APP_URL}/${slug}`;
+
+    return {
+        title,
+        description,
+        openGraph: {
+            title,
+            description,
+            url: pageUrl,
+            siteName: "Taut",
+            type: "website",
+            ...(ogImage ? { images: [{ url: ogImage, width: 1200, height: 630, alt: title }] } : {}),
+        },
+        twitter: {
+            card: ogImage ? "summary_large_image" : "summary",
+            title,
+            description,
+            ...(ogImage ? { images: [ogImage] } : {}),
+        },
+    };
 }
 
 export default async function SlugPage({ params, searchParams }: Props) {
