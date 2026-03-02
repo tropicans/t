@@ -81,7 +81,7 @@ export default async function MicrositesPage() {
                     </p>
                 </div>
                 <Link href="/dashboard/microsites/new">
-                    <Button className="bg-blue-600 hover:bg-blue-700 text-white gap-2 shadow-lg shadow-blue-600/20 font-semibold">
+                    <Button className="bg-primary hover:bg-primary/90 text-white gap-2 shadow-lg shadow-blue-600/20 font-semibold">
                         <Plus className="w-4 h-4" />
                         Buat Microsite
                     </Button>
@@ -99,7 +99,7 @@ export default async function MicrositesPage() {
                         Buat microsite pertamamu untuk mulai mengumpulkan link dalam satu halaman.
                     </p>
                     <Link href="/dashboard/microsites/new">
-                        <Button className="bg-blue-600 hover:bg-blue-700 text-white gap-2">
+                        <Button className="bg-primary hover:bg-primary/90 text-white gap-2">
                             <Plus className="w-4 h-4" /> Buat Microsite
                         </Button>
                     </Link>
@@ -131,7 +131,7 @@ export default async function MicrositesPage() {
                                 </div>
 
                                 {/* Slug */}
-                                <p className="text-blue-500 text-xs font-medium mb-3">/{ms.slug}</p>
+                                <p className="text-primary text-xs font-medium mb-3">/{ms.slug}</p>
 
                                 {/* Stats + Actions */}
                                 <div className="flex items-center justify-between pt-3 border-t border-zinc-800">
@@ -168,7 +168,7 @@ export default async function MicrositesPage() {
                             <PlusCircle className="w-10 h-10 text-zinc-700 mx-auto mb-3" />
                             <p className="text-zinc-500 text-sm">
                                 Butuh halaman baru?{" "}
-                                <Link href="/dashboard/microsites/new" className="text-blue-500 font-semibold hover:text-blue-400 transition-colors">
+                                <Link href="/dashboard/microsites/new" className="text-primary font-semibold hover:text-blue-400 transition-colors">
                                     Buat microsite baru
                                 </Link>
                             </p>

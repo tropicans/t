@@ -85,7 +85,7 @@ export default async function AnalyticsPage() {
                 <Card className="bg-zinc-900/50 border-zinc-800">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium text-zinc-400">Microsite Views</CardTitle>
-                        <Globe className="h-4 w-4 text-blue-500" />
+                        <Globe className="h-4 w-4 text-primary" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold text-white">{totalMicrositeClicks.toLocaleString()}</div>
@@ -130,9 +130,9 @@ export default async function AnalyticsPage() {
                             ) : (
                                 topItems.map((item) => (
                                     <div key={item.id} className="flex items-center gap-3">
-                                        <div className={`w-8 h-8 rounded flex items-center justify-center flex-shrink-0 ${item.type === "microsite" ? "bg-blue-500/20" : "bg-zinc-800"}`}>
+                                        <div className={`w-8 h-8 rounded flex items-center justify-center flex-shrink-0 ${item.type === "microsite" ? "bg-primary/20" : "bg-zinc-800"}`}>
                                             {item.type === "microsite" ? (
-                                                <Globe className="w-4 h-4 text-blue-400" />
+                                                <Globe className="w-4 h-4 text-primary" />
                                             ) : (
                                                 <LinkIcon className="w-4 h-4 text-zinc-400" />
                                             )}
@@ -173,7 +173,7 @@ export default async function AnalyticsPage() {
                                     </div>
                                     <div className="w-24 bg-zinc-800 rounded-full h-1.5">
                                         <div
-                                            className="bg-blue-500 h-1.5 rounded-full"
+                                            className="bg-primary h-1.5 rounded-full"
                                             style={{
                                                 width: totalMicrositeClicks > 0
                                                     ? `${Math.round((ms._count.clicks / totalMicrositeClicks) * 100)}%`

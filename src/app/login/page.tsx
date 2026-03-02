@@ -12,27 +12,20 @@ function LoginContent() {
     const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
 
     return (
-        <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-zinc-950">
-            {/* Immersive Background Glows */}
-            <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-blue-600/10 blur-[120px] mix-blend-screen pointer-events-none" />
-            <div className="absolute bottom-[-20%] right-[-10%] w-[40%] h-[50%] rounded-full bg-violet-600/10 blur-[120px] mix-blend-screen pointer-events-none" />
-
+        <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background">
             <div className="relative z-10 w-full max-w-md p-6">
                 {/* Brand Logo Header */}
                 <div className="flex flex-col items-center mb-10 space-y-4">
-                    <div className="relative flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-violet-600 shadow-xl shadow-blue-500/20">
-                        <div className="absolute inset-0 rounded-2xl border border-white/20" />
-                        <LinkIcon className="w-8 h-8 text-white drop-shadow-md" />
+                    <div className="relative flex items-center justify-center w-16 h-16 rounded-2xl bg-primary shadow-lg">
+                        <LinkIcon className="w-8 h-8 text-white" />
                     </div>
                 </div>
 
                 {/* Main Login Card */}
-                <div className="relative rounded-3xl bg-zinc-900/40 backdrop-blur-xl border border-zinc-700/50 shadow-2xl p-8 overflow-hidden">
-                    <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-
+                <div className="relative rounded-3xl bg-card border border-border shadow-2xl p-8 overflow-hidden">
                     <div className="text-center space-y-2 mb-8">
-                        <h1 className="text-3xl font-bold tracking-tight text-white">Welcome to Taut</h1>
-                        <p className="text-sm text-zinc-400">
+                        <h1 className="font-heading text-3xl font-bold tracking-tight text-white">Welcome to Taut</h1>
+                        <p className="font-sans text-sm text-zinc-400">
                             Masuk untuk mulai mengelola Shortened URLs dan Microsites Anda.
                         </p>
                     </div>
@@ -49,11 +42,10 @@ function LoginContent() {
                     )}
 
                     <Button
-                        className="relative group w-full h-12 bg-white hover:bg-zinc-100 text-black font-semibold rounded-xl flex items-center justify-center gap-3 transition-all duration-300 shadow-lg shadow-white/5 overflow-hidden"
+                        className="w-full h-12 bg-white text-black font-sans font-semibold rounded-full flex items-center justify-center gap-3 transition-colors duration-300 hover:bg-zinc-200"
                         onClick={() => signIn("google", { callbackUrl })}
                     >
-                        <div className="absolute inset-0 bg-gradient-to-r from-zinc-200/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                        <span className="relative flex items-center gap-3">
+                        <span className="flex items-center gap-3">
                             <svg viewBox="0 0 24 24" className="w-5 h-5 flex-shrink-0" aria-hidden="true">
                                 <path
                                     d="M12.0003 4.75C13.7703 4.75 15.3553 5.36 16.6053 6.54998L20.0303 3.125C17.9502 1.19 15.2353 0 12.0003 0C7.31028 0 3.25527 2.69 1.28027 6.60998L5.27028 9.70498C6.21525 6.86002 8.87028 4.75 12.0003 4.75Z"
@@ -87,7 +79,7 @@ function LoginContent() {
 
 export default function LoginPage() {
     return (
-        <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-zinc-950 p-4">Loading...</div>}>
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-background p-4 text-white">Loading...</div>}>
             <LoginContent />
         </Suspense>
     );

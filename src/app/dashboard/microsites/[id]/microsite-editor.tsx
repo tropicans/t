@@ -265,7 +265,7 @@ export function MicrositeEditor({ microsite }: { microsite: MicrositeWithLinks }
                         </div>
                         <div className="flex gap-2">
                             <Button type="submit" disabled={isPending} size="sm"
-                                className="bg-blue-600 hover:bg-blue-700 text-white">
+                                className="bg-primary hover:bg-primary/90 text-white">
                                 {isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                                 Simpan
                             </Button>
@@ -289,7 +289,7 @@ export function MicrositeEditor({ microsite }: { microsite: MicrositeWithLinks }
                     <div className="flex items-center justify-between">
                         <CardTitle className="text-white text-base">Links ({microsite.links.length})</CardTitle>
                         <Button size="sm" onClick={() => setShowAddForm(!showAddForm)}
-                            className="bg-blue-600 hover:bg-blue-700 text-white gap-1">
+                            className="bg-primary hover:bg-primary/90 text-white gap-1">
                             <Plus className="w-3.5 h-3.5" /> Tambah Link
                         </Button>
                     </div>
@@ -305,7 +305,7 @@ export function MicrositeEditor({ microsite }: { microsite: MicrositeWithLinks }
                                 className="bg-zinc-900 border-zinc-700 text-white" />
                             <div className="flex gap-2">
                                 <Button type="submit" size="sm" disabled={isPending}
-                                    className="bg-blue-600 hover:bg-blue-700 text-white">
+                                    className="bg-primary hover:bg-primary/90 text-white">
                                     {isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null} Tambah
                                 </Button>
                                 <Button type="button" size="sm" variant="ghost" onClick={() => setShowAddForm(false)}
@@ -337,7 +337,7 @@ export function MicrositeEditor({ microsite }: { microsite: MicrositeWithLinks }
                                     </select>
                                     <div className="flex gap-2">
                                         <Button type="submit" size="sm" disabled={isPending}
-                                            className="bg-blue-600 hover:bg-blue-700 text-white">
+                                            className="bg-primary hover:bg-primary/90 text-white">
                                             Simpan
                                         </Button>
                                         <Button type="button" size="sm" variant="ghost" onClick={() => setEditLinkId(null)}

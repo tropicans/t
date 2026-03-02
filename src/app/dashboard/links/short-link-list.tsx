@@ -56,7 +56,7 @@ export function ShortLinkList({ initialLinks }: { initialLinks: ShortLink[] }) {
                                         href={fullShortUrl}
                                         target="_blank"
                                         rel="noreferrer"
-                                        className="text-base font-semibold text-blue-400 hover:text-blue-300 truncate"
+                                        className="text-base font-semibold text-primary hover:text-primary/80 truncate"
                                     >
                                         {baseUrl.replace(/^https?:\/\//, "")}/{link.shortCode}
                                     </a>

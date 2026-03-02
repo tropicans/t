@@ -24,8 +24,8 @@ export default function DashboardLayout({
 
     if (status === "loading") {
         return (
-            <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
-                <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+            <div className="min-h-screen bg-background flex items-center justify-center">
+                <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
             </div>
         );
     }
@@ -43,12 +43,12 @@ export default function DashboardLayout({
     ];
 
     return (
-        <div className="min-h-screen bg-zinc-950 flex">
+        <div className="min-h-screen bg-background flex">
             {/* Sidebar */}
-            <aside className="w-64 border-r border-zinc-800 bg-zinc-900/50 flex flex-col hidden md:flex">
+            <aside className="w-64 border-r border-border bg-sidebar flex flex-col hidden md:flex">
                 <div className="h-16 flex items-center px-6 border-b border-zinc-800">
                     <Link href="/dashboard" className="flex items-center gap-2 font-bold text-white text-lg tracking-tight">
-                        <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                             <LinkIcon className="w-4 h-4 text-white" />
                         </div>
                         Taut
@@ -65,8 +65,8 @@ export default function DashboardLayout({
                                 key={item.name}
                                 href={item.href}
                                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${isActive
-                                    ? "bg-zinc-800 text-white"
-                                    : "text-zinc-400 hover:text-white hover:bg-zinc-800/50"
+                                    ? "bg-primary/15 text-primary"
+                                    : "text-muted-foreground hover:text-white hover:bg-muted"
                                     }`}
                             >
                                 <Icon className="w-5 h-5" />
@@ -76,7 +76,7 @@ export default function DashboardLayout({
                     })}
                 </nav>
 
-                <div className="p-4 border-t border-zinc-800">
+                <div className="p-4 border-t border-border">
                     <div className="flex items-center gap-3 px-3 py-2 mb-4">
                         {session?.user?.image ? (
                             <img src={session.user.image} alt="Avatar" className="w-8 h-8 rounded-full bg-zinc-800" />
@@ -104,9 +104,9 @@ export default function DashboardLayout({
             {/* Main Content */}
             <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
                 {/* Mobile Header */}
-                <div className="md:hidden h-16 border-b border-zinc-800 bg-zinc-900/50 flex items-center px-4 shrink-0">
+                <div className="md:hidden h-16 border-b border-border bg-sidebar flex items-center px-4 shrink-0">
                     <Link href="/dashboard" className="flex items-center gap-2 font-bold text-white text-lg tracking-tight">
-                        <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                             <LinkIcon className="w-4 h-4 text-white" />
                         </div>
                         Taut

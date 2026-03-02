@@ -179,7 +179,7 @@ export default function NewMicrositePage() {
                     <Button
                         type="submit"
                         disabled={isPending}
-                        className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+                        className="flex-1 bg-primary hover:bg-primary/90 text-white"
                     >
                         {isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                         {isPending ? "Membuat..." : "Buat Microsite"}

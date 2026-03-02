@@ -47,7 +47,7 @@ export function PasswordForm({ shortCode, error }: { shortCode: string; error?: 
                         <Button
                             type="submit"
                             disabled={isPending}
-                            className="w-full bg-blue-600 hover:bg-blue-700 text-white h-11"
+                            className="w-full bg-primary hover:bg-primary/90 text-white h-11"
                         >
                             {isPending ? "Verifying..." : (
                                 <>Unlock Link <ArrowRight className="w-4 h-4 ml-2" /></>

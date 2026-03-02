@@ -86,7 +86,7 @@ export function ShortLinkForm() {
                         <Button
                             type="submit"
                             disabled={isPending}
-                            className="bg-blue-600 hover:bg-blue-700 text-white w-full sm:w-auto"
+                            className="bg-primary hover:bg-primary/90 text-white w-full sm:w-auto"
                         >
                             {isPending ? "Shortening..." : <><Wand2 className="w-4 h-4 mr-2" /> Shorten URL</>}
                         </Button>

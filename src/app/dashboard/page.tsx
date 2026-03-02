@@ -39,11 +39,11 @@ export default async function DashboardPage() {
                 <Card className="bg-zinc-900/50 border-zinc-800">
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
                         <CardTitle className="text-sm font-medium text-zinc-400">Microsites</CardTitle>
-                        <Globe className="w-4 h-4 text-blue-500" />
+                        <Globe className="w-4 h-4 text-primary" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold text-white">{micrositesCount}</div>
-                        <Link href="/dashboard/microsites" className="text-xs text-blue-500 hover:text-blue-400 mt-1 inline-block">
+                        <Link href="/dashboard/microsites" className="text-xs text-primary hover:text-primary/80 mt-1 inline-block">
                             Kelola microsites →
                         </Link>
                     </CardContent>
@@ -79,7 +79,7 @@ export default async function DashboardPage() {
             {/* Quick actions */}
             <div className="flex gap-3 pt-2">
                 <Link href="/dashboard/microsites/new">
-                    <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                    <Button className="bg-primary hover:bg-primary/90 text-white">
                         + Buat Microsite
                     </Button>
                 </Link>
