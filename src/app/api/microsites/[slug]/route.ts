@@ -16,12 +16,18 @@ export async function GET(
             { error: "Not found" },
             {
                 status: 404,
-                headers: { "Cache-Control": "no-store" },
+                headers: {
+                    "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+                    "CDN-Cache-Control": "no-store",
+                },
             }
         );
     }
 
     return NextResponse.json(microsite, {
-        headers: { "Cache-Control": "no-store" },
+        headers: {
+            "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+            "CDN-Cache-Control": "no-store",
+        },
     });
 }

@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useEffectEvent, useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { ExternalLink } from "lucide-react";
 import { ShareBar } from "@/components/share-bar";
 import type { PublicMicrositeData } from "@/lib/public-microsite";
 
-const POLL_INTERVAL_MS = 30000;
+const POLL_INTERVAL_MS = 10000;
 
 const themeStyles = {
     dark: {
@@ -88,56 +88,76 @@ export function MicrositePageClient({ initialMicrosite, pageUrl }: MicrositePage
     const [, startTransition] = useTransition();
     const requestInFlightRef = useRef(false);
 
-    const syncMicrosite = useEffectEvent(async () => {
-        if (document.visibilityState === "hidden" || requestInFlightRef.current) {
-            return;
-        }
+    useEffect(() => {
+        let disposed = false;
+        let timeoutId: number | undefined;
 
-        requestInFlightRef.current = true;
-
-        try {
-            const response = await fetch(`/api/microsites/${encodeURIComponent(initialMicrosite.slug)}`, {
-                cache: "no-store",
-            });
-
-            if (!response.ok) {
+        const syncMicrosite = async () => {
+            if (disposed || document.visibilityState === "hidden" || requestInFlightRef.current) {
                 return;
             }
 
-            const nextMicrosite = (await response.json()) as PublicMicrositeData;
+            requestInFlightRef.current = true;
 
-            startTransition(() => {
-                setMicrosite((currentMicrosite) =>
-                    hasMicrositeChanged(currentMicrosite, nextMicrosite) ? nextMicrosite : currentMicrosite
+            try {
+                const response = await fetch(
+                    `/api/microsites/${encodeURIComponent(initialMicrosite.slug)}?ts=${Date.now()}`,
+                    {
+                        cache: "no-store",
+                    }
                 );
-            });
-        } catch {
-            // Ignore transient polling failures and try again on the next cycle.
-        } finally {
-            requestInFlightRef.current = false;
-        }
-    });
 
-    useEffect(() => {
+                if (!response.ok) {
+                    return;
+                }
+
+                const nextMicrosite = (await response.json()) as PublicMicrositeData;
+
+                startTransition(() => {
+                    setMicrosite((currentMicrosite) =>
+                        hasMicrositeChanged(currentMicrosite, nextMicrosite) ? nextMicrosite : currentMicrosite
+                    );
+                });
+            } catch {
+                // Ignore transient polling failures and try again on the next cycle.
+            } finally {
+                requestInFlightRef.current = false;
+            }
+        };
+
+        const scheduleNextPoll = () => {
+            timeoutId = window.setTimeout(async () => {
+                await syncMicrosite();
+
+                if (!disposed) {
+                    scheduleNextPoll();
+                }
+            }, POLL_INTERVAL_MS);
+        };
+
         const handleVisibility = () => {
             if (document.visibilityState === "visible") {
                 void syncMicrosite();
             }
         };
 
-        const intervalId = window.setInterval(() => {
-            void syncMicrosite();
-        }, POLL_INTERVAL_MS);
+        void syncMicrosite();
+        scheduleNextPoll();
 
         document.addEventListener("visibilitychange", handleVisibility);
         window.addEventListener("focus", handleVisibility);
 
         return () => {
-            window.clearInterval(intervalId);
+            disposed = true;
+
+            if (timeoutId !== undefined) {
+                window.clearTimeout(timeoutId);
+            }
+
             document.removeEventListener("visibilitychange", handleVisibility);
             window.removeEventListener("focus", handleVisibility);
         };
-    }, []);
+    }, [initialMicrosite.slug, startTransition]);
 
     const styles = themeStyles[microsite.theme as keyof typeof themeStyles] ?? themeStyles.dark;
     const hasCover = !!microsite.coverImage;
