@@ -2,17 +2,50 @@
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { isGlobalDashboardViewer } from "@/lib/microsite-access";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
-async function getCurrentUserId(): Promise<string> {
+interface CurrentUserAccess {
+    userId: string;
+    canManageAllMicrosites: boolean;
+}
+
+async function getCurrentUserAccess(): Promise<CurrentUserAccess> {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) throw new Error("Unauthorized");
+
     const user = await prisma.user.findUnique({ where: { email: session.user.email } });
     if (!user) throw new Error("Unauthorized");
-    return user.id;
+
+    return {
+        userId: user.id,
+        canManageAllMicrosites: isGlobalDashboardViewer(session.user.email),
+    };
+}
+
+async function getEditableMicrosite(id: string, access: CurrentUserAccess) {
+    const microsite = await prisma.microsite.findUnique({ where: { id } });
+    if (!microsite || (!access.canManageAllMicrosites && microsite.userId !== access.userId)) {
+        throw new Error("Not found");
+    }
+
+    return microsite;
+}
+
+async function getEditableMicrositeLink(linkId: string, access: CurrentUserAccess) {
+    const link = await prisma.micrositeLink.findUnique({
+        where: { id: linkId },
+        include: { microsite: true },
+    });
+
+    if (!link || (!access.canManageAllMicrosites && link.microsite.userId !== access.userId)) {
+        throw new Error("Not found");
+    }
+
+    return link;
 }
 
 function validateSlug(slug: string): string {
@@ -28,7 +61,7 @@ function validateSlug(slug: string): string {
 // ── Microsite CRUD ─────────────────────────────────────────────────────────────
 
 export async function createMicrosite(formData: FormData) {
-    const userId = await getCurrentUserId();
+    const { userId } = await getCurrentUserAccess();
     const slug = validateSlug(formData.get("slug") as string);
     const title = (formData.get("title") as string)?.trim();
     const description = (formData.get("description") as string)?.trim() || null;
@@ -50,9 +83,8 @@ export async function createMicrosite(formData: FormData) {
 }
 
 export async function updateMicrosite(id: string, formData: FormData) {
-    const userId = await getCurrentUserId();
-    const microsite = await prisma.microsite.findUnique({ where: { id } });
-    if (!microsite || microsite.userId !== userId) throw new Error("Not found");
+    const access = await getCurrentUserAccess();
+    const microsite = await getEditableMicrosite(id, access);
 
     const title = (formData.get("title") as string)?.trim();
     const description = (formData.get("description") as string)?.trim() || null;
@@ -74,9 +106,8 @@ export async function updateMicrosite(id: string, formData: FormData) {
 }
 
 export async function deleteMicrosite(id: string) {
-    const userId = await getCurrentUserId();
-    const microsite = await prisma.microsite.findUnique({ where: { id } });
-    if (!microsite || microsite.userId !== userId) throw new Error("Not found");
+    const access = await getCurrentUserAccess();
+    await getEditableMicrosite(id, access);
 
     await prisma.microsite.delete({ where: { id } });
     revalidatePath("/dashboard/microsites");
@@ -86,9 +117,8 @@ export async function deleteMicrosite(id: string) {
 // ── Microsite Link CRUD ────────────────────────────────────────────────────────
 
 export async function createMicrositeLink(micrositeId: string, formData: FormData) {
-    const userId = await getCurrentUserId();
-    const microsite = await prisma.microsite.findUnique({ where: { id: micrositeId } });
-    if (!microsite || microsite.userId !== userId) throw new Error("Not found");
+    const access = await getCurrentUserAccess();
+    await getEditableMicrosite(micrositeId, access);
 
     const title = (formData.get("title") as string)?.trim();
     const url = (formData.get("url") as string)?.trim();
@@ -111,12 +141,8 @@ export async function createMicrositeLink(micrositeId: string, formData: FormDat
 }
 
 export async function updateMicrositeLink(linkId: string, formData: FormData) {
-    const userId = await getCurrentUserId();
-    const link = await prisma.micrositeLink.findUnique({
-        where: { id: linkId },
-        include: { microsite: true },
-    });
-    if (!link || link.microsite.userId !== userId) throw new Error("Not found");
+    const access = await getCurrentUserAccess();
+    const link = await getEditableMicrositeLink(linkId, access);
 
     const title = (formData.get("title") as string)?.trim();
     const url = (formData.get("url") as string)?.trim();
@@ -133,12 +159,8 @@ export async function updateMicrositeLink(linkId: string, formData: FormData) {
 }
 
 export async function deleteMicrositeLink(linkId: string) {
-    const userId = await getCurrentUserId();
-    const link = await prisma.micrositeLink.findUnique({
-        where: { id: linkId },
-        include: { microsite: true },
-    });
-    if (!link || link.microsite.userId !== userId) throw new Error("Not found");
+    const access = await getCurrentUserAccess();
+    const link = await getEditableMicrositeLink(linkId, access);
 
     await prisma.micrositeLink.delete({ where: { id: linkId } });
     revalidatePath(`/dashboard/microsites/${link.micrositeId}`);
@@ -146,9 +168,8 @@ export async function deleteMicrositeLink(linkId: string) {
 }
 
 export async function reorderMicrositeLinks(micrositeId: string, orderedIds: string[]) {
-    const userId = await getCurrentUserId();
-    const microsite = await prisma.microsite.findUnique({ where: { id: micrositeId } });
-    if (!microsite || microsite.userId !== userId) throw new Error("Not found");
+    const access = await getCurrentUserAccess();
+    await getEditableMicrosite(micrositeId, access);
 
     await Promise.all(
         orderedIds.map((id, index) =>

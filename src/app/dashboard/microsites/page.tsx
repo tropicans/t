@@ -108,8 +108,6 @@ export default async function MicrositesPage() {
                     {/* Card Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {microsites.map((ms) => {
-                            const isOwner = ms.userId === dbUser.id;
-
                             return (
                                 <div
                                     key={ms.id}
@@ -134,7 +132,7 @@ export default async function MicrositesPage() {
 
                                     {/* Slug */}
                                     <p className="text-primary text-xs font-medium mb-3">/{ms.slug}</p>
-                                    {canViewAllMicrosites && !isOwner ? (
+                                    {canViewAllMicrosites && ms.userId !== dbUser.id ? (
                                         <p className="text-xs text-zinc-500 mb-3">
                                             Owner: {ms.user.name || ms.user.email || "Tanpa nama"}
                                         </p>
@@ -160,7 +158,7 @@ export default async function MicrositesPage() {
                                             </a>
                                             <Link href={`/dashboard/microsites/${ms.id}`}>
                                                 <Button variant="outline" size="sm" className="h-7 px-2.5 text-xs bg-zinc-900 hover:bg-zinc-800 border-zinc-700 text-zinc-300 hover:text-white hover:border-zinc-500">
-                                                    {canViewAllMicrosites && !isOwner ? "Lihat" : "Edit"}
+                                                    Edit
                                                 </Button>
                                             </Link>
                                         </div>
