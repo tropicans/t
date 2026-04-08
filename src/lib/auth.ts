@@ -2,6 +2,10 @@ import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { prisma } from "./prisma";
 
+function getErrorMessage(error: unknown): string {
+    return error instanceof Error ? error.message : String(error);
+}
+
 export const authOptions: NextAuthOptions = {
     providers: [
         GoogleProvider({
@@ -43,8 +47,8 @@ export const authOptions: NextAuthOptions = {
                         },
                     });
                     return true;
-                } catch (error: any) {
-                    console.error("SignIn DB Error:", error?.message || error);
+                } catch (error) {
+                    console.error("SignIn DB Error:", getErrorMessage(error));
                     // Allow sign-in even if DB upsert fails (degraded mode)
                     return true;
                 }

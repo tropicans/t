@@ -56,10 +56,30 @@ export default async function AnalyticsPage() {
 
     const combinedClicks = [...recentShortClicks, ...recentMicrositeClicks];
 
+    type TopItem = {
+        id: string;
+        label: string;
+        sub: string;
+        clicks: number;
+        type: "short" | "microsite";
+    };
+
     // --- Top performing items ---
-    const topItems = [
-        ...shortLinks.map((l: any) => ({ id: l.id, label: `/${l.shortCode}`, sub: l.originalUrl, clicks: l._count.clicks, type: "short" })),
-        ...microsites.map((m: any) => ({ id: m.id, label: m.title, sub: `/${m.slug}`, clicks: m._count.clicks, type: "microsite" })),
+    const topItems: TopItem[] = [
+        ...shortLinks.map((link) => ({
+            id: link.id,
+            label: `/${link.shortCode}`,
+            sub: link.originalUrl,
+            clicks: link._count.clicks,
+            type: "short" as const,
+        })),
+        ...microsites.map((microsite) => ({
+            id: microsite.id,
+            label: microsite.title,
+            sub: `/${microsite.slug}`,
+            clicks: microsite._count.clicks,
+            type: "microsite" as const,
+        })),
     ].sort((a, b) => b.clicks - a.clicks).slice(0, 8);
 
     return (
@@ -161,7 +181,7 @@ export default async function AnalyticsPage() {
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-2">
-                            {microsites.map((ms: any) => (
+                            {microsites.map((ms) => (
                                 <div key={ms.id} className="flex items-center gap-4 py-2 border-b border-zinc-800 last:border-0">
                                     <div className="flex-1 min-w-0">
                                         <p className="text-sm font-medium text-white">{ms.title}</p>

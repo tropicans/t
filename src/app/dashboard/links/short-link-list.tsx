@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition, useState, useEffect } from "react";
+import { useTransition, useState } from "react";
 import { type ShortLink } from "@prisma/client";
 import { deleteShortLink } from "@/app/actions/short";
 import { Card, CardContent } from "@/components/ui/card";
@@ -16,15 +16,25 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 
-export function ShortLinkList({ initialLinks }: { initialLinks: ShortLink[] }) {
+type ShortLinkWithOwner = ShortLink & {
+    user: {
+        name: string | null;
+        email: string | null;
+    } | null;
+};
+
+interface ShortLinkListProps {
+    initialLinks: ShortLinkWithOwner[];
+    viewerUserId: string;
+    canViewAllLinks: boolean;
+}
+
+export function ShortLinkList({ initialLinks, viewerUserId, canViewAllLinks }: ShortLinkListProps) {
     const [isPending, startTransition] = useTransition();
     const [copiedId, setCopiedId] = useState<string | null>(null);
-    const [baseUrl, setBaseUrl] = useState("");
-
-    useEffect(() => {
-        // Get the base URL securely on the client
-        setBaseUrl(window.location.origin);
-    }, []);
+    const baseUrl = typeof window !== "undefined"
+        ? window.location.origin
+        : (process.env.NEXT_PUBLIC_APP_URL || "");
 
     const handleDelete = (id: string) => {
         if (confirm("Are you sure you want to delete this short link?")) {
@@ -45,6 +55,7 @@ export function ShortLinkList({ initialLinks }: { initialLinks: ShortLink[] }) {
         <div className="space-y-4">
             {initialLinks.map((link) => {
                 const fullShortUrl = `${baseUrl}/${link.shortCode}`;
+                const isOwner = link.userId === viewerUserId;
 
                 return (
                     <Card key={link.id} className="bg-zinc-900/50 border-zinc-800 transition-all hover:bg-zinc-800/50">
@@ -74,6 +85,11 @@ export function ShortLinkList({ initialLinks }: { initialLinks: ShortLink[] }) {
                                 <div className="text-xs text-zinc-600 mt-2">
                                     Created {formatDistanceToNow(new Date(link.createdAt), { addSuffix: true })}
                                 </div>
+                                {canViewAllLinks && !isOwner ? (
+                                    <div className="text-xs text-zinc-500 mt-1">
+                                        Owner: {link.user?.name || link.user?.email || "Tanpa nama"}
+                                    </div>
+                                ) : null}
                             </div>
 
                             <div className="flex items-center gap-2 w-full sm:w-auto justify-end mt-2 sm:mt-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-zinc-800">
@@ -103,15 +119,17 @@ export function ShortLinkList({ initialLinks }: { initialLinks: ShortLink[] }) {
                                     </DialogContent>
                                 </Dialog>
 
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="text-zinc-500 hover:text-red-400 hover:bg-red-400/10"
-                                    onClick={() => handleDelete(link.id)}
-                                    disabled={isPending}
-                                >
-                                    <Trash2 className="w-4 h-4" />
-                                </Button>
+                                {isOwner ? (
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="text-zinc-500 hover:text-red-400 hover:bg-red-400/10"
+                                        onClick={() => handleDelete(link.id)}
+                                        disabled={isPending}
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                    </Button>
+                                ) : null}
                             </div>
                         </CardContent>
                     </Card>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import Image from "next/image";
 import { useUploadThing } from "@/lib/uploadthing-client";
 import { Upload, Loader2, X, UserCircle2 } from "lucide-react";
 
@@ -12,7 +13,6 @@ interface AvatarImageUploaderProps {
 }
 
 export function AvatarImageUploader({ currentUrl, onUploadComplete, fallbackInitial, className }: AvatarImageUploaderProps) {
-    const [isDragging, setIsDragging] = useState(false);
     const [preview, setPreview] = useState(currentUrl);
 
     const { startUpload, isUploading } = useUploadThing("micrositeAvatarImage", {
@@ -42,18 +42,18 @@ export function AvatarImageUploader({ currentUrl, onUploadComplete, fallbackInit
         if (file) handleFile(file);
     };
 
-    const handleDrop = (e: React.DragEvent) => {
-        e.preventDefault();
-        setIsDragging(false);
-        const file = e.dataTransfer.files?.[0];
-        if (file) handleFile(file);
-    };
-
     return (
         <div className="flex items-center gap-4">
             <div className={`relative rounded-full overflow-hidden border-2 border-zinc-700 bg-zinc-900 flex-shrink-0 group ${className || 'w-16 h-16'}`}>
                 {preview ? (
-                    <img src={preview} alt="Avatar" className="w-full h-full object-cover" />
+                    <Image
+                        src={preview}
+                        alt="Avatar"
+                        fill
+                        unoptimized
+                        sizes="128px"
+                        className="object-cover"
+                    />
                 ) : (
                     <div className="w-full h-full flex items-center justify-center text-xl font-bold text-zinc-500">
                         {fallbackInitial ? fallbackInitial : <UserCircle2 className="w-8 h-8" />}

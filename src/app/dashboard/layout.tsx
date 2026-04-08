@@ -4,6 +4,7 @@ import { useSession, signOut } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { LinkIcon, Home, BarChart2, Settings, LogOut, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -79,7 +80,13 @@ export default function DashboardLayout({
                 <div className="p-4 border-t border-border">
                     <div className="flex items-center gap-3 px-3 py-2 mb-4">
                         {session?.user?.image ? (
-                            <img src={session.user.image} alt="Avatar" className="w-8 h-8 rounded-full bg-zinc-800" />
+                            <Image
+                                src={session.user.image}
+                                alt="Avatar"
+                                width={32}
+                                height={32}
+                                className="w-8 h-8 rounded-full bg-zinc-800"
+                            />
                         ) : (
                             <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-xs font-medium text-white">
                                 {session?.user?.name?.charAt(0) || "U"}

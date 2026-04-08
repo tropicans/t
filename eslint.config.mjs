@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Local agent skill bundles and scratch scripts are not app source.
+    ".agents/**",
+    "test-prisma.cjs",
   ]),
 ]);
 

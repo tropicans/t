@@ -50,6 +50,10 @@ type MicrositeWithLinks = Microsite & {
     _count: { clicks: number };
 };
 
+function getErrorMessage(error: unknown): string {
+    return error instanceof Error ? error.message : "Terjadi kesalahan tak terduga";
+}
+
 export function MicrositeEditor({ microsite }: { microsite: MicrositeWithLinks }) {
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
@@ -96,8 +100,8 @@ export function MicrositeEditor({ microsite }: { microsite: MicrositeWithLinks }
             try {
                 await updateMicrosite(microsite.id, formData);
                 router.refresh();
-            } catch (err: any) {
-                setError(err.message);
+            } catch (err) {
+                setError(getErrorMessage(err));
             }
         });
     }
@@ -133,8 +137,8 @@ export function MicrositeEditor({ microsite }: { microsite: MicrositeWithLinks }
                 (e.target as HTMLFormElement).reset();
                 setShowAddForm(false);
                 router.refresh();
-            } catch (err: any) {
-                setError(err.message);
+            } catch (err) {
+                setError(getErrorMessage(err));
             }
         });
     }
@@ -148,8 +152,8 @@ export function MicrositeEditor({ microsite }: { microsite: MicrositeWithLinks }
                 await updateMicrositeLink(linkId, formData);
                 setEditLinkId(null);
                 router.refresh();
-            } catch (err: any) {
-                setError(err.message);
+            } catch (err) {
+                setError(getErrorMessage(err));
             }
         });
     }
@@ -160,6 +164,23 @@ export function MicrositeEditor({ microsite }: { microsite: MicrositeWithLinks }
         startTransition(async () => {
             await deleteMicrositeLink(linkId);
             router.refresh();
+        });
+    }
+
+    // --- Toggle link visibility ---
+    function handleToggleLinkVisibility(link: MicrositeLink) {
+        startTransition(async () => {
+            try {
+                const formData = new FormData();
+                formData.set("title", link.title);
+                formData.set("url", link.url);
+                formData.set("isActive", String(!link.isActive));
+                formData.set("icon", link.icon || "");
+                await updateMicrositeLink(link.id, formData);
+                router.refresh();
+            } catch (err) {
+                setError(getErrorMessage(err));
+            }
         });
     }
 
@@ -318,7 +339,7 @@ export function MicrositeEditor({ microsite }: { microsite: MicrositeWithLinks }
 
                     {microsite.links.length === 0 && !showAddForm && (
                         <p className="text-zinc-500 text-sm text-center py-6">
-                            Belum ada link. Klik "Tambah Link" untuk mulai.
+                            Belum ada link. Klik tombol Tambah Link untuk mulai.
                         </p>
                     )}
 
@@ -354,16 +375,26 @@ export function MicrositeEditor({ microsite }: { microsite: MicrositeWithLinks }
                                         </p>
                                         <p className="text-xs text-zinc-600 truncate">{link.url}</p>
                                     </div>
-                                    <div className="flex gap-1 flex-shrink-0">
-                                        <a href={link.url} target="_blank" rel="noopener noreferrer">
-                                            <Button variant="ghost" size="icon" className="w-7 h-7 text-zinc-600 hover:text-white hover:bg-zinc-800">
-                                                <ExternalLink className="w-3.5 h-3.5" />
-                                            </Button>
-                                        </a>
-                                        <Button variant="ghost" size="icon" onClick={() => setEditLinkId(link.id)}
-                                            className="w-7 h-7 text-zinc-600 hover:text-white hover:bg-zinc-800">
-                                            <Pencil className="w-3.5 h-3.5" />
-                                        </Button>
+                                     <div className="flex gap-1 flex-shrink-0">
+                                         <a href={link.url} target="_blank" rel="noopener noreferrer">
+                                             <Button variant="ghost" size="icon" className="w-7 h-7 text-zinc-600 hover:text-white hover:bg-zinc-800">
+                                                 <ExternalLink className="w-3.5 h-3.5" />
+                                             </Button>
+                                         </a>
+                                         <Button
+                                             variant="ghost"
+                                             size="icon"
+                                             onClick={() => handleToggleLinkVisibility(link)}
+                                             disabled={isPending}
+                                             className="w-7 h-7 text-zinc-600 hover:text-white hover:bg-zinc-800"
+                                             title={link.isActive ? "Sembunyikan link" : "Tampilkan link"}
+                                         >
+                                             {link.isActive ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                                         </Button>
+                                         <Button variant="ghost" size="icon" onClick={() => setEditLinkId(link.id)}
+                                             className="w-7 h-7 text-zinc-600 hover:text-white hover:bg-zinc-800">
+                                             <Pencil className="w-3.5 h-3.5" />
+                                         </Button>
                                         <Button variant="ghost" size="icon" onClick={() => handleDeleteLink(link.id)}
                                             disabled={isPending}
                                             className="w-7 h-7 text-zinc-600 hover:text-red-400 hover:bg-red-500/10">

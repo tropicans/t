@@ -1,9 +1,9 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import Image from "next/image";
 import { useUploadThing } from "@/lib/uploadthing-client";
 import { Upload, Loader2, X, ImageIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 interface CoverImageUploaderProps {
     currentUrl: string;
@@ -60,10 +60,13 @@ export function CoverImageUploader({ currentUrl, onUploadComplete, className }: 
             {preview ? (
                 /* Preview state */
                 <div className="relative rounded-xl overflow-hidden border border-zinc-800 h-full w-full group">
-                    <img
+                    <Image
                         src={preview}
                         alt="Cover preview"
-                        className="w-full h-full object-cover"
+                        fill
+                        unoptimized
+                        sizes="100vw"
+                        className="object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                     {isUploading && (

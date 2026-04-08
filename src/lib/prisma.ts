@@ -2,7 +2,6 @@ import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 
 declare global {
-  // eslint-disable-next-line no-var
   var __prisma: PrismaClient | undefined;
 }
 
@@ -12,7 +11,7 @@ function createPrismaClient(): PrismaClient {
     "postgresql://taut_admin:taut_password_123!@localhost:5436/taut_db?schema=public";
 
   const adapter = new PrismaPg({ connectionString });
-  return new PrismaClient({ adapter } as any);
+  return new PrismaClient({ adapter });
 }
 
 // Reuse singleton across hot module reloads in development

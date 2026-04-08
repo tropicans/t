@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { isGlobalMicrositeViewer } from "@/lib/microsite-access";
 import {
     Plus,
     ExternalLink,
@@ -13,11 +14,6 @@ import {
     Eye,
     EyeOff,
     Link2,
-    CalendarCheck,
-    ShoppingBag,
-    FileEdit,
-    Sparkles,
-    Globe,
     Layers,
 } from "lucide-react";
 
@@ -62,10 +58,13 @@ export default async function MicrositesPage() {
     const dbUser = await prisma.user.findUnique({ where: { email: session.user.email } });
     if (!dbUser) redirect("/login");
 
+    const canViewAllMicrosites = isGlobalMicrositeViewer(session.user.email);
+
     const microsites = await prisma.microsite.findMany({
-        where: { userId: dbUser.id },
+        where: canViewAllMicrosites ? undefined : { userId: dbUser.id },
         include: {
             _count: { select: { links: true, clicks: true } },
+            user: { select: { name: true, email: true } },
         },
         orderBy: { createdAt: "desc" },
     });
@@ -108,58 +107,67 @@ export default async function MicrositesPage() {
                 <>
                     {/* Card Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {microsites.map((ms) => (
-                            <div
-                                key={ms.id}
-                                className="bg-zinc-900/60 border border-zinc-800 hover:border-blue-500/40 rounded-xl p-5 group transition-all cursor-pointer"
-                            >
-                                {/* Thumbnail */}
-                                <ThemeThumbnail theme={ms.theme} title={ms.title} />
+                        {microsites.map((ms) => {
+                            const isOwner = ms.userId === dbUser.id;
 
-                                {/* Title + Badge */}
-                                <div className="flex items-start justify-between mb-1">
-                                    <h3 className="text-base font-bold text-white truncate max-w-[70%]">{ms.title}</h3>
-                                    {ms.isPublished ? (
-                                        <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
-                                            <Eye className="w-2.5 h-2.5" /> Publik
-                                        </span>
-                                    ) : (
-                                        <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-zinc-700/50 text-zinc-400 border border-zinc-700 flex items-center gap-1">
-                                            <EyeOff className="w-2.5 h-2.5" /> Draft
-                                        </span>
-                                    )}
-                                </div>
+                            return (
+                                <div
+                                    key={ms.id}
+                                    className="bg-zinc-900/60 border border-zinc-800 hover:border-blue-500/40 rounded-xl p-5 group transition-all cursor-pointer"
+                                >
+                                    {/* Thumbnail */}
+                                    <ThemeThumbnail theme={ms.theme} title={ms.title} />
 
-                                {/* Slug */}
-                                <p className="text-primary text-xs font-medium mb-3">/{ms.slug}</p>
-
-                                {/* Stats + Actions */}
-                                <div className="flex items-center justify-between pt-3 border-t border-zinc-800">
-                                    <div className="flex items-center gap-4 text-xs text-zinc-500">
-                                        <span className="flex items-center gap-1">
-                                            <Link2 className="w-3.5 h-3.5" />
-                                            {ms._count.links} links
-                                        </span>
-                                        <span className="flex items-center gap-1">
-                                            <Eye className="w-3.5 h-3.5" />
-                                            {ms._count.clicks} klik
-                                        </span>
+                                    {/* Title + Badge */}
+                                    <div className="flex items-start justify-between mb-1">
+                                        <h3 className="text-base font-bold text-white truncate max-w-[70%]">{ms.title}</h3>
+                                        {ms.isPublished ? (
+                                            <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
+                                                <Eye className="w-2.5 h-2.5" /> Publik
+                                            </span>
+                                        ) : (
+                                            <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-zinc-700/50 text-zinc-400 border border-zinc-700 flex items-center gap-1">
+                                                <EyeOff className="w-2.5 h-2.5" /> Draft
+                                            </span>
+                                        )}
                                     </div>
-                                    <div className="flex items-center gap-1">
-                                        <a href={`/${ms.slug}`} target="_blank" rel="noopener noreferrer">
-                                            <Button variant="ghost" size="icon" className="w-7 h-7 text-zinc-500 hover:text-white hover:bg-zinc-800">
-                                                <ExternalLink className="w-3.5 h-3.5" />
-                                            </Button>
-                                        </a>
-                                        <Link href={`/dashboard/microsites/${ms.id}`}>
-                                            <Button variant="outline" size="sm" className="h-7 px-2.5 text-xs bg-zinc-900 hover:bg-zinc-800 border-zinc-700 text-zinc-300 hover:text-white hover:border-zinc-500">
-                                                Edit
-                                            </Button>
-                                        </Link>
+
+                                    {/* Slug */}
+                                    <p className="text-primary text-xs font-medium mb-3">/{ms.slug}</p>
+                                    {canViewAllMicrosites && !isOwner ? (
+                                        <p className="text-xs text-zinc-500 mb-3">
+                                            Owner: {ms.user.name || ms.user.email || "Tanpa nama"}
+                                        </p>
+                                    ) : null}
+
+                                    {/* Stats + Actions */}
+                                    <div className="flex items-center justify-between pt-3 border-t border-zinc-800">
+                                        <div className="flex items-center gap-4 text-xs text-zinc-500">
+                                            <span className="flex items-center gap-1">
+                                                <Link2 className="w-3.5 h-3.5" />
+                                                {ms._count.links} links
+                                            </span>
+                                            <span className="flex items-center gap-1">
+                                                <Eye className="w-3.5 h-3.5" />
+                                                {ms._count.clicks} klik
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center gap-1">
+                                            <a href={`/${ms.slug}`} target="_blank" rel="noopener noreferrer">
+                                                <Button variant="ghost" size="icon" className="w-7 h-7 text-zinc-500 hover:text-white hover:bg-zinc-800">
+                                                    <ExternalLink className="w-3.5 h-3.5" />
+                                                </Button>
+                                            </a>
+                                            <Link href={`/dashboard/microsites/${ms.id}`}>
+                                                <Button variant="outline" size="sm" className="h-7 px-2.5 text-xs bg-zinc-900 hover:bg-zinc-800 border-zinc-700 text-zinc-300 hover:text-white hover:border-zinc-500">
+                                                    {canViewAllMicrosites && !isOwner ? "Lihat" : "Edit"}
+                                                </Button>
+                                            </Link>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
 
                     {/* Add more CTA at bottom */}

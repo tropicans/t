@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
+import Image from "next/image";
 import { ExternalLink } from "lucide-react";
 import { ShareBar } from "@/components/share-bar";
 import type { PublicMicrositeData } from "@/lib/public-microsite";
@@ -166,10 +167,12 @@ export function MicrositePageClient({ initialMicrosite, pageUrl }: MicrositePage
         <div className={`min-h-screen ${styles.page}`}>
             {hasCover ? (
                 <div className="relative w-full h-52 sm:h-64">
-                    <img
+                    <Image
                         src={microsite.coverImage!}
                         alt={microsite.title}
-                        className="w-full h-full object-cover"
+                        fill
+                        sizes="100vw"
+                        className="object-cover"
                     />
                     <div className={`absolute inset-0 bg-gradient-to-b ${styles.hero}`} />
                 </div>
@@ -181,15 +184,19 @@ export function MicrositePageClient({ initialMicrosite, pageUrl }: MicrositePage
                 <div className="w-full max-w-md">
                     <div className="text-center mb-8">
                         {microsite.avatarImage ? (
-                            <img
+                            <Image
                                 src={microsite.avatarImage}
                                 alt={microsite.title}
+                                width={80}
+                                height={80}
                                 className={`w-20 h-20 rounded-full mx-auto mb-4 border-4 object-cover shadow-xl ${styles.avatar}`}
                             />
                         ) : microsite.user.image ? (
-                            <img
+                            <Image
                                 src={microsite.user.image}
                                 alt={microsite.user.name || microsite.title}
+                                width={80}
+                                height={80}
                                 className={`w-20 h-20 rounded-full mx-auto mb-4 border-4 object-cover shadow-xl ${styles.avatar}`}
                             />
                         ) : (

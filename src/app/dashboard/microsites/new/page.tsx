@@ -19,6 +19,10 @@ const THEMES = [
     { value: "gradient", label: "Gradient", bg: "bg-gradient-to-br from-blue-600 to-purple-700", text: "Warna-warni" },
 ];
 
+function getErrorMessage(error: unknown): string {
+    return error instanceof Error ? error.message : "Terjadi kesalahan";
+}
+
 export default function NewMicrositePage() {
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
@@ -45,8 +49,8 @@ export default function NewMicrositePage() {
                 if (result.success) {
                     router.push(`/dashboard/microsites/${result.microsite.id}`);
                 }
-            } catch (err: any) {
-                setError(err.message || "Terjadi kesalahan");
+            } catch (err) {
+                setError(getErrorMessage(err));
             }
         });
     }

@@ -16,7 +16,7 @@ export const ourFileRouter = {
             if (!session?.user?.email) throw new Error("Unauthorized");
             return { email: session.user.email };
         })
-        .onUploadComplete(async ({ metadata, file }) => {
+        .onUploadComplete(async ({ file }) => {
             return { url: file.ufsUrl };
         }),
     micrositeAvatarImage: f({
@@ -30,7 +30,7 @@ export const ourFileRouter = {
             if (!session?.user?.email) throw new Error("Unauthorized");
             return { email: session.user.email };
         })
-        .onUploadComplete(async ({ metadata, file }) => {
+        .onUploadComplete(async ({ file }) => {
             return { url: file.ufsUrl };
         }),
 } satisfies FileRouter;
