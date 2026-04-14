@@ -16,7 +16,7 @@ import { AvatarImageUploader } from "@/components/avatar-image-uploader";
 const THEMES = [
     { value: "dark", label: "Dark", bg: "bg-zinc-900", text: "Gelap elegan" },
     { value: "light", label: "Light", bg: "bg-white", text: "Terang bersih" },
-    { value: "gradient", label: "Gradient", bg: "bg-gradient-to-br from-blue-600 to-purple-700", text: "Warna-warni" },
+    { value: "gradient", label: "Gradient", bg: "bg-gradient-to-b from-white to-[#8EC5E8]", text: "Putih ke biru lembut" },
 ];
 
 function getErrorMessage(error: unknown): string {

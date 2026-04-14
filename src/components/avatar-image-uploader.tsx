@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import Image from "next/image";
 import { useUploadThing } from "@/lib/uploadthing-client";
 import { Upload, Loader2, X, UserCircle2 } from "lucide-react";
 
@@ -16,25 +15,29 @@ export function AvatarImageUploader({ currentUrl, onUploadComplete, fallbackInit
     const [preview, setPreview] = useState(currentUrl);
 
     const { startUpload, isUploading } = useUploadThing("micrositeAvatarImage", {
-        onClientUploadComplete: (res) => {
-            if (res?.[0]?.url) {
-                setPreview(res[0].url);
-                onUploadComplete(res[0].url);
-            }
-        },
         onUploadError: (err) => {
             alert(`Upload gagal: ${err.message}`);
         },
     });
 
     const handleFile = useCallback(
-        (file: File) => {
+        async (file: File) => {
             if (!file.type.startsWith("image/")) return;
             const objectUrl = URL.createObjectURL(file);
             setPreview(objectUrl);
-            startUpload([file]);
+
+            const res = await startUpload([file]);
+            const uploadedUrl = res?.[0]?.serverData?.url ?? res?.[0]?.ufsUrl;
+
+            if (uploadedUrl) {
+                setPreview(uploadedUrl);
+                onUploadComplete(uploadedUrl);
+                return;
+            }
+
+            alert("Upload selesai, tapi URL gambar tidak diterima aplikasi.");
         },
-        [startUpload]
+        [onUploadComplete, startUpload]
     );
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,13 +49,10 @@ export function AvatarImageUploader({ currentUrl, onUploadComplete, fallbackInit
         <div className="flex items-center gap-4">
             <div className={`relative rounded-full overflow-hidden border-2 border-zinc-700 bg-zinc-900 flex-shrink-0 group ${className || 'w-16 h-16'}`}>
                 {preview ? (
-                    <Image
+                    <img
                         src={preview}
                         alt="Avatar"
-                        fill
-                        unoptimized
-                        sizes="128px"
-                        className="object-cover"
+                        className="absolute inset-0 h-full w-full object-cover"
                     />
                 ) : (
                     <div className="w-full h-full flex items-center justify-center text-xl font-bold text-zinc-500">

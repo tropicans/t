@@ -84,10 +84,10 @@ export function MicrositeEditor({ microsite }: { microsite: MicrositeWithLinks }
         {
             id: "gradient",
             label: "Gradient",
-            bg: "bg-blue-950",
-            preview: "bg-gradient-to-b from-blue-900 via-purple-900 to-zinc-950",
-            cardBg: "bg-white/20",
-            dot: "bg-blue-300",
+            bg: "bg-[#8EC5E8]",
+            preview: "bg-gradient-to-b from-white to-[#8EC5E8]",
+            cardBg: "bg-white/70 border border-white/80",
+            dot: "bg-sky-300",
         },
     ];
 

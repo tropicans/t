@@ -23,8 +23,8 @@ function ThemeThumbnail({ theme, title }: { theme: string; title: string }) {
 
     if (theme === "gradient") {
         return (
-            <div className="h-32 w-full rounded-xl mb-4 bg-gradient-to-br from-blue-500/20 via-purple-500/10 to-blue-900/20 flex items-center justify-center overflow-hidden group-hover:from-blue-500/30 transition-all">
-                <div className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl w-14 h-14 flex items-center justify-center text-white text-2xl font-bold shadow-lg group-hover:scale-110 transition-transform">
+            <div className="h-32 w-full rounded-xl mb-4 bg-gradient-to-b from-white to-[#8EC5E8] flex items-center justify-center overflow-hidden transition-all group-hover:brightness-95">
+                <div className="bg-white/80 rounded-2xl w-14 h-14 flex items-center justify-center text-sky-950 text-2xl font-bold shadow-lg group-hover:scale-110 transition-transform backdrop-blur-sm">
                     {initial}
                 </div>
             </div>

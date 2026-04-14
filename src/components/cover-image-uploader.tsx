@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import Image from "next/image";
 import { useUploadThing } from "@/lib/uploadthing-client";
 import { Upload, Loader2, X, ImageIcon } from "lucide-react";
 
@@ -14,28 +13,33 @@ interface CoverImageUploaderProps {
 export function CoverImageUploader({ currentUrl, onUploadComplete, className }: CoverImageUploaderProps) {
     const [isDragging, setIsDragging] = useState(false);
     const [preview, setPreview] = useState(currentUrl);
+    const frameClassName = className || "h-32";
 
     const { startUpload, isUploading } = useUploadThing("micrositeCoverImage", {
-        onClientUploadComplete: (res) => {
-            if (res?.[0]?.url) {
-                setPreview(res[0].url);
-                onUploadComplete(res[0].url);
-            }
-        },
         onUploadError: (err) => {
             alert(`Upload gagal: ${err.message}`);
         },
     });
 
     const handleFile = useCallback(
-        (file: File) => {
+        async (file: File) => {
             if (!file.type.startsWith("image/")) return;
             // Show local preview immediately
             const objectUrl = URL.createObjectURL(file);
             setPreview(objectUrl);
-            startUpload([file]);
+
+            const res = await startUpload([file]);
+            const uploadedUrl = res?.[0]?.serverData?.url ?? res?.[0]?.ufsUrl;
+
+            if (uploadedUrl) {
+                setPreview(uploadedUrl);
+                onUploadComplete(uploadedUrl);
+                return;
+            }
+
+            alert("Upload selesai, tapi URL gambar tidak diterima aplikasi.");
         },
-        [startUpload]
+        [onUploadComplete, startUpload]
     );
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,17 +60,14 @@ export function CoverImageUploader({ currentUrl, onUploadComplete, className }: 
     };
 
     return (
-        <div className={`space-y-2 ${className || ''}`}>
+        <div className="space-y-2">
             {preview ? (
                 /* Preview state */
-                <div className="relative rounded-xl overflow-hidden border border-zinc-800 h-full w-full group">
-                    <Image
+                <div className={`relative w-full overflow-hidden rounded-xl border border-zinc-800 group ${frameClassName}`}>
+                    <img
                         src={preview}
                         alt="Cover preview"
-                        fill
-                        unoptimized
-                        sizes="100vw"
-                        className="object-cover"
+                        className="absolute inset-0 h-full w-full object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                     {isUploading && (
@@ -96,7 +97,7 @@ export function CoverImageUploader({ currentUrl, onUploadComplete, className }: 
             ) : (
                 /* Drop zone */
                 <label
-                    className={`flex flex-col items-center justify-center gap-3 h-32 rounded-xl border-2 border-dashed cursor-pointer transition-all duration-200 ${isDragging
+                    className={`flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed cursor-pointer transition-all duration-200 ${frameClassName} ${isDragging
                         ? "border-blue-500 bg-blue-500/10"
                         : "border-zinc-700 hover:border-zinc-500 hover:bg-zinc-900/50"
                         }`}
