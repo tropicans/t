@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { isGlobalDashboardViewer } from "@/lib/microsite-access";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { normalizeMicrositeTheme } from "@/lib/microsite-themes";
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
@@ -65,7 +66,7 @@ export async function createMicrosite(formData: FormData) {
     const slug = validateSlug(formData.get("slug") as string);
     const title = (formData.get("title") as string)?.trim();
     const description = (formData.get("description") as string)?.trim() || null;
-    const theme = (formData.get("theme") as string) || "dark";
+    const theme = normalizeMicrositeTheme(formData.get("theme"));
     const coverImage = (formData.get("coverImage") as string)?.trim() || null;
     const avatarImage = (formData.get("avatarImage") as string)?.trim() || null;
 
@@ -86,14 +87,12 @@ export async function updateMicrosite(id: string, formData: FormData) {
     const access = await getCurrentUserAccess();
     const microsite = await getEditableMicrosite(id, access);
 
-    const title = (formData.get("title") as string)?.trim();
-    const description = (formData.get("description") as string)?.trim() || null;
-    const theme = (formData.get("theme") as string) || microsite.theme;
-    const isPublished = formData.get("isPublished") === "true";
-    const coverImageRaw = (formData.get("coverImage") as string)?.trim();
-    const coverImage = coverImageRaw || null;
-    const avatarImageRaw = (formData.get("avatarImage") as string)?.trim();
-    const avatarImage = avatarImageRaw || null;
+    const title = formData.has("title") ? (formData.get("title") as string)?.trim() : microsite.title;
+    const description = formData.has("description") ? ((formData.get("description") as string)?.trim() || null) : microsite.description;
+    const theme = formData.has("theme") ? normalizeMicrositeTheme(formData.get("theme")) : microsite.theme;
+    const isPublished = formData.has("isPublished") ? (formData.get("isPublished") === "true") : microsite.isPublished;
+    const coverImage = formData.has("coverImage") ? ((formData.get("coverImage") as string)?.trim() || null) : microsite.coverImage;
+    const avatarImage = formData.has("avatarImage") ? ((formData.get("avatarImage") as string)?.trim() || null) : microsite.avatarImage;
 
     const updated = await prisma.microsite.update({
         where: { id },
