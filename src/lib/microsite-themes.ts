@@ -219,7 +219,7 @@ export function isMicrositeThemeId(value: string): value is MicrositeThemeId {
   return MICROSITE_THEMES.some((t) => t.id === value);
 }
 
-export function normalizeMicrositeTheme(value: any): MicrositeThemeId {
+export function normalizeMicrositeTheme(value: unknown): MicrositeThemeId {
   const str = typeof value === "string" ? value : String(value || "");
   return isMicrositeThemeId(str) ? str : DEFAULT_MICROSITE_THEME_ID;
 }

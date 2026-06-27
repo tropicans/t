@@ -5,59 +5,11 @@ import Image from "next/image";
 import { ExternalLink } from "lucide-react";
 import { ShareBar } from "@/components/share-bar";
 import type { PublicMicrositeData } from "@/lib/public-microsite";
+import { getMicrositeTheme } from "@/lib/microsite-themes";
 
 const POLL_INTERVAL_MS = 10000;
 
-const themeStyles = {
-    dark: {
-        page: "bg-zinc-950",
-        hero: "from-zinc-900/0 via-zinc-950/60 to-zinc-950",
-        title: "text-white",
-        description: "text-zinc-400",
-        avatar: "border-zinc-800 ring-2 ring-zinc-700",
-        card: "bg-zinc-900 border border-zinc-800 text-white hover:bg-zinc-800 hover:border-zinc-600 hover:shadow-lg hover:shadow-black/30",
-        cardTitle: "text-white",
-        icon: "text-zinc-600 group-hover:text-zinc-300",
-        empty: "text-zinc-600",
-        footer: "text-zinc-800",
-        footerBrand: "text-zinc-600",
-        divider: "bg-zinc-800",
-        share: "text-zinc-500 hover:text-white",
-        shareLabel: "text-zinc-600",
-    },
-    light: {
-        page: "bg-gray-50",
-        hero: "from-gray-50/0 via-gray-50/60 to-gray-50",
-        title: "text-zinc-900",
-        description: "text-zinc-500",
-        avatar: "border-white ring-2 ring-zinc-200",
-        card: "bg-white border border-zinc-200 text-zinc-900 hover:border-zinc-300 hover:shadow-lg hover:shadow-zinc-200/60",
-        cardTitle: "text-zinc-900",
-        icon: "text-zinc-400 group-hover:text-zinc-600",
-        empty: "text-zinc-400",
-        footer: "text-zinc-300",
-        footerBrand: "text-zinc-400",
-        divider: "bg-zinc-200",
-        share: "text-zinc-400 hover:text-zinc-800",
-        shareLabel: "text-zinc-400",
-    },
-    gradient: {
-        page: "bg-gradient-to-b from-white to-[#8EC5E8]",
-        hero: "from-white/0 via-white/35 to-[#8EC5E8]",
-        title: "text-sky-950",
-        description: "text-sky-900/75",
-        avatar: "border-white/80 ring-2 ring-sky-200/80",
-        card: "bg-white/55 border border-white/70 text-sky-950 hover:bg-white/75 hover:border-white/90 backdrop-blur-md hover:shadow-lg hover:shadow-sky-300/30",
-        cardTitle: "text-sky-950",
-        icon: "text-sky-900/40 group-hover:text-sky-900/70",
-        empty: "text-sky-900/45",
-        footer: "text-sky-950/20",
-        footerBrand: "text-sky-950/45",
-        divider: "bg-sky-900/12",
-        share: "text-sky-900/45 hover:text-sky-950",
-        shareLabel: "text-sky-900/40",
-    },
-} as const;
+
 
 function hasMicrositeChanged(current: PublicMicrositeData, next: PublicMicrositeData) {
     if (
@@ -160,7 +112,7 @@ export function MicrositePageClient({ initialMicrosite, pageUrl }: MicrositePage
         };
     }, [initialMicrosite.slug, startTransition]);
 
-    const styles = themeStyles[microsite.theme as keyof typeof themeStyles] ?? themeStyles.dark;
+    const styles = getMicrositeTheme(microsite.theme).public;
     const hasCover = !!microsite.coverImage;
 
     return (

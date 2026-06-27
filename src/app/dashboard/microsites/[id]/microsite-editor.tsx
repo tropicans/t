@@ -19,6 +19,7 @@ import { ArrowLeft, Plus, ExternalLink, Trash2, Pencil, Loader2, Eye, EyeOff, Gl
 import { CoverImageUploader } from "@/components/cover-image-uploader";
 import { AvatarImageUploader } from "@/components/avatar-image-uploader";
 import Link from "next/link";
+import { MICROSITE_THEMES, normalizeMicrositeTheme } from "@/lib/microsite-themes";
 type MicrositeLink = {
     id: string;
     title: string;
@@ -60,36 +61,11 @@ export function MicrositeEditor({ microsite }: { microsite: MicrositeWithLinks }
     const [editLinkId, setEditLinkId] = useState<string | null>(null);
     const [showAddForm, setShowAddForm] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [selectedTheme, setSelectedTheme] = useState(microsite.theme || "dark");
+    const [selectedTheme, setSelectedTheme] = useState(normalizeMicrositeTheme(microsite.theme));
     const [coverImageUrl, setCoverImageUrl] = useState(microsite.coverImage || "");
     const [avatarImageUrl, setAvatarImageUrl] = useState(microsite.avatarImage || "");
 
-    const THEMES = [
-        {
-            id: "dark",
-            label: "Dark",
-            bg: "bg-zinc-950",
-            preview: "bg-gradient-to-b from-zinc-900 to-zinc-950",
-            cardBg: "bg-zinc-800",
-            dot: "bg-zinc-400",
-        },
-        {
-            id: "light",
-            label: "Light",
-            bg: "bg-gray-100",
-            preview: "bg-gradient-to-b from-white to-gray-100",
-            cardBg: "bg-white border border-gray-200",
-            dot: "bg-gray-400",
-        },
-        {
-            id: "gradient",
-            label: "Gradient",
-            bg: "bg-[#8EC5E8]",
-            preview: "bg-gradient-to-b from-white to-[#8EC5E8]",
-            cardBg: "bg-white/70 border border-white/80",
-            dot: "bg-sky-300",
-        },
-    ];
+
 
     // --- Update microsite info ---
     function handleUpdateInfo(e: React.FormEvent<HTMLFormElement>) {
@@ -259,26 +235,39 @@ export function MicrositeEditor({ microsite }: { microsite: MicrositeWithLinks }
                         <div className="space-y-2">
                             <Label className="text-zinc-300">Tema Tampilan</Label>
                             <div className="grid grid-cols-3 gap-3">
-                                {THEMES.map((t) => (
+                                {MICROSITE_THEMES.map((t) => (
                                     <button
                                         key={t.id}
                                         type="button"
                                         onClick={() => setSelectedTheme(t.id)}
-                                        className={`relative rounded-xl overflow-hidden border-2 transition-all duration-200 ${selectedTheme === t.id
-                                            ? "border-blue-500 shadow-lg shadow-blue-500/20"
-                                            : "border-zinc-700 hover:border-zinc-500"
-                                            }`}
+                                        className={`relative rounded-xl overflow-hidden border-2 transition-all duration-200 text-left flex flex-col ${
+                                            selectedTheme === t.id
+                                                ? "border-blue-500 shadow-lg shadow-blue-500/20"
+                                                : "border-zinc-800 hover:border-zinc-700 bg-zinc-900/50"
+                                        }`}
                                     >
                                         {/* Mini preview */}
-                                        <div className={`h-20 w-full ${t.preview} flex flex-col items-center justify-center gap-1.5 p-2`}>
-                                            <div className={`w-6 h-6 rounded-full ${t.dot} opacity-80`} />
-                                            <div className={`h-2 w-12 rounded-full ${t.cardBg} opacity-70`} />
-                                            <div className={`h-2 w-10 rounded-full ${t.cardBg} opacity-50`} />
+                                        <div className={`h-24 w-full ${t.preview.bg} flex flex-col items-center justify-center gap-1 p-2 relative overflow-hidden`}>
+                                            {/* Miniature header strip (title strip) */}
+                                            <div className="w-12 h-1 bg-zinc-400/40 rounded-full mb-1" />
+                                            
+                                            {/* Avatar / dot */}
+                                            <div className={`w-5 h-5 rounded-full ${t.preview.dot} mb-1`} />
+                                            
+                                            {/* Two link-card shapes */}
+                                            <div className={`h-2.5 w-20 rounded ${t.preview.card}`} />
+                                            <div className={`h-2.5 w-20 rounded ${t.preview.card}`} />
                                         </div>
-                                        <div className={`py-1.5 text-center text-xs font-medium ${selectedTheme === t.id ? "text-blue-400" : "text-zinc-400"
-                                            } ${t.bg}`}>
-                                            {t.label}
-                                            {selectedTheme === t.id && " ✓"}
+                                        
+                                        {/* Label & Tagline */}
+                                        <div className="p-2 flex-1 flex flex-col justify-between bg-zinc-950/40 w-full">
+                                            <div>
+                                                <p className={`text-xs font-bold ${selectedTheme === t.id ? "text-blue-400" : "text-zinc-300"}`}>
+                                                    {t.label}
+                                                    {selectedTheme === t.id && " ✓"}
+                                                </p>
+                                                <p className="text-[10px] text-zinc-500 leading-tight mt-0.5">{t.tagline}</p>
+                                            </div>
                                         </div>
                                     </button>
                                 ))}

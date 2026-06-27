@@ -12,12 +12,9 @@ import { ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { CoverImageUploader } from "@/components/cover-image-uploader";
 import { AvatarImageUploader } from "@/components/avatar-image-uploader";
+import { MICROSITE_THEMES } from "@/lib/microsite-themes";
 
-const THEMES = [
-    { value: "dark", label: "Dark", bg: "bg-zinc-900", text: "Gelap elegan" },
-    { value: "light", label: "Light", bg: "bg-white", text: "Terang bersih" },
-    { value: "gradient", label: "Gradient", bg: "bg-gradient-to-b from-white to-[#8EC5E8]", text: "Putih ke biru lembut" },
-];
+
 
 function getErrorMessage(error: unknown): string {
     return error instanceof Error ? error.message : "Terjadi kesalahan";
@@ -149,19 +146,40 @@ export default function NewMicrositePage() {
                     </CardHeader>
                     <CardContent>
                         <div className="grid grid-cols-3 gap-3">
-                            {THEMES.map((theme) => (
+                            {MICROSITE_THEMES.map((t) => (
                                 <button
-                                    key={theme.value}
+                                    key={t.id}
                                     type="button"
-                                    onClick={() => setSelectedTheme(theme.value)}
-                                    className={`rounded-xl p-3 border-2 transition-all text-left ${selectedTheme === theme.value
-                                        ? "border-blue-500"
-                                        : "border-zinc-800 hover:border-zinc-600"
-                                        }`}
+                                    onClick={() => setSelectedTheme(t.id)}
+                                    className={`relative rounded-xl overflow-hidden border-2 transition-all duration-200 text-left flex flex-col ${
+                                        selectedTheme === t.id
+                                            ? "border-blue-500 shadow-lg shadow-blue-500/20"
+                                            : "border-zinc-800 hover:border-zinc-700 bg-zinc-900/50"
+                                    }`}
                                 >
-                                    <div className={`w-full h-12 rounded-lg mb-2 ${theme.bg}`} />
-                                    <p className="text-xs font-medium text-white">{theme.label}</p>
-                                    <p className="text-xs text-zinc-500">{theme.text}</p>
+                                    {/* Mini preview */}
+                                    <div className={`h-24 w-full ${t.preview.bg} flex flex-col items-center justify-center gap-1 p-2 relative overflow-hidden`}>
+                                        {/* Miniature header strip (title strip) */}
+                                        <div className="w-12 h-1 bg-zinc-400/40 rounded-full mb-1" />
+                                        
+                                        {/* Avatar / dot */}
+                                        <div className={`w-5 h-5 rounded-full ${t.preview.dot} mb-1`} />
+                                        
+                                        {/* Two link-card shapes */}
+                                        <div className={`h-2.5 w-20 rounded ${t.preview.card}`} />
+                                        <div className={`h-2.5 w-20 rounded ${t.preview.card}`} />
+                                    </div>
+                                    
+                                    {/* Label & Tagline */}
+                                    <div className="p-2 flex-1 flex flex-col justify-between bg-zinc-950/40 w-full">
+                                        <div>
+                                            <p className={`text-xs font-bold ${selectedTheme === t.id ? "text-blue-400" : "text-zinc-300"}`}>
+                                                {t.label}
+                                                {selectedTheme === t.id && " ✓"}
+                                            </p>
+                                            <p className="text-[10px] text-zinc-500 leading-tight mt-0.5">{t.tagline}</p>
+                                        </div>
+                                    </div>
                                 </button>
                             ))}
                         </div>
