@@ -17,11 +17,11 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Link Ordering
 
-- [ ] **ORDER-01**: User can drag and drop microsite links in the dashboard editor to change their order.
-- [ ] **ORDER-02**: User can save reordered links and see the new order persist across editor reloads.
-- [ ] **ORDER-03**: Public microsite displays active links in the saved order.
-- [ ] **ORDER-04**: Reordering preserves each link's label, URL, active state, and click tracking behavior.
-- [ ] **ORDER-05**: Reorder persistence is validated server-side so users can only reorder links belonging to their own accessible microsite.
+- [x] **ORDER-01**: User can drag and drop microsite links in the dashboard editor to change their order.
+- [x] **ORDER-02**: User can save reordered links and see the new order persist across editor reloads.
+- [x] **ORDER-03**: Public microsite displays active links in the saved order.
+- [x] **ORDER-04**: Reordering preserves each link's label, URL, active state, and click tracking behavior.
+- [x] **ORDER-05**: Reorder persistence is validated server-side so users can only reorder links belonging to their own accessible microsite.
 
 ### Accessibility And UX
 
@@ -74,11 +74,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | THEME-03 | Phase 1 | Pending |
 | THEME-04 | Phase 1 | Pending |
 | THEME-05 | Phase 1 | Pending |
-| ORDER-01 | Phase 2 | Pending |
-| ORDER-02 | Phase 2 | Pending |
-| ORDER-03 | Phase 2 | Pending |
-| ORDER-04 | Phase 2 | Pending |
-| ORDER-05 | Phase 2 | Pending |
+| ORDER-01 | Phase 2 | Complete |
+| ORDER-02 | Phase 2 | Complete |
+| ORDER-03 | Phase 2 | Complete |
+| ORDER-04 | Phase 2 | Complete |
+| ORDER-05 | Phase 2 | Complete |
 | UX-01 | Phase 3 | Pending |
 | UX-02 | Phase 3 | Pending |
 | UX-03 | Phase 3 | Pending |
@@ -87,6 +87,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | VER-03 | Phase 3 | Pending |
 
 **Coverage:**
+
 - v1 requirements: 16 total
 - Mapped to phases: 16
 - Unmapped: 0 ✓
