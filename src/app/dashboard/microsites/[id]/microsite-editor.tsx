@@ -83,15 +83,31 @@ export function MicrositeEditor({ microsite }: { microsite: MicrositeWithLinks }
     // --- Links ordering state ---
     const [linksState, setLinksState] = useState(microsite.links);
     const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
+    const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+    const [dragPosition, setDragPosition] = useState<"top" | "bottom" | null>(null);
+    const [showSaveSuccess, setShowSaveSuccess] = useState(false);
+    const [announcement, setAnnouncement] = useState("");
+    const [focusTarget, setFocusTarget] = useState<{ id: string; direction: "up" | "down" } | null>(null);
 
     // Sync linksState when props update
     useEffect(() => {
         setLinksState(microsite.links);
     }, [microsite.links]);
 
+    // Focus restoration effect
+    useEffect(() => {
+        if (focusTarget) {
+            const el = document.getElementById(`btn-${focusTarget.direction}-${focusTarget.id}`);
+            if (el && !el.hasAttribute("disabled")) {
+                el.focus();
+            }
+            setFocusTarget(null);
+        }
+    }, [linksState, focusTarget]);
+
     const isReorderDisabled = isPending || editLinkId !== null || showAddForm;
 
-    function handleReorder(newLinks: MicrositeLink[]) {
+    function handleReorder(newLinks: MicrositeLink[], movedLinkTitle?: string, targetIndex?: number) {
         const originalLinks = [...linksState];
         setLinksState(newLinks);
         setError(null);
@@ -102,14 +118,25 @@ export function MicrositeEditor({ microsite }: { microsite: MicrositeWithLinks }
             return;
         }
 
+        setAnnouncement("Mengurutkan...");
+        setShowSaveSuccess(false);
+
         startTransition(async () => {
             try {
                 const res = await reorderMicrositeLinks(microsite.id, newOrderIds);
                 if (!res.success) throw new Error("Gagal mengurutkan link");
+                setShowSaveSuccess(true);
+                setTimeout(() => setShowSaveSuccess(false), 1500);
+                if (movedLinkTitle && targetIndex !== undefined) {
+                    setAnnouncement(
+                        `Tautan "${movedLinkTitle}" berhasil dipindahkan ke posisi ${targetIndex + 1} dari ${newLinks.length}`
+                    );
+                }
                 router.refresh();
             } catch (err) {
                 setLinksState(originalLinks);
                 setError(getErrorMessage(err));
+                setAnnouncement("Gagal mengurutkan link");
                 setTimeout(() => setError(null), 5000);
             }
         });
@@ -125,40 +152,84 @@ export function MicrositeEditor({ microsite }: { microsite: MicrositeWithLinks }
         setDraggingIndex(index);
     }
 
-    function handleDragOver(e: React.DragEvent) {
+    function handleDragOver(e: React.DragEvent, index: number) {
         e.preventDefault();
+        if (draggingIndex === null || draggingIndex === index) return;
+        const rect = e.currentTarget.getBoundingClientRect();
+        const relativeY = e.clientY - rect.top;
+        const position = relativeY < rect.height / 2 ? "top" : "bottom";
+        setDragOverIndex(index);
+        setDragPosition(position);
+    }
+
+    function handleDragLeave() {
+        setDragOverIndex(null);
+        setDragPosition(null);
     }
 
     function handleDrop(e: React.DragEvent, targetIndex: number) {
         e.preventDefault();
-        if (draggingIndex === null || draggingIndex === targetIndex) return;
+        if (draggingIndex === null) return;
+        
+        const pos = dragPosition;
+        setDraggingIndex(null);
+        setDragOverIndex(null);
+        setDragPosition(null);
+
+        if (draggingIndex === targetIndex) return;
+
+        let targetIdx = targetIndex;
+        if (draggingIndex < targetIndex && pos === "top") {
+            targetIdx = targetIndex - 1;
+        } else if (draggingIndex > targetIndex && pos === "bottom") {
+            targetIdx = targetIndex + 1;
+        }
+
+        if (draggingIndex === targetIdx) return;
 
         const reordered = [...linksState];
         const [draggedItem] = reordered.splice(draggingIndex, 1);
-        reordered.splice(targetIndex, 0, draggedItem);
+        reordered.splice(targetIdx, 0, draggedItem);
 
-        setDraggingIndex(null);
-        handleReorder(reordered);
+        handleReorder(reordered, draggedItem.title, targetIdx);
     }
 
     // Chevron handlers
     function handleMoveUp(index: number) {
         if (index === 0 || isReorderDisabled) return;
         const reordered = [...linksState];
+        const movedLink = reordered[index];
         const temp = reordered[index];
         reordered[index] = reordered[index - 1];
         reordered[index - 1] = temp;
-        handleReorder(reordered);
+        
+        // Focus boundary tracking
+        const newIndex = index - 1;
+        setFocusTarget({
+            id: movedLink.id,
+            direction: newIndex === 0 ? "down" : "up",
+        });
+        
+        handleReorder(reordered, movedLink.title, newIndex);
     }
 
     // Chevron handlers
     function handleMoveDown(index: number) {
         if (index === linksState.length - 1 || isReorderDisabled) return;
         const reordered = [...linksState];
+        const movedLink = reordered[index];
         const temp = reordered[index];
         reordered[index] = reordered[index + 1];
         reordered[index + 1] = temp;
-        handleReorder(reordered);
+        
+        // Focus boundary tracking
+        const newIndex = index + 1;
+        setFocusTarget({
+            id: movedLink.id,
+            direction: newIndex === reordered.length - 1 ? "up" : "down",
+        });
+
+        handleReorder(reordered, movedLink.title, newIndex);
     }
 
     // --- Update microsite info ---
@@ -399,6 +470,9 @@ export function MicrositeEditor({ microsite }: { microsite: MicrositeWithLinks }
                                     <span>Menyimpan...</span>
                                 </div>
                             )}
+                            {!isPending && showSaveSuccess && (
+                                <span className="text-green-500 text-xs font-medium">Tersimpan ✓</span>
+                            )}
                         </div>
                         <Button size="sm" onClick={() => setShowAddForm(!showAddForm)}
                             className="bg-primary hover:bg-primary/90 text-white gap-1">
@@ -434,110 +508,135 @@ export function MicrositeEditor({ microsite }: { microsite: MicrositeWithLinks }
                         </p>
                     )}
 
+                    <div className="sr-only" aria-live="polite" aria-atomic="true">
+                        {announcement}
+                    </div>
+
                     {linksState.map((link: MicrositeLink, index: number) => (
-                        <div
-                            key={link.id}
-                            draggable={!isReorderDisabled}
-                            onDragStart={(e) => handleDragStart(e, index)}
-                            onDragOver={handleDragOver}
-                            onDrop={(e) => handleDrop(e, index)}
-                            className={`bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden transition-all duration-200 ${
-                                draggingIndex === index ? "opacity-40" : ""
-                            }`}
-                        >
-                            {editLinkId === link.id ? (
-                                <form onSubmit={(e) => handleEditLink(e, link.id)} className="p-4 space-y-3">
-                                    <Input name="title" defaultValue={link.title} required
-                                        className="bg-zinc-900 border-zinc-700 text-white" />
-                                    <Input name="url" type="url" defaultValue={link.url} required
-                                        className="bg-zinc-900 border-zinc-700 text-white" />
-                                    <select name="isActive" defaultValue={String(link.isActive)}
-                                        className="w-full bg-zinc-900 border border-zinc-700 rounded-md px-3 py-2 text-sm text-white">
-                                        <option value="true">Aktif</option>
-                                        <option value="false">Nonaktif</option>
-                                    </select>
-                                    <div className="flex gap-2">
-                                        <Button type="submit" size="sm" disabled={isPending}
-                                            className="bg-primary hover:bg-primary/90 text-white">
-                                            Simpan
-                                        </Button>
-                                        <Button type="button" size="sm" variant="ghost" onClick={() => setEditLinkId(null)}
-                                            className="text-zinc-400 hover:text-white hover:bg-zinc-800">
-                                            Batal
-                                        </Button>
-                                    </div>
-                                </form>
-                            ) : (
-                                <div className="p-4 flex items-center gap-3">
-                                    {/* Drag handle */}
-                                    <div
-                                        className={`flex-shrink-0 text-zinc-600 cursor-grab active:cursor-grabbing p-1 -ml-1 rounded hover:bg-zinc-900 hover:text-zinc-300 transition-colors ${
-                                            isReorderDisabled ? "opacity-40 cursor-not-allowed hover:bg-transparent hover:text-zinc-600" : ""
-                                        }`}
-                                    >
-                                        <GripVertical className="w-4 h-4" />
-                                    </div>
-
-                                    <div className="flex-1 min-w-0">
-                                        <p className={`text-sm font-medium ${link.isActive ? "text-white" : "text-zinc-500 line-through"}`}>
-                                            {link.title}
-                                        </p>
-                                        <p className="text-xs text-zinc-600 truncate">{link.url}</p>
-                                    </div>
-                                    <div className="flex gap-1 flex-shrink-0 items-center">
-                                        <a href={link.url} target="_blank" rel="noopener noreferrer">
-                                            <Button variant="ghost" size="icon" className="w-7 h-7 text-zinc-600 hover:text-white hover:bg-zinc-800">
-                                                <ExternalLink className="w-3.5 h-3.5" />
+                        <div key={link.id} className="relative">
+                            {/* Drag Insertion Indicator (Top) */}
+                            {dragOverIndex === index && dragPosition === "top" && (
+                                <div className="h-0.5 w-full bg-blue-500 rounded my-1" />
+                            )}
+                            <div
+                                draggable={!isReorderDisabled}
+                                onDragStart={(e) => handleDragStart(e, index)}
+                                onDragOver={(e) => handleDragOver(e, index)}
+                                onDragLeave={handleDragLeave}
+                                onDrop={(e) => handleDrop(e, index)}
+                                className={`bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden transition-all duration-200 ${
+                                    draggingIndex === index ? "opacity-40" : ""
+                                }`}
+                            >
+                                {editLinkId === link.id ? (
+                                    <form onSubmit={(e) => handleEditLink(e, link.id)} className="p-4 space-y-3">
+                                        <Input name="title" defaultValue={link.title} required
+                                            className="bg-zinc-900 border-zinc-700 text-white" />
+                                        <Input name="url" type="url" defaultValue={link.url} required
+                                            className="bg-zinc-900 border-zinc-700 text-white" />
+                                        <select name="isActive" defaultValue={String(link.isActive)}
+                                            className="w-full bg-zinc-900 border border-zinc-700 rounded-md px-3 py-2 text-sm text-white">
+                                            <option value="true">Aktif</option>
+                                            <option value="false">Nonaktif</option>
+                                        </select>
+                                        <div className="flex gap-2">
+                                            <Button type="submit" size="sm" disabled={isPending}
+                                                className="bg-primary hover:bg-primary/90 text-white">
+                                                Simpan
                                             </Button>
-                                        </a>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            onClick={() => handleToggleLinkVisibility(link)}
-                                            disabled={isPending}
-                                            className="w-7 h-7 text-zinc-600 hover:text-white hover:bg-zinc-800"
-                                            title={link.isActive ? "Sembunyikan link" : "Tampilkan link"}
-                                        >
-                                            {link.isActive ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                                        </Button>
-                                        <Button variant="ghost" size="icon" onClick={() => setEditLinkId(link.id)}
-                                            className="w-7 h-7 text-zinc-600 hover:text-white hover:bg-zinc-800">
-                                            <Pencil className="w-3.5 h-3.5" />
-                                        </Button>
-                                        <Button variant="ghost" size="icon" onClick={() => handleDeleteLink(link.id)}
-                                            disabled={isPending}
-                                            className="w-7 h-7 text-zinc-600 hover:text-red-400 hover:bg-red-500/10">
-                                            <Trash2 className="w-3.5 h-3.5" />
-                                        </Button>
+                                            <Button type="button" size="sm" variant="ghost" onClick={() => setEditLinkId(null)}
+                                                className="text-zinc-400 hover:text-white hover:bg-zinc-800">
+                                                Batal
+                                            </Button>
+                                        </div>
+                                    </form>
+                                ) : (
+                                    <div className="p-4 flex flex-col md:flex-row md:items-center gap-3">
+                                        {/* First row: Drag handle + link info */}
+                                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                                            {/* Drag handle */}
+                                            <div
+                                                aria-hidden="true"
+                                                tabIndex={-1}
+                                                className={`flex-shrink-0 text-zinc-600 cursor-grab active:cursor-grabbing p-1 -ml-1 rounded hover:bg-zinc-900 hover:text-zinc-300 transition-colors ${
+                                                    isReorderDisabled ? "opacity-40 cursor-not-allowed hover:bg-transparent hover:text-zinc-600" : ""
+                                                }`}
+                                            >
+                                                <GripVertical className="w-4 h-4" />
+                                            </div>
 
-                                        {/* Chevron controls */}
-                                        <div className="w-px h-6 bg-zinc-800 mx-1" />
-                                        <Button
-                                            type="button"
-                                            variant="ghost"
-                                            size="icon"
-                                            onClick={() => handleMoveUp(index)}
-                                            disabled={isReorderDisabled || index === 0}
-                                            className={`w-7 h-7 text-zinc-600 hover:text-white hover:bg-zinc-800 ${
-                                                isReorderDisabled ? "opacity-40 cursor-not-allowed hover:bg-transparent hover:text-zinc-600" : ""
-                                            }`}
-                                        >
-                                            <ChevronUp className="w-4 h-4" />
-                                        </Button>
-                                        <Button
-                                            type="button"
-                                            variant="ghost"
-                                            size="icon"
-                                            onClick={() => handleMoveDown(index)}
-                                            disabled={isReorderDisabled || index === linksState.length - 1}
-                                            className={`w-7 h-7 text-zinc-600 hover:text-white hover:bg-zinc-800 ${
-                                                isReorderDisabled ? "opacity-40 cursor-not-allowed hover:bg-transparent hover:text-zinc-600" : ""
-                                            }`}
-                                        >
-                                            <ChevronDown className="w-4 h-4" />
-                                        </Button>
+                                            <div className="flex-1 min-w-0">
+                                                <p className={`text-sm font-medium ${link.isActive ? "text-white" : "text-zinc-500 line-through"}`}>
+                                                    {link.title}
+                                                </p>
+                                                <p className="text-xs text-zinc-600 truncate">{link.url}</p>
+                                            </div>
+                                        </div>
+
+                                        {/* Second row: Action buttons toolbar (right-aligned flex on mobile, side-aligned on desktop) */}
+                                        <div className="flex gap-1 flex-shrink-0 items-center justify-end border-t border-zinc-800/60 pt-3 mt-1 md:border-t-0 md:pt-0 md:mt-0">
+                                            <a href={link.url} target="_blank" rel="noopener noreferrer">
+                                                <Button variant="ghost" size="icon" className="w-7 h-7 text-zinc-600 hover:text-white hover:bg-zinc-800">
+                                                    <ExternalLink className="w-3.5 h-3.5" />
+                                                </Button>
+                                            </a>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                onClick={() => handleToggleLinkVisibility(link)}
+                                                disabled={isPending}
+                                                className="w-7 h-7 text-zinc-600 hover:text-white hover:bg-zinc-800"
+                                                title={link.isActive ? "Sembunyikan link" : "Tampilkan link"}
+                                            >
+                                                {link.isActive ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                                            </Button>
+                                            <Button variant="ghost" size="icon" onClick={() => setEditLinkId(link.id)}
+                                                className="w-7 h-7 text-zinc-600 hover:text-white hover:bg-zinc-800">
+                                                <Pencil className="w-3.5 h-3.5" />
+                                            </Button>
+                                            <Button variant="ghost" size="icon" onClick={() => handleDeleteLink(link.id)}
+                                                disabled={isPending}
+                                                className="w-7 h-7 text-zinc-600 hover:text-red-400 hover:bg-red-500/10">
+                                                <Trash2 className="w-3.5 h-3.5" />
+                                            </Button>
+
+                                            {/* Chevron controls */}
+                                            <div className="w-px h-6 bg-zinc-800 mx-1" />
+                                            <Button
+                                                id={`btn-up-${link.id}`}
+                                                type="button"
+                                                variant="ghost"
+                                                size="icon"
+                                                onClick={() => handleMoveUp(index)}
+                                                disabled={isReorderDisabled || index === 0}
+                                                aria-label={`Pindahkan "${link.title}" ke atas`}
+                                                className={`w-7 h-7 text-zinc-600 hover:text-white hover:bg-zinc-800 ${
+                                                    isReorderDisabled ? "opacity-40 cursor-not-allowed hover:bg-transparent hover:text-zinc-600" : ""
+                                                }`}
+                                            >
+                                                <ChevronUp className="w-4 h-4" />
+                                            </Button>
+                                            <Button
+                                                id={`btn-down-${link.id}`}
+                                                type="button"
+                                                variant="ghost"
+                                                size="icon"
+                                                onClick={() => handleMoveDown(index)}
+                                                disabled={isReorderDisabled || index === linksState.length - 1}
+                                                aria-label={`Pindahkan "${link.title}" ke bawah`}
+                                                className={`w-7 h-7 text-zinc-600 hover:text-white hover:bg-zinc-800 ${
+                                                    isReorderDisabled ? "opacity-40 cursor-not-allowed hover:bg-transparent hover:text-zinc-600" : ""
+                                                }`}
+                                            >
+                                                <ChevronDown className="w-4 h-4" />
+                                            </Button>
+                                        </div>
                                     </div>
-                                </div>
+                                )}
+                            </div>
+                            {/* Drag Insertion Indicator (Bottom) */}
+                            {dragOverIndex === index && dragPosition === "bottom" && (
+                                <div className="h-0.5 w-full bg-blue-500 rounded my-1" />
                             )}
                         </div>
                     ))}
