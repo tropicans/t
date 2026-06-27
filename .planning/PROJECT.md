@@ -23,14 +23,16 @@ Microsite owners can create a more personalized public page and control link pri
 - ✓ Users can add active links to microsites and public visitors can click them — existing.
 - ✓ Public `/:username` resolves short links first and microsites second — existing.
 - ✓ Microsite pages support image uploads, public rendering, and polling refresh — existing.
+- ✓ Microsite editor offers more visual theme variants than current implementation — Validated in Phase 1.
+- ✓ Public microsite rendering applies selected theme consistently — Validated in Phase 1.
+- ✓ Dashboard users can drag and drop microsite links to reorder them — Validated in Phase 2.
+- ✓ Saved link order persists and controls public microsite link order — Validated in Phase 2.
+- ✓ Reordering works without breaking link CRUD, active/inactive filtering, or click tracking — Validated in Phase 2.
 
 ### Active
 
-- [ ] Microsite editor offers more visual theme variants than current implementation.
-- [ ] Public microsite rendering applies selected theme consistently.
-- [ ] Dashboard users can drag and drop microsite links to reorder them.
-- [ ] Saved link order persists and controls public microsite link order.
-- [ ] Reordering works without breaking link CRUD, active/inactive filtering, or click tracking.
+None. All Phase 1 and Phase 2 requirements are validated.
+
 
 ### Out of Scope
 
@@ -60,10 +62,10 @@ Microsite owners can create a more personalized public page and control link pri
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Brownfield planning over greenfield setup | Existing app and codebase map already exist. | — Pending |
-| Focus v1 on microsite themes and drag-and-drop link ordering | User requested these two capabilities directly. | — Pending |
-| Use vertical MVP phases | Each phase should produce a user-visible capability in the existing app. | — Pending |
-| Keep public routing and auth model unchanged | Reduces regression risk for short links, microsites, and dashboard access. | — Pending |
+| Brownfield planning over greenfield setup | Existing app and codebase map already exist. | ✓ Completed |
+| Focus v1 on microsite themes and drag-and-drop link ordering | User requested these two capabilities directly. | ✓ Completed |
+| Use vertical MVP phases | Each phase should produce a user-visible capability in the existing app. | ✓ Completed |
+| Keep public routing and auth model unchanged | Reduces regression risk for short links, microsites, and dashboard access. | ✓ Completed |
 
 ## Evolution
 
@@ -83,4 +85,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-26 after initialization*
+*Last updated: 2026-06-27 after Phase 2 completion*
