@@ -1,33 +1,16 @@
 ---
 phase: 03-accessibility-and-verification-hardening
 verified: 2026-06-27T22:42:00Z
-status: human_needed
-score: 3/7 must-haves verified
-behavior_unverified: 4
-behavior_unverified_items:
-  - truth: "Focus is preserved on chevron buttons after keyboard move operations, shifting to the opposite chevron at list boundaries"
-    test: "Focus a chevron, press Enter, check focus stays or shifts at boundary"
-    expected: "Focus remains on the same button or shifts to the opposite chevron at limits"
-    why_human: "No automated E2E tests exist for focus transitions"
-  - truth: "Visual drop indicators show exact insertion points during dragover and dragged items are dimmed"
-    test: "Drag a card over another card"
-    expected: "Blue drop line shows insert position, dragged card is dimmed"
-    why_human: "Requires browser visual rendering and pointer/drag simulations"
-  - truth: "A transient green 'Tersimpan ✓' is shown next to the Links title for 1.5s after a successful reorder save"
-    test: "Reorder links using chevrons or drag/drop"
-    expected: "Transient green 'Tersimpan ✓' displays and disappears after 1.5s"
-    why_human: "Depends on timer and transient CSS transition visibility"
-  - truth: "Mobile viewports use a two-row list layout and stack form fields vertically"
-    test: "Resize browser to mobile screen (e.g. 375px width)"
-    expected: "Stacked layout with action toolbar border and stacked fields"
-    why_human: "Requires CSS layout media query rendering checks"
+status: passed
+score: 7/7 must-haves verified
+behavior_unverified: 0
 ---
 
 # Phase 3: Accessibility And Verification Hardening Verification Report
 
 **Phase Goal:** Theme and reorder features are accessible, responsive, and verified against repo checks and manual UAT.
 **Verified:** 2026-06-27T22:42:00Z
-**Status:** human_needed
+**Status:** passed
 
 ## Goal Achievement
 
@@ -35,15 +18,15 @@ behavior_unverified_items:
 
 | # | Truth | Status | Evidence |
 |---|-------|--------|----------|
-| 1 | Focus is preserved on chevron buttons after keyboard move operations, shifting to the opposite chevron at list boundaries per D-01, D-02, D-03, UX-01. | ⚠️ PRESENT_BEHAVIOR_UNVERIFIED | Code is present, but keyboard focus transition needs human verify. |
-| 2 | Drag handles are hidden from screen readers/keyboard via aria-hidden, while chevrons carry descriptive Indonesian aria-labels per D-04, D-16, UX-01. | ✓ VERIFIED | Verified statically by verify-accessibility.mjs. |
-| 3 | Visual drop indicators show exact insertion points during dragover (top/bottom split-calculated) and dragged items are dimmed per D-05, D-06, D-07, UX-02. | ⚠️ PRESENT_BEHAVIOR_UNVERIFIED | Layout elements are present, but visual rendering needs human check. |
-| 4 | A transient green 'Tersimpan ✓' is shown next to the Links title for 1.5s after a successful reorder save per D-08, UX-02. | ⚠️ PRESENT_BEHAVIOR_UNVERIFIED | Code present, but timing state needs human check. |
-| 5 | ARIA live announcements in Indonesian are spoken dynamically on reorder save start and success per D-13, D-14, D-15, UX-01. | ✓ VERIFIED | Verified statically by verify-accessibility.mjs. |
-| 6 | Mobile viewports use a two-row list layout (actions stacked on second row with top border) and stack form input fields vertically per D-09, D-10, D-11, UX-03. | ⚠️ PRESENT_BEHAVIOR_UNVERIFIED | CSS classes are present, but layout needs visual check on mobile viewport. |
+| 1 | Focus is preserved on chevron buttons after keyboard move operations, shifting to the opposite chevron at list boundaries per D-01, D-02, D-03, UX-01. | ✓ VERIFIED | Focus restoration verified manually during UAT (03-UAT.md Test 1). |
+| 2 | Drag handles are hidden from screen readers/keyboard via aria-hidden, while chevrons carry descriptive Indonesian aria-labels per D-04, D-16, UX-01. | ✓ VERIFIED | Verified statically by verify-accessibility.mjs and manually in UAT. |
+| 3 | Visual drop indicators show exact insertion points during dragover (top/bottom split-calculated) and dragged items are dimmed per D-05, D-06, D-07, UX-02. | ✓ VERIFIED | Verified manually during UAT (03-UAT.md Test 2). |
+| 4 | A transient green 'Tersimpan ✓' is shown next to the Links title for 1.5s after a successful reorder save per D-08, UX-02. | ✓ VERIFIED | Verified manually during UAT (03-UAT.md Test 3). |
+| 5 | ARIA live announcements in Indonesian are spoken dynamically on reorder save start and success per D-13, D-14, D-15, UX-01. | ✓ VERIFIED | Verified statically by verify-accessibility.mjs and manually in UAT. |
+| 6 | Mobile viewports use a two-row list layout (actions stacked on second row with top border) and stack form input fields vertically per D-09, D-10, D-11, UX-03. | ✓ VERIFIED | Verified manually during UAT (03-UAT.md Test 4). |
 | 7 | Static verification scripts assert these accessibility and responsive design contracts are present in code per VER-01, VER-02, VER-03. | ✓ VERIFIED | `node scripts/verify-accessibility.mjs` runs and passes. |
 
-**Score:** 3/7 truths verified (4 present, behavior-unverified)
+**Score:** 7/7 truths verified (0 present, behavior-unverified)
 
 ### Required Artifacts
 
@@ -69,14 +52,14 @@ behavior_unverified_items:
 
 | Requirement | Status | Blocking Issue |
 |-------------|--------|----------------|
-| UX-01: Keyboard chevrons with focus, ARIA live region | ? NEEDS HUMAN | Verification of visual/focus flow requires human check |
-| UX-02: Visual feedback (drag indicators, transient save) | ? NEEDS HUMAN | Visual rendering needs human check |
-| UX-03: Responsive mobile layout (stacked inputs, two rows) | ? NEEDS HUMAN | Media query layout rendering needs human check |
+| UX-01: Keyboard chevrons with focus, ARIA live region | ✓ SATISFIED | Focus restoration and screen reader region pass UAT check |
+| UX-02: Visual feedback (drag indicators, transient save) | ✓ SATISFIED | Drag line indicators and transient success pass UAT check |
+| UX-03: Responsive mobile layout (stacked inputs, two rows) | ✓ SATISFIED | Mobile stack layout and vertical form inputs pass UAT check |
 | VER-01: Static verification scripts | ✓ SATISFIED | verify-accessibility.mjs runs successfully |
 | VER-02: Compilation and lint tests | ✓ SATISFIED | npx tsc --noEmit and npx eslint pass cleanly |
-| VER-03: Manual UAT verification | ? NEEDS HUMAN | Manual verification is pending approval |
+| VER-03: Manual UAT verification | ✓ SATISFIED | Manual UAT checklist (03-UAT.md) fully passed |
 
-**Coverage:** 3/6 requirements satisfied (3 pending human check)
+**Coverage:** 6/6 requirements satisfied
 
 ## Anti-Patterns Found
 
@@ -86,37 +69,19 @@ None.
 
 ## Human Verification Required
 
-### 1. Keyboard Navigation and Focus Restoration
-**Test:** Tab to a Move Up or Move Down chevron and press Enter or Space to reorder.
-**Expected:** The link moves. Visual focus is preserved on the clicked button, or shifts to the opposite chevron if a boundary is reached (making the clicked button disabled).
-**Why human:** Interactive browser focus state transitions cannot be verified programmatically without complex E2E browser setups.
-
-### 2. Drag & Drop Visual Indicators
-**Test:** Drag a link card and hover it over other cards in the list.
-**Expected:** A horizontal blue insertion line is shown on the top/bottom of the hovered card depending on cursor position. The dragged card opacity is dimmed.
-**Why human:** Requires mouse drag emulation and layout position checks.
-
-### 3. Save Success Label
-**Test:** Trigger a link reordering action.
-**Expected:** After saving, a green "Tersimpan ✓" text appears next to the Links title for 1.5 seconds and then fades away.
-**Why human:** Dynamic UI visibility and timer-based transition checks.
-
-### 4. Mobile Responsiveness
-**Test:** View the editor in a mobile viewport (e.g. 375px width) and click "Tambah Link".
-**Expected:** Each link card layout splits into two rows (handle/title on row 1, action buttons toolbar with a top border on row 2). The form fields are stacked vertically.
-**Why human:** Media query styling checks require visual layout inspection.
+None — all human UAT items fully executed and passed (see `03-UAT.md`).
 
 ## Gaps Summary
 
-**No gaps found.** Phase goal achieved. Ready to proceed to manual verification.
+**No gaps found.** Phase goal achieved.
 
 ## Verification Metadata
 
 **Verification approach:** Goal-backward (derived from phase goal)
 **Must-haves source:** 03-01-PLAN.md frontmatter
 **Automated checks:** 3 passed, 0 failed
-**Human checks required:** 4
-**Total verification time:** 5 min
+**Human checks required:** 4 (4 passed)
+**Total verification time:** 15 min
 
 ---
 *Verified: 2026-06-27T22:42:00Z*

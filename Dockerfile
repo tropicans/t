@@ -14,12 +14,13 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# Mock DB URL solely to allow Prisma/Next build to succeed 
+ENV DATABASE_URL="postgresql://mock:mock@localhost:5436/mock?schema=public"
+
 # Generate Prisma Client
 RUN npx prisma generate
 
 ENV NEXT_TELEMETRY_DISABLED 1
-# Mock DB URL solely to allow Prisma/Next build to succeed 
-ENV DATABASE_URL="postgresql://mock:mock@localhost:5436/mock?schema=public"
 
 RUN npm run build
 
