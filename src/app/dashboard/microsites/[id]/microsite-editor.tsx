@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
     updateMicrosite,
@@ -8,6 +8,7 @@ import {
     createMicrositeLink,
     updateMicrositeLink,
     deleteMicrositeLink,
+    reorderMicrositeLinks,
 } from "@/app/actions/microsite";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,11 +16,25 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Plus, ExternalLink, Trash2, Pencil, Loader2, Eye, EyeOff, Globe } from "lucide-react";
+import {
+    ArrowLeft,
+    Plus,
+    ExternalLink,
+    Trash2,
+    Pencil,
+    Loader2,
+    Eye,
+    EyeOff,
+    Globe,
+    GripVertical,
+    ChevronUp,
+    ChevronDown
+} from "lucide-react";
 import { CoverImageUploader } from "@/components/cover-image-uploader";
 import { AvatarImageUploader } from "@/components/avatar-image-uploader";
 import Link from "next/link";
 import { MICROSITE_THEMES, normalizeMicrositeTheme } from "@/lib/microsite-themes";
+
 type MicrositeLink = {
     id: string;
     title: string;
@@ -65,7 +80,86 @@ export function MicrositeEditor({ microsite }: { microsite: MicrositeWithLinks }
     const [coverImageUrl, setCoverImageUrl] = useState(microsite.coverImage || "");
     const [avatarImageUrl, setAvatarImageUrl] = useState(microsite.avatarImage || "");
 
+    // --- Links ordering state ---
+    const [linksState, setLinksState] = useState(microsite.links);
+    const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
 
+    // Sync linksState when props update
+    useEffect(() => {
+        setLinksState(microsite.links);
+    }, [microsite.links]);
+
+    const isReorderDisabled = isPending || editLinkId !== null || showAddForm;
+
+    function handleReorder(newLinks: MicrositeLink[]) {
+        const originalLinks = [...linksState];
+        setLinksState(newLinks);
+        setError(null);
+
+        const currentOrderIds = microsite.links.map((l) => l.id);
+        const newOrderIds = newLinks.map((l) => l.id);
+        if (JSON.stringify(currentOrderIds) === JSON.stringify(newOrderIds)) {
+            return;
+        }
+
+        startTransition(async () => {
+            try {
+                const res = await reorderMicrositeLinks(microsite.id, newOrderIds);
+                if (!res.success) throw new Error("Gagal mengurutkan link");
+                router.refresh();
+            } catch (err) {
+                setLinksState(originalLinks);
+                setError(getErrorMessage(err));
+                setTimeout(() => setError(null), 5000);
+            }
+        });
+    }
+
+    // HTML5 Drag Handlers
+    function handleDragStart(e: React.DragEvent, index: number) {
+        if (isReorderDisabled) {
+            e.preventDefault();
+            return;
+        }
+        e.dataTransfer.effectAllowed = "move";
+        setDraggingIndex(index);
+    }
+
+    function handleDragOver(e: React.DragEvent) {
+        e.preventDefault();
+    }
+
+    function handleDrop(e: React.DragEvent, targetIndex: number) {
+        e.preventDefault();
+        if (draggingIndex === null || draggingIndex === targetIndex) return;
+
+        const reordered = [...linksState];
+        const [draggedItem] = reordered.splice(draggingIndex, 1);
+        reordered.splice(targetIndex, 0, draggedItem);
+
+        setDraggingIndex(null);
+        handleReorder(reordered);
+    }
+
+    // Chevron handlers
+    function handleMoveUp(index: number) {
+        if (index === 0 || isReorderDisabled) return;
+        const reordered = [...linksState];
+        const temp = reordered[index];
+        reordered[index] = reordered[index - 1];
+        reordered[index - 1] = temp;
+        handleReorder(reordered);
+    }
+
+    // Chevron handlers
+    function handleMoveDown(index: number) {
+        if (index === linksState.length - 1 || isReorderDisabled) return;
+        const reordered = [...linksState];
+        const temp = reordered[index];
+        reordered[index] = reordered[index + 1];
+        reordered[index + 1] = temp;
+        handleReorder(reordered);
+    }
 
     // --- Update microsite info ---
     function handleUpdateInfo(e: React.FormEvent<HTMLFormElement>) {
@@ -297,7 +391,15 @@ export function MicrositeEditor({ microsite }: { microsite: MicrositeWithLinks }
             <Card className="bg-zinc-900/60 border-zinc-800">
                 <CardHeader>
                     <div className="flex items-center justify-between">
-                        <CardTitle className="text-white text-base">Links ({microsite.links.length})</CardTitle>
+                        <div className="flex items-center gap-3">
+                            <CardTitle className="text-white text-base">Links ({microsite.links.length})</CardTitle>
+                            {isPending && (
+                                <div className="flex items-center gap-1.5 text-zinc-500 text-xs font-medium">
+                                    <Loader2 className="w-3 h-3 animate-spin" />
+                                    <span>Menyimpan...</span>
+                                </div>
+                            )}
+                        </div>
                         <Button size="sm" onClick={() => setShowAddForm(!showAddForm)}
                             className="bg-primary hover:bg-primary/90 text-white gap-1">
                             <Plus className="w-3.5 h-3.5" /> Tambah Link
@@ -332,8 +434,17 @@ export function MicrositeEditor({ microsite }: { microsite: MicrositeWithLinks }
                         </p>
                     )}
 
-                    {microsite.links.map((link: MicrositeLink) => (
-                        <div key={link.id} className="bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden">
+                    {linksState.map((link: MicrositeLink, index: number) => (
+                        <div
+                            key={link.id}
+                            draggable={!isReorderDisabled}
+                            onDragStart={(e) => handleDragStart(e, index)}
+                            onDragOver={handleDragOver}
+                            onDrop={(e) => handleDrop(e, index)}
+                            className={`bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden transition-all duration-200 ${
+                                draggingIndex === index ? "opacity-40" : ""
+                            }`}
+                        >
                             {editLinkId === link.id ? (
                                 <form onSubmit={(e) => handleEditLink(e, link.id)} className="p-4 space-y-3">
                                     <Input name="title" defaultValue={link.title} required
@@ -358,36 +469,72 @@ export function MicrositeEditor({ microsite }: { microsite: MicrositeWithLinks }
                                 </form>
                             ) : (
                                 <div className="p-4 flex items-center gap-3">
+                                    {/* Drag handle */}
+                                    <div
+                                        className={`flex-shrink-0 text-zinc-600 cursor-grab active:cursor-grabbing p-1 -ml-1 rounded hover:bg-zinc-900 hover:text-zinc-300 transition-colors ${
+                                            isReorderDisabled ? "opacity-40 cursor-not-allowed hover:bg-transparent hover:text-zinc-600" : ""
+                                        }`}
+                                    >
+                                        <GripVertical className="w-4 h-4" />
+                                    </div>
+
                                     <div className="flex-1 min-w-0">
                                         <p className={`text-sm font-medium ${link.isActive ? "text-white" : "text-zinc-500 line-through"}`}>
                                             {link.title}
                                         </p>
                                         <p className="text-xs text-zinc-600 truncate">{link.url}</p>
                                     </div>
-                                     <div className="flex gap-1 flex-shrink-0">
-                                         <a href={link.url} target="_blank" rel="noopener noreferrer">
-                                             <Button variant="ghost" size="icon" className="w-7 h-7 text-zinc-600 hover:text-white hover:bg-zinc-800">
-                                                 <ExternalLink className="w-3.5 h-3.5" />
-                                             </Button>
-                                         </a>
-                                         <Button
-                                             variant="ghost"
-                                             size="icon"
-                                             onClick={() => handleToggleLinkVisibility(link)}
-                                             disabled={isPending}
-                                             className="w-7 h-7 text-zinc-600 hover:text-white hover:bg-zinc-800"
-                                             title={link.isActive ? "Sembunyikan link" : "Tampilkan link"}
-                                         >
-                                             {link.isActive ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                                         </Button>
-                                         <Button variant="ghost" size="icon" onClick={() => setEditLinkId(link.id)}
-                                             className="w-7 h-7 text-zinc-600 hover:text-white hover:bg-zinc-800">
-                                             <Pencil className="w-3.5 h-3.5" />
-                                         </Button>
+                                    <div className="flex gap-1 flex-shrink-0 items-center">
+                                        <a href={link.url} target="_blank" rel="noopener noreferrer">
+                                            <Button variant="ghost" size="icon" className="w-7 h-7 text-zinc-600 hover:text-white hover:bg-zinc-800">
+                                                <ExternalLink className="w-3.5 h-3.5" />
+                                            </Button>
+                                        </a>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => handleToggleLinkVisibility(link)}
+                                            disabled={isPending}
+                                            className="w-7 h-7 text-zinc-600 hover:text-white hover:bg-zinc-800"
+                                            title={link.isActive ? "Sembunyikan link" : "Tampilkan link"}
+                                        >
+                                            {link.isActive ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                                        </Button>
+                                        <Button variant="ghost" size="icon" onClick={() => setEditLinkId(link.id)}
+                                            className="w-7 h-7 text-zinc-600 hover:text-white hover:bg-zinc-800">
+                                            <Pencil className="w-3.5 h-3.5" />
+                                        </Button>
                                         <Button variant="ghost" size="icon" onClick={() => handleDeleteLink(link.id)}
                                             disabled={isPending}
                                             className="w-7 h-7 text-zinc-600 hover:text-red-400 hover:bg-red-500/10">
                                             <Trash2 className="w-3.5 h-3.5" />
+                                        </Button>
+
+                                        {/* Chevron controls */}
+                                        <div className="w-px h-6 bg-zinc-800 mx-1" />
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => handleMoveUp(index)}
+                                            disabled={isReorderDisabled || index === 0}
+                                            className={`w-7 h-7 text-zinc-600 hover:text-white hover:bg-zinc-800 ${
+                                                isReorderDisabled ? "opacity-40 cursor-not-allowed hover:bg-transparent hover:text-zinc-600" : ""
+                                            }`}
+                                        >
+                                            <ChevronUp className="w-4 h-4" />
+                                        </Button>
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => handleMoveDown(index)}
+                                            disabled={isReorderDisabled || index === linksState.length - 1}
+                                            className={`w-7 h-7 text-zinc-600 hover:text-white hover:bg-zinc-800 ${
+                                                isReorderDisabled ? "opacity-40 cursor-not-allowed hover:bg-transparent hover:text-zinc-600" : ""
+                                            }`}
+                                        >
+                                            <ChevronDown className="w-4 h-4" />
                                         </Button>
                                     </div>
                                 </div>

@@ -123,8 +123,6 @@ export async function createMicrositeLink(micrositeId: string, formData: FormDat
     const url = (formData.get("url") as string)?.trim();
     const icon = (formData.get("icon") as string)?.trim() || null;
 
-    if (!title || !url) throw new Error("Title and URL are required");
-
     // Get current max order
     const maxOrder = await prisma.micrositeLink.aggregate({
         where: { micrositeId },
@@ -168,14 +166,29 @@ export async function deleteMicrositeLink(linkId: string) {
 
 export async function reorderMicrositeLinks(micrositeId: string, orderedIds: string[]) {
     const access = await getCurrentUserAccess();
-    await getEditableMicrosite(micrositeId, access);
+    const microsite = await getEditableMicrosite(micrositeId, access);
 
-    await Promise.all(
+    // Fetch existing link IDs for this microsite
+    const existingLinks = await prisma.micrositeLink.findMany({
+        where: { micrositeId },
+        select: { id: true },
+    });
+    const existingIds = new Set(existingLinks.map((l) => l.id));
+
+    // Validate that the submitted links match exactly the existing links
+    const allValid = orderedIds.length === existingLinks.length && orderedIds.every((id) => existingIds.has(id));
+    if (!allValid) {
+        throw new Error("Invalid link IDs submitted");
+    }
+
+    // Atomically update indices
+    await prisma.$transaction(
         orderedIds.map((id, index) =>
             prisma.micrositeLink.update({ where: { id }, data: { order: index } })
         )
     );
 
     revalidatePath(`/dashboard/microsites/${micrositeId}`);
+    revalidatePath(`/${microsite.slug}`);
     return { success: true };
 }

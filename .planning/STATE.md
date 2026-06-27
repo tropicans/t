@@ -2,31 +2,31 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: Phase 1 - Microsite Theme Variants
-status: planning
+current_phase: 2
+status: completed
 stopped_at: Phase 2 context gathered
-last_updated: "2026-06-27T15:06:56.074Z"
+last_updated: "2026-06-27T15:15:47.145Z"
 progress:
   total_phases: 3
-  completed_phases: 0
-  total_plans: 2
-  completed_plans: 1
-  percent: 0
+  completed_phases: 1
+  total_plans: 3
+  completed_plans: 2
+  percent: 33
 ---
 
 # Project State
 
 **Project:** Taut Microsite Enhancements
 **Initialized:** 2026-06-26
-**Current Phase:** Phase 1 - Microsite Theme Variants
-**Status:** Ready for phase discussion/planning
+**Current Phase:** 2
+**Status:** Phase 2 complete
 
 ## Project Reference
 
 See: `.planning/PROJECT.md` (updated 2026-06-26)
 
 **Core value:** Microsite owners can create a more personalized public page and control link priority without fighting manual editing order.
-**Current focus:** Phase 1 - Microsite Theme Variants
+**Current focus:** Phase 2 — drag-and-drop-link-ordering
 
 ## Active Roadmap
 
