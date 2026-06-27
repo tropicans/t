@@ -1,0 +1,15 @@
+node_modules
+.next
+out
+build
+.git
+.gitignore
+.env
+.env*.local
+.agents/
+.planning/
+CVS
+.svn
+.hg
+.DS_Store
+*.log
