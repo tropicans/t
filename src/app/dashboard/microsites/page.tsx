@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { getMicrositeTheme } from "@/lib/microsite-themes";
 import { Button } from "@/components/ui/button";
 import { isGlobalMicrositeViewer } from "@/lib/microsite-access";
 import {
@@ -20,31 +21,11 @@ import {
 // Pick a thumbnail icon based on the microsite's theme
 function ThemeThumbnail({ theme, title }: { theme: string; title: string }) {
     const initial = title.charAt(0).toUpperCase();
+    const { thumbnail } = getMicrositeTheme(theme);
 
-    if (theme === "gradient") {
-        return (
-            <div className="h-32 w-full rounded-xl mb-4 bg-gradient-to-b from-white to-[#8EC5E8] flex items-center justify-center overflow-hidden transition-all group-hover:brightness-95">
-                <div className="bg-white/80 rounded-2xl w-14 h-14 flex items-center justify-center text-sky-950 text-2xl font-bold shadow-lg group-hover:scale-110 transition-transform backdrop-blur-sm">
-                    {initial}
-                </div>
-            </div>
-        );
-    }
-
-    if (theme === "light") {
-        return (
-            <div className="h-32 w-full rounded-xl mb-4 bg-slate-100 dark:bg-zinc-800/40 flex items-center justify-center overflow-hidden group-hover:bg-zinc-800/60 transition-all">
-                <div className="bg-white dark:bg-zinc-700 rounded-2xl w-14 h-14 flex items-center justify-center text-zinc-800 dark:text-white text-2xl font-bold shadow-md group-hover:scale-110 transition-transform">
-                    {initial}
-                </div>
-            </div>
-        );
-    }
-
-    // dark (default)
     return (
-        <div className="h-32 w-full rounded-xl mb-4 bg-zinc-800/50 flex items-center justify-center overflow-hidden group-hover:bg-zinc-800/80 transition-all">
-            <div className="bg-zinc-800 rounded-2xl w-14 h-14 flex items-center justify-center text-white text-2xl font-bold shadow-md group-hover:scale-110 transition-transform">
+        <div className={`h-32 w-full rounded-xl mb-4 ${thumbnail.container}`}>
+            <div className={thumbnail.avatar}>
                 {initial}
             </div>
         </div>

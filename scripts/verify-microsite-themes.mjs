@@ -35,8 +35,9 @@ const editorPath = path.join(root, 'src/app/dashboard/microsites/[id]/microsite-
 const newPagePath = path.join(root, 'src/app/dashboard/microsites/new/page.tsx');
 const publicRendererPath = path.join(root, 'src/components/microsite-page-client.tsx');
 const actionPath = path.join(root, 'src/app/actions/microsite.ts');
+const listPagePath = path.join(root, 'src/app/dashboard/microsites/page.tsx');
 
-const files = [editorPath, newPagePath, publicRendererPath, actionPath];
+const files = [editorPath, newPagePath, publicRendererPath, actionPath, listPagePath];
 for (const file of files) {
   assert(fs.existsSync(file), `${file} must exist`);
 }
@@ -45,6 +46,7 @@ const editorContent = fs.readFileSync(editorPath, 'utf8');
 const newPageContent = fs.readFileSync(newPagePath, 'utf8');
 const publicRendererContent = fs.readFileSync(publicRendererPath, 'utf8');
 const actionContent = fs.readFileSync(actionPath, 'utf8');
+const listPageContent = fs.readFileSync(listPagePath, 'utf8');
 
 // Assert imports
 assert(
@@ -63,6 +65,10 @@ assert(
   actionContent.includes('microsite-themes') || actionContent.includes('@/lib/microsite-themes'),
   'Server action must import from microsite-themes'
 );
+assert(
+  listPageContent.includes('microsite-themes') || listPageContent.includes('@/lib/microsite-themes'),
+  'List page must import from microsite-themes'
+);
 
 // Assert absence of local definitions (avoid self-matching in the check code)
 const localThemeStylesMarker = 'const themeStyles =';
@@ -71,5 +77,8 @@ assert(!publicRendererContent.includes(localThemeStylesMarker), 'Public renderer
 const localThemesMarker = 'const THEMES =';
 assert(!editorContent.includes(localThemesMarker), 'Editor must not contain local THEMES array');
 assert(!newPageContent.includes(localThemesMarker), 'New page must not contain local THEMES array');
+
+const hardcodedThemeThumbnailMarker = 'theme === "gradient"';
+assert(!listPageContent.includes(hardcodedThemeThumbnailMarker), 'List page ThemeThumbnail must not hardcode theme checks');
 
 console.log('All verification assertions passed!');
