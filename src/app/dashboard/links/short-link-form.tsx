@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition, useRef, useState } from "react";
+import { useTransition, useRef, useState, useEffect } from "react";
 import { createShortLink } from "@/app/actions/short";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,11 @@ export function ShortLinkForm() {
     const [isPending, startTransition] = useTransition();
     const [errorMsg, setErrorMsg] = useState("");
     const formRef = useRef<HTMLFormElement>(null);
+    const [displayDomain, setDisplayDomain] = useState("");
+
+    useEffect(() => {
+        setDisplayDomain(window.location.host);
+    }, []);
 
     async function action(formData: FormData) {
         setErrorMsg("");
@@ -49,7 +54,7 @@ export function ShortLinkForm() {
                             <Label htmlFor="customAlias" className="text-zinc-300">Custom Alias (Optional)</Label>
                             <div className="flex rounded-md shadow-sm">
                                 <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-zinc-700 bg-zinc-800 text-zinc-400 sm:text-sm whitespace-nowrap">
-                                    {(process.env.NEXT_PUBLIC_APP_URL ?? "localhost:4000").replace(/^https?:\/\//, "")}/
+                                    {displayDomain || (process.env.NEXT_PUBLIC_APP_URL ?? "localhost:4000").replace(/^https?:\/\//, "")}/
                                 </span>
                                 <Input
                                     type="text"

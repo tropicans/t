@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createMicrosite } from "@/app/actions/microsite";
 import { Button } from "@/components/ui/button";
@@ -28,6 +28,11 @@ export default function NewMicrositePage() {
     const [slugValue, setSlugValue] = useState("");
     const [coverImageUrl, setCoverImageUrl] = useState("");
     const [avatarImageUrl, setAvatarImageUrl] = useState("");
+    const [displayDomain, setDisplayDomain] = useState("");
+
+    useEffect(() => {
+        setDisplayDomain(window.location.host);
+    }, []);
 
     function handleSlugChange(e: React.ChangeEvent<HTMLInputElement>) {
         const cleaned = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-").replace(/-+/g, "-");
@@ -114,7 +119,7 @@ export default function NewMicrositePage() {
                         <div className="space-y-2">
                             <Label className="text-zinc-300">URL Slug</Label>
                             <div className="flex items-center gap-2">
-                                <span className="text-zinc-500 text-sm">t.ppkasn.id/</span>
+                                <span className="text-zinc-500 text-sm">{displayDomain || "t.ppkasn.id"}/</span>
                                 <Input
                                     name="slug"
                                     value={slugValue}
