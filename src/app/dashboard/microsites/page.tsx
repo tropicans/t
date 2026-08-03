@@ -8,6 +8,7 @@ import Link from "next/link";
 import { getMicrositeTheme } from "@/lib/microsite-themes";
 import { Button } from "@/components/ui/button";
 import { isGlobalMicrositeViewer } from "@/lib/microsite-access";
+import { MicrositeQrCode } from "@/components/microsite-qr-code";
 import {
     Plus,
     ExternalLink,
@@ -133,10 +134,11 @@ export default async function MicrositesPage() {
                                         </div>
                                         <div className="flex items-center gap-1">
                                             <a href={`/${ms.slug}`} target="_blank" rel="noopener noreferrer">
-                                                <Button variant="ghost" size="icon" className="w-7 h-7 text-zinc-500 hover:text-white hover:bg-zinc-800">
+                                                <Button variant="ghost" size="icon" className="w-7 h-7 text-zinc-500 hover:text-white hover:bg-zinc-800" title="Buka Microsite">
                                                     <ExternalLink className="w-3.5 h-3.5" />
                                                 </Button>
                                             </a>
+                                            <MicrositeQrCode slug={ms.slug} title={ms.title} />
                                             <Link href={`/dashboard/microsites/${ms.id}`}>
                                                 <Button variant="outline" size="sm" className="h-7 px-2.5 text-xs bg-zinc-900 hover:bg-zinc-800 border-zinc-700 text-zinc-300 hover:text-white hover:border-zinc-500">
                                                     Edit

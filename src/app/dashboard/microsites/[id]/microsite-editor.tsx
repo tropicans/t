@@ -34,6 +34,7 @@ import { CoverImageUploader } from "@/components/cover-image-uploader";
 import { AvatarImageUploader } from "@/components/avatar-image-uploader";
 import Link from "next/link";
 import { MICROSITE_THEMES, normalizeMicrositeTheme } from "@/lib/microsite-themes";
+import { MicrositeQrCode } from "@/components/microsite-qr-code";
 
 type MicrositeLink = {
     id: string;
@@ -350,6 +351,7 @@ export function MicrositeEditor({ microsite }: { microsite: MicrositeWithLinks }
                         <Globe className="w-3.5 h-3.5" /> Lihat
                     </Button>
                 </a>
+                <MicrositeQrCode slug={microsite.slug} title={microsite.title} variant="button" />
             </div>
 
             {error && (
