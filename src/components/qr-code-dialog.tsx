@@ -111,7 +111,7 @@ export function QrCodeDialog({
             <DialogTrigger asChild>
                 {defaultTrigger}
             </DialogTrigger>
-            <DialogContent className="sm:max-w-md bg-zinc-950 border-zinc-800 text-white">
+            <DialogContent className="w-full max-w-[95vw] sm:max-w-md bg-zinc-950 border-zinc-800 text-white overflow-hidden">
                 <DialogHeader>
                     <DialogTitle className="text-white font-bold text-lg">{dialogTitle}</DialogTitle>
                 </DialogHeader>
@@ -127,7 +127,7 @@ export function QrCodeDialog({
                     </div>
 
                     {/* Info & Metadata */}
-                    <div className="text-center w-full space-y-2 px-1">
+                    <div className="text-center w-full space-y-2 px-1 overflow-hidden">
                         <h4 className="font-semibold text-sm sm:text-base text-zinc-100 break-words text-center px-4 max-w-full leading-relaxed">
                             {title}
                         </h4>
@@ -135,7 +135,7 @@ export function QrCodeDialog({
                             {url}
                         </p>
                         {subtitle && (
-                            <p className="text-[10px] text-zinc-500 truncate max-w-full px-4 text-center mt-1" title={subtitle}>
+                            <p className="text-[10px] text-zinc-500 break-all line-clamp-1 max-w-full px-4 text-center mt-1" title={subtitle}>
                                 Tujuan: {subtitle}
                             </p>
                         )}
