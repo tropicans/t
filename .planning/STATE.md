@@ -92,3 +92,9 @@ Last activity: 2026-08-04 — Milestone v1.2 completed and archived
 ## Operator Next Steps
 
 - Start the next milestone with /gsd-new-milestone
+
+## Quick Tasks Completed
+
+| Task | Slug | Date | Status |
+|------|------|------|--------|
+| Enhance analytics dashboard | enhance-analytics-dashboard | 2026-08-04 | Complete |
