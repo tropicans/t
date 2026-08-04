@@ -16,14 +16,21 @@ export default async function AnalyticsPage() {
 
     const userId = dbUser.id;
 
-    // --- Summary counts ---
-    const [shortLinksCount, micrositesCount] = await Promise.all([
+    // --- Time-series (last 7 days) date definition ---
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    // --- Query in parallel ---
+    const [
+        shortLinksCount,
+        micrositesCount,
+        shortLinks,
+        microsites,
+        recentShortClicks,
+        recentMicrositeClicks,
+    ] = await Promise.all([
         prisma.shortLink.count({ where: { userId } }),
         prisma.microsite.count({ where: { userId } }),
-    ]);
-
-    // --- Per-link click counts ---
-    const [shortLinks, microsites] = await Promise.all([
         prisma.shortLink.findMany({
             where: { userId },
             include: { _count: { select: { clicks: true } } },
@@ -33,17 +40,6 @@ export default async function AnalyticsPage() {
             include: { _count: { select: { clicks: true } } },
             orderBy: { clicks: { _count: "desc" } },
         }),
-    ]);
-
-    const totalShortClicks = shortLinks.reduce((acc: number, curr: { _count: { clicks: number } }) => acc + curr._count.clicks, 0);
-    const totalMicrositeClicks = microsites.reduce((acc: number, curr: { _count: { clicks: number } }) => acc + curr._count.clicks, 0);
-    const totalClicks = totalShortClicks + totalMicrositeClicks;
-
-    // --- Time-series (last 7 days) ---
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-
-    const [recentShortClicks, recentMicrositeClicks] = await Promise.all([
         prisma.shortLinkClick.findMany({
             where: { shortLink: { userId }, createdAt: { gte: sevenDaysAgo } },
             select: { createdAt: true },
@@ -53,6 +49,10 @@ export default async function AnalyticsPage() {
             select: { createdAt: true },
         }),
     ]);
+
+    const totalShortClicks = shortLinks.reduce((acc: number, curr: { _count: { clicks: number } }) => acc + curr._count.clicks, 0);
+    const totalMicrositeClicks = microsites.reduce((acc: number, curr: { _count: { clicks: number } }) => acc + curr._count.clicks, 0);
+    const totalClicks = totalShortClicks + totalMicrositeClicks;
 
     const combinedClicks = [...recentShortClicks, ...recentMicrositeClicks];
 

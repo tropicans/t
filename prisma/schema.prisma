@@ -116,6 +116,10 @@ model MicrositeClick {
   userAgent   String?
   country     String?
   createdAt   DateTime       @default(now())
+
+  @@index([micrositeId])
+  @@index([linkId])
+  @@index([createdAt])
 }
 
 
@@ -128,4 +132,8 @@ model ShortLinkClick {
   country   String?
   createdAt DateTime @default(now())
   shortLink ShortLink @relation(fields: [shortLinkId], references: [id], onDelete: Cascade)
+
+  @@index([shortLinkId])
+  @@index([createdAt])
 }
+

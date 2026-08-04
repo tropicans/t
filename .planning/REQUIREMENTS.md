@@ -19,15 +19,15 @@
 
 ### Performance Optimization & Testing (Phase 6)
 
-- [ ] **PERF-01**: Kueri analytics berjalan lebih cepat berkat adanya indeks database pada kolom pencarian tanggal dan ID klik.
-- [ ] **PERF-02**: Dashboard overview memuat data lebih cepat dengan memparalelkan penghitungan total klik short link dan microsite.
-- [ ] **TEST-01**: Tersedia automated testing suite menggunakan Vitest yang mencakup unit/integration test untuk server actions utama.
+- [x] **PERF-01**: Kueri analytics berjalan lebih cepat berkat adanya indeks database pada kolom pencarian tanggal dan ID klik.
+- [x] **PERF-02**: Dashboard overview memuat data lebih cepat dengan memparalelkan penghitungan total klik short link dan microsite.
+- [x] **TEST-01**: Tersedia automated testing suite menggunakan Vitest yang mencakup unit/integration test untuk server actions utama.
 
 ### Verification
 
-- [ ] **VER-01**: `npm run lint` berhasil dilewati tanpa error.
-- [ ] **VER-02**: `npx tsc --noEmit` berhasil dilewati tanpa kesalahan kompilasi TypeScript.
-- [ ] **VER-03**: Automated tests (Vitest) berhasil dijalankan dan semua test case lulus (pass).
+- [x] **VER-01**: `npm run lint` berhasil dilewati tanpa error.
+- [x] **VER-02**: `npx tsc --noEmit` berhasil dilewati tanpa kesalahan kompilasi TypeScript.
+- [x] **VER-03**: Automated tests (Vitest) berhasil dijalankan dan semua test case lulus (pass).
 
 ## Traceability
 
@@ -39,12 +39,12 @@
 | SEC-01      | Phase 5 | In Progress |
 | SEC-02      | Phase 5 | In Progress |
 | SEC-03      | Phase 5 | In Progress |
-| PERF-01     | Phase 6 | In Progress |
-| PERF-02     | Phase 6 | In Progress |
-| TEST-01     | Phase 6 | In Progress |
-| VER-01      | Phase 6 | In Progress |
-| VER-02      | Phase 6 | In Progress |
-| VER-03      | Phase 6 | In Progress |
+| PERF-01     | Phase 6 | Complete |
+| PERF-02     | Phase 6 | Complete |
+| TEST-01     | Phase 6 | Complete |
+| VER-01      | Phase 6 | Complete |
+| VER-02      | Phase 6 | Complete |
+| VER-03      | Phase 6 | Complete |
 
 **Coverage:**
 

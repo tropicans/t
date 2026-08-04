@@ -15,14 +15,16 @@ export default async function DashboardPage() {
         ? await prisma.user.findUnique({ where: { email: session.user.email } })
         : null;
 
-    const [shortLinksCount, micrositesCount, totalClicks] = dbUser
+    const [shortLinksCount, micrositesCount, shortClicksCount, micrositeClicksCount] = dbUser
         ? await Promise.all([
             prisma.shortLink.count({ where: { userId: dbUser.id } }),
             prisma.microsite.count({ where: { userId: dbUser.id } }),
-            prisma.shortLinkClick.count({ where: { shortLink: { userId: dbUser.id } } })
-                .then(async (s) => s + await prisma.micrositeClick.count({ where: { microsite: { userId: dbUser.id } } })),
+            prisma.shortLinkClick.count({ where: { shortLink: { userId: dbUser.id } } }),
+            prisma.micrositeClick.count({ where: { microsite: { userId: dbUser.id } } }),
         ])
-        : [0, 0, 0];
+        : [0, 0, 0, 0];
+
+    const totalClicks = shortClicksCount + micrositeClicksCount;
 
     return (
         <div className="max-w-5xl mx-auto space-y-6">
