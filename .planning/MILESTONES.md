@@ -1,5 +1,15 @@
 # Milestones
 
+## v1.2 Edit Link Microsite (Shipped: 2026-08-04)
+
+**Phases completed:** 1 phases, 1 plans, 0 tasks
+
+**Key accomplishments:**
+
+- (none recorded)
+
+---
+
 ## v1.1 Perbaikan dan Optimasi (Shipped: 2026-08-04)
 
 **Phases completed:** 3 phases, 3 plans, 0 tasks

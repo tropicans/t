@@ -4,15 +4,12 @@
 
 Taut is a Next.js URL shortener and link-in-bio product. This project has completed its first two milestones: expanding microsite visual theme choices and drag-and-drop link ordering (v1.0), and implementing database index optimizations, dashboard query parallelization, routing security hardening, and an automated testing suite (v1.1).
 
-## Current Milestone: v1.2 Edit Link Microsite
+## Current Milestone: Planning next milestone
 
-**Goal:** Memungkinkan pengguna untuk mengedit slug URL dari microsite mereka secara langsung melalui Dashboard Editor.
+**Goal:** Menentukan kebutuhan dan merancang arsitektur untuk milestone berikutnya.
 
 **Target features:**
-- Input form untuk memperbarui slug microsite.
-- Integrasi server action `updateMicrosite` untuk memproses perubahan slug di database.
-- Validasi tabrakan nama rute (route collision checking) menggunakan helper validator terpusat.
-- Pembersihan cache Next.js via revalidatePath dan integrasi unit tests di Vitest.
+- (TBD)
 
 ## Core Value
 
@@ -28,6 +25,7 @@ Microsite owners can create a more personalized public page, control link priori
 
 - Shipped **v1.0** milestone delivering preset themes, drag-and-drop link ordering, Indonesian accessibility announcements/restoration, and mobile double-row responsive layout.
 - Shipped **v1.1** milestone delivering clicks database indexing, query parallelization using Promise.all, Next.js middleware protection migration, central route collision checks, protocol scheme validation, and a Vitest automated unit testing suite.
+- Shipped **v1.2** milestone delivering microsite slug editing UI, collision-free validators, server action updates, path revalidation, and automated Vitest unit tests.
 
 ## Requirements
 
@@ -60,14 +58,15 @@ Microsite owners can create a more personalized public page, control link priori
 - ✓ PERF-01: Adding database indexes on Click tables for analytics — v1.1.
 - ✓ PERF-02: Parallelizing async count queries in the dashboard overview and analytics — v1.1.
 - ✓ TEST-01: Setting up Vitest and writing unit tests for server actions — v1.1.
+- ✓ SLUG-01: User can edit their microsite slug via the information form in the dashboard editor. — v1.2
+- ✓ SLUG-02: Editing the slug must validate against collision with reserved routes and short-link codes. — v1.2
+- ✓ SLUG-03: Server action `updateMicrosite` must handle slug validation and database updates. — v1.2
+- ✓ SLUG-04: Changing the slug triggers path revalidation for both the old and new URLs. — v1.2
+- ✓ SLUG-05: Write Vitest unit tests to verify slug updates, collision rejections, and validation outcomes. — v1.2
 
 ### Active
 
-- [ ] SLUG-01: User can edit their microsite slug via the information form in the dashboard editor.
-- [ ] SLUG-02: Editing the slug must validate against collision with reserved routes and short-link codes.
-- [ ] SLUG-03: Server action `updateMicrosite` must handle slug validation and database updates.
-- [ ] SLUG-04: Changing the slug triggers path revalidation for both the old and new URLs.
-- [ ] SLUG-05: Write Vitest unit tests to verify slug updates, collision rejections, and validation outcomes.
+(None yet)
 
 ### Out of Scope
 
@@ -114,6 +113,13 @@ Microsite owners can create a more personalized public page, control link priori
 | Database Indexing for clicks | Adding indices to `ShortLinkClick` and `MicrositeClick` accelerates analytics queries. | ✓ Completed (v1.1) |
 | Dashboards query parallelization | Utilizing Promise.all reduces query roundtrip latencies for loading dashboards. | ✓ Completed (v1.1) |
 | Vitest automated test suite | Co-located unit/integration tests with mocked prisma/sessions validates server actions regression-free. | ✓ Completed (v1.1) |
+| Inline slug input field | Placed inside the 'Informasi Microsite' card and shared the 'Simpan' button to minimize UI footprint. | ✓ Completed (v1.2) |
+| Prefixed dynamic hostname | Ensures the user understands the resulting URL format. | ✓ Completed (v1.2) |
+| Client-side slug sanitization | Converts to lowercase, swaps spaces/non-alphanumeric with hyphens on change, and trims hyphens on blur. | ✓ Completed (v1.2) |
+| Centralized collision checking | Validates slug updates against reserved routes and short links before saving. | ✓ Completed (v1.2) |
+| Card-level error banner | Provides clear, inline user feedback when slug validation or collision check fails. | ✓ Completed (v1.2) |
+| Atomic server action validations | Ensures database updates only occur if all validation and collision checks pass. | ✓ Completed (v1.2) |
+| Selective cache revalidation | Triggers path revalidation for old slug, new slug, and editor routes to keep cache fresh. | ✓ Completed (v1.2) |
 
 ## Evolution
 
@@ -133,4 +139,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-08-04 after completing v1.1 milestone*
+*Last updated: 2026-08-04 after completing v1.2 milestone*
