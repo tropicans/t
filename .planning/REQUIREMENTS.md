@@ -1,0 +1,55 @@
+# Requirements: Taut Microsite Enhancements
+
+**Defined:** 2026-08-04
+**Core Value:** Microsite owners can create a more personalized public page, control link priority, and experience fast, secure dashboard routing and analytics performance.
+
+## v1 Requirements
+
+Requirements for milestone v1.2 (Edit Link Microsite). Each maps to roadmap phases.
+
+### Edit Slug
+
+- [ ] **SLUG-01**: User can edit their microsite slug via the information form in the dashboard editor.
+- [ ] **SLUG-02**: Editing the slug must validate against collision with reserved routes and short-link codes.
+- [ ] **SLUG-03**: Server action `updateMicrosite` must handle slug validation and database updates.
+- [ ] **SLUG-04**: Changing the slug triggers path revalidation for both the old and new URLs.
+- [ ] **SLUG-05**: Write Vitest unit tests to verify slug updates, collision rejections, and validation outcomes.
+
+## v2 Requirements
+
+Deferred to future release. Tracked but not in current roadmap.
+
+### Custom Themes
+
+- **THEM-01**: User can create custom color themes.
+- **THEM-02**: User can select custom Google Fonts for microsite rendering.
+
+## Out of Scope
+
+Explicitly excluded. Documented to prevent scope creep.
+
+| Feature | Reason |
+|---------|--------|
+| Multi-user collaboration on same microsite | Out of scope for individual link management. |
+| Custom domains for individual microsites | Infrastructure complexity, defer to premium tiers. |
+
+## Traceability
+
+Which phases cover which requirements. Updated during roadmap creation.
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| SLUG-01 | Phase 7 | Pending |
+| SLUG-02 | Phase 7 | Pending |
+| SLUG-03 | Phase 7 | Pending |
+| SLUG-04 | Phase 7 | Pending |
+| SLUG-05 | Phase 7 | Pending |
+
+**Coverage:**
+- v1 requirements: 5 total
+- Mapped to phases: 5
+- Unmapped: 0 ✓
+
+---
+*Requirements defined: 2026-08-04*
+*Last updated: 2026-08-04 after starting v1.2 milestone*

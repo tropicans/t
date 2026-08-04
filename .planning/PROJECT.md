@@ -4,6 +4,16 @@
 
 Taut is a Next.js URL shortener and link-in-bio product. This project has completed its first two milestones: expanding microsite visual theme choices and drag-and-drop link ordering (v1.0), and implementing database index optimizations, dashboard query parallelization, routing security hardening, and an automated testing suite (v1.1).
 
+## Current Milestone: v1.2 Edit Link Microsite
+
+**Goal:** Memungkinkan pengguna untuk mengedit slug URL dari microsite mereka secara langsung melalui Dashboard Editor.
+
+**Target features:**
+- Input form untuk memperbarui slug microsite.
+- Integrasi server action `updateMicrosite` untuk memproses perubahan slug di database.
+- Validasi tabrakan nama rute (route collision checking) menggunakan helper validator terpusat.
+- Pembersihan cache Next.js via revalidatePath dan integrasi unit tests di Vitest.
+
 ## Core Value
 
 Microsite owners can create a more personalized public page, control link priority, and experience fast, secure dashboard routing and analytics performance.
@@ -53,7 +63,11 @@ Microsite owners can create a more personalized public page, control link priori
 
 ### Active
 
-- [ ] TBD (run /gsd-new-milestone to define requirements for next milestone)
+- [ ] SLUG-01: User can edit their microsite slug via the information form in the dashboard editor.
+- [ ] SLUG-02: Editing the slug must validate against collision with reserved routes and short-link codes.
+- [ ] SLUG-03: Server action `updateMicrosite` must handle slug validation and database updates.
+- [ ] SLUG-04: Changing the slug triggers path revalidation for both the old and new URLs.
+- [ ] SLUG-05: Write Vitest unit tests to verify slug updates, collision rejections, and validation outcomes.
 
 ### Out of Scope
 

@@ -4,7 +4,7 @@
 
 - ✅ **v1.0 Theme & Ordering MVP** — Phases 1-3 (shipped 2026-06-27)
 - ✅ **v1.1 Perbaikan dan Optimasi** — Phases 4-6 (shipped 2026-08-04)
-- 📋 **v2.0 TBD** — Phase 7 (planned)
+- 🚧 **v1.2 Edit Link Microsite** — Phase 7 (in progress)
 
 ## Phases
 
@@ -33,13 +33,13 @@
 
 ---
 
-### 📋 v2.0 TBD (Planned)
+### 🚧 v1.2 Edit Link Microsite (In Progress)
 
-#### Phase 7: Next Enhancements
-**Goal:** [To be planned]
-**Requirements:** TBD
+#### Phase 7: Edit Microsite Slug
+**Goal:** Memungkinkan pengguna untuk mengedit slug URL microsite mereka secara aman dengan validasi collision dan revalidatePath.
+**Requirements:** SLUG-01, SLUG-02, SLUG-03, SLUG-04, SLUG-05
 **Depends on:** Phase 6
-- [ ] TBD (run `/gsd-plan-phase 7` to break down)
+- [ ] 07-01: Implementasi field input slug di dashboard editor UI, pembaruan server action updateMicrosite, dan penulisan unit tests.
 
 ---
 *Roadmap updated: 2026-08-04*
