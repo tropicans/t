@@ -5,16 +5,9 @@ import { type ShortLink } from "@prisma/client";
 import { deleteShortLink } from "@/app/actions/short";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Copy, Trash2, ExternalLink, QrCode, Lock } from "lucide-react";
+import { Copy, Trash2, ExternalLink, Lock } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import QRCode from "react-qr-code";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
+import { QrCodeDialog } from "@/components/qr-code-dialog";
 
 type ShortLinkWithOwner = ShortLink & {
     user: {
@@ -103,21 +96,13 @@ export function ShortLinkList({ initialLinks, viewerUserId, canViewAllLinks }: S
                                     {copiedId === link.id ? "Copied!" : "Copy"}
                                 </Button>
 
-                                <Dialog>
-                                    <DialogTrigger asChild>
-                                        <Button variant="ghost" size="icon" className="text-zinc-400 hover:text-white hover:bg-zinc-800">
-                                            <QrCode className="w-4 h-4" />
-                                        </Button>
-                                    </DialogTrigger>
-                                    <DialogContent className="sm:max-w-md bg-zinc-950 border-zinc-800">
-                                        <DialogHeader>
-                                            <DialogTitle className="text-white">QR Code</DialogTitle>
-                                        </DialogHeader>
-                                        <div className="flex flex-col items-center justify-center p-6 bg-white rounded-xl">
-                                            <QRCode value={fullShortUrl} size={256} className="w-full max-w-[200px] h-auto" />
-                                        </div>
-                                    </DialogContent>
-                                </Dialog>
+                                <QrCodeDialog
+                                    url={fullShortUrl}
+                                    title={link.originalUrl}
+                                    downloadFilename={`qrcode-${link.shortCode}`}
+                                    dialogTitle="QR Code Link"
+                                    variant="icon"
+                                />
 
                                 {isOwner ? (
                                     <Button
