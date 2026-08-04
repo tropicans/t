@@ -6,8 +6,13 @@ import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Activity, Link as LinkIcon, Globe } from "lucide-react";
 import { AnalyticsCharts } from "./analytics-charts";
+import { parseUserAgent } from "@/lib/user-agent";
 
-export default async function AnalyticsPage() {
+export default async function AnalyticsPage({
+    searchParams,
+}: {
+    searchParams: Promise<{ range?: string }>;
+}) {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) return null;
 
@@ -15,10 +20,23 @@ export default async function AnalyticsPage() {
     if (!dbUser) return null;
 
     const userId = dbUser.id;
+    const { range = "7d" } = await searchParams;
 
-    // --- Time-series (last 7 days) date definition ---
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    // --- Dynamic Time-range calculation ---
+    let startDate: Date | undefined = new Date();
+    if (range === "24h") {
+        startDate.setHours(startDate.getHours() - 24);
+    } else if (range === "30d") {
+        startDate.setDate(startDate.getDate() - 30);
+    } else if (range === "all") {
+        startDate = undefined;
+    } else {
+        // default 7d
+        startDate.setDate(startDate.getDate() - 7);
+    }
+
+    const dateFilter = startDate ? { gte: startDate } : undefined;
+    const clicksFilter = dateFilter ? { where: { createdAt: dateFilter } } : true;
 
     // --- Query in parallel ---
     const [
@@ -33,20 +51,20 @@ export default async function AnalyticsPage() {
         prisma.microsite.count({ where: { userId } }),
         prisma.shortLink.findMany({
             where: { userId },
-            include: { _count: { select: { clicks: true } } },
+            include: { _count: { select: { clicks: clicksFilter } } },
         }),
         prisma.microsite.findMany({
             where: { userId },
-            include: { _count: { select: { clicks: true } } },
+            include: { _count: { select: { clicks: clicksFilter } } },
             orderBy: { clicks: { _count: "desc" } },
         }),
         prisma.shortLinkClick.findMany({
-            where: { shortLink: { userId }, createdAt: { gte: sevenDaysAgo } },
-            select: { createdAt: true },
+            where: { shortLink: { userId }, createdAt: dateFilter },
+            select: { createdAt: true, userAgent: true, country: true },
         }),
         prisma.micrositeClick.findMany({
-            where: { microsite: { userId }, createdAt: { gte: sevenDaysAgo } },
-            select: { createdAt: true },
+            where: { microsite: { userId }, createdAt: dateFilter },
+            select: { createdAt: true, userAgent: true, country: true },
         }),
     ]);
 
@@ -56,6 +74,54 @@ export default async function AnalyticsPage() {
 
     const combinedClicks = [...recentShortClicks, ...recentMicrositeClicks];
 
+    // --- Telemetry Aggregations ---
+    const countryMap: Record<string, { name: string; flag: string }> = {
+        ID: { name: "Indonesia", flag: "🇮🇩" },
+        US: { name: "United States", flag: "🇺🇸" },
+        SG: { name: "Singapore", flag: "🇸🇬" },
+        MY: { name: "Malaysia", flag: "🇲🇾" },
+        JP: { name: "Japan", flag: "🇯🇵" },
+        AU: { name: "Australia", flag: "🇦🇺" },
+        GB: { name: "United Kingdom", flag: "🇬🇧" },
+        DE: { name: "Germany", flag: "🇩🇪" },
+        FR: { name: "France", flag: "🇫🇷" },
+        NL: { name: "Netherlands", flag: "🇳🇱" },
+    };
+
+    const countriesCount: Record<string, number> = {};
+    const devicesCount: Record<string, number> = { Mobile: 0, Desktop: 0, Unknown: 0 };
+    const browsersCount: Record<string, number> = {};
+
+    const processClick = (click: { userAgent: string | null; country: string | null }) => {
+        const cCode = click.country ? click.country.toUpperCase() : "UNKNOWN";
+        countriesCount[cCode] = (countriesCount[cCode] || 0) + 1;
+
+        const { device, browser } = parseUserAgent(click.userAgent);
+        devicesCount[device] = (devicesCount[device] || 0) + 1;
+        browsersCount[browser] = (browsersCount[browser] || 0) + 1;
+    };
+
+    recentShortClicks.forEach(processClick);
+    recentMicrositeClicks.forEach(processClick);
+
+    const topCountries = Object.entries(countriesCount)
+        .map(([code, count]) => {
+            const mapped = countryMap[code];
+            return {
+                code,
+                name: mapped ? mapped.name : code === "UNKNOWN" ? "Unknown" : code,
+                flag: mapped ? mapped.flag : "🏳️",
+                count,
+            };
+        })
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 5);
+
+    const topBrowsers = Object.entries(browsersCount)
+        .map(([name, count]) => ({ name, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 5);
+
     type TopItem = {
         id: string;
         label: string;
@@ -64,7 +130,7 @@ export default async function AnalyticsPage() {
         type: "short" | "microsite";
     };
 
-    // --- Top performing items ---
+    // --- Top performing items (filtered) ---
     const topItems: TopItem[] = [
         ...shortLinks.map((link) => ({
             id: link.id,
@@ -84,9 +150,33 @@ export default async function AnalyticsPage() {
 
     return (
         <div className="max-w-6xl mx-auto space-y-6">
-            <div className="flex flex-col gap-2">
-                <h1 className="text-3xl font-bold tracking-tight text-white">Analytics</h1>
-                <p className="text-zinc-400">Pantau performa Short Links dan Microsites kamu.</p>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="flex flex-col gap-2">
+                    <h1 className="text-3xl font-bold tracking-tight text-white">Analytics</h1>
+                    <p className="text-zinc-400">Pantau performa Short Links dan Microsites kamu.</p>
+                </div>
+
+                {/* Time range selector */}
+                <div className="flex bg-zinc-950 p-1 rounded-lg border border-zinc-800/80 w-fit self-start md:self-auto">
+                    {[
+                        { label: "24 Jam", value: "24h" },
+                        { label: "7 Hari", value: "7d" },
+                        { label: "30 Hari", value: "30d" },
+                        { label: "Semua Waktu", value: "all" },
+                    ].map((item) => (
+                        <a
+                            key={item.value}
+                            href={`/dashboard/analytics?range=${item.value}`}
+                            className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all duration-200 ${
+                                range === item.value
+                                    ? "bg-zinc-850 text-white border-zinc-700 shadow"
+                                    : "text-zinc-400 hover:text-white"
+                            }`}
+                        >
+                            {item.label}
+                        </a>
+                    ))}
+                </div>
             </div>
 
             {/* Summary cards */}
@@ -98,7 +188,7 @@ export default async function AnalyticsPage() {
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold text-white">{totalClicks.toLocaleString()}</div>
-                        <p className="text-xs text-zinc-500 mt-1">Semua link & microsite</p>
+                        <p className="text-xs text-zinc-500 mt-1">Rentang waktu terpilih</p>
                     </CardContent>
                 </Card>
 
@@ -129,11 +219,11 @@ export default async function AnalyticsPage() {
                 {/* Chart */}
                 <Card className="col-span-4 bg-zinc-900/50 border-zinc-800">
                     <CardHeader>
-                        <CardTitle className="text-white">7-Day Performance</CardTitle>
+                        <CardTitle className="text-white">Performance Chart</CardTitle>
                         <CardDescription className="text-zinc-400">Total klik harian dari semua link & microsite</CardDescription>
                     </CardHeader>
                     <CardContent className="pl-2">
-                        <AnalyticsCharts rawData={combinedClicks} />
+                        <AnalyticsCharts rawData={combinedClicks} range={range} />
                     </CardContent>
                 </Card>
 
@@ -172,6 +262,118 @@ export default async function AnalyticsPage() {
                 </Card>
             </div>
 
+            {/* Telemetry Widgets Grid */}
+            <div className="grid gap-4 md:grid-cols-2">
+                {/* Top Countries */}
+                <Card className="bg-zinc-900/50 border-zinc-800">
+                    <CardHeader>
+                        <CardTitle className="text-white">Negara Asal</CardTitle>
+                        <CardDescription className="text-zinc-400">Lokasi geografis pengunjung</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="space-y-4">
+                            {topCountries.length === 0 ? (
+                                <p className="text-zinc-500 text-sm text-center py-4">Belum ada data negara.</p>
+                            ) : (
+                                topCountries.map((c) => (
+                                    <div key={c.code} className="flex items-center gap-3">
+                                        <span className="text-2xl select-none">{c.flag}</span>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-sm font-medium text-white truncate">{c.name}</p>
+                                            <p className="text-xs text-zinc-500">{c.code}</p>
+                                        </div>
+                                        <div className="font-semibold text-white tabular-nums">
+                                            {c.count} klik
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Device & Browser Distribution */}
+                <Card className="bg-zinc-900/50 border-zinc-800">
+                    <CardHeader>
+                        <CardTitle className="text-white">Perangkat & Browser</CardTitle>
+                        <CardDescription className="text-zinc-400">Tipe device dan browser pengunjung</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                        {/* Device Types */}
+                        <div className="space-y-3">
+                            <h4 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Tipe Perangkat</h4>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="bg-zinc-950 p-3 rounded-lg border border-zinc-800/80 text-center">
+                                    <p className="text-xs text-zinc-500">Mobile</p>
+                                    <p className="text-lg font-bold text-white mt-1 tabular-nums">
+                                        {devicesCount.Mobile}
+                                    </p>
+                                </div>
+                                <div className="bg-zinc-950 p-3 rounded-lg border border-zinc-800/80 text-center">
+                                    <p className="text-xs text-zinc-500">Desktop</p>
+                                    <p className="text-lg font-bold text-white mt-1 tabular-nums">
+                                        {devicesCount.Desktop}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Top Browsers */}
+                        <div className="space-y-3">
+                            <h4 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Browser Terpopuler</h4>
+                            <div className="space-y-2">
+                                {topBrowsers.length === 0 ? (
+                                    <p className="text-zinc-500 text-sm py-1">Belum ada data browser.</p>
+                                ) : (
+                                    topBrowsers.map((b) => (
+                                        <div key={b.name} className="flex justify-between items-center text-sm">
+                                            <span className="text-zinc-300">{b.name}</span>
+                                            <span className="font-semibold text-white tabular-nums">{b.count} klik</span>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+
+            {/* Short Link breakdown table */}
+            {shortLinks.length > 0 && (
+                <Card className="bg-zinc-900/50 border-zinc-800">
+                    <CardHeader>
+                        <CardTitle className="text-white">Short Link Breakdown</CardTitle>
+                        <CardDescription className="text-zinc-400">Detail performa setiap short link</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="space-y-2">
+                            {shortLinks.map((link) => (
+                                <div key={link.id} className="flex items-center gap-4 py-2 border-b border-zinc-800 last:border-0">
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-sm font-medium text-white">/{link.shortCode}</p>
+                                        <p className="text-xs text-zinc-500 truncate">{link.originalUrl}</p>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="text-sm font-semibold text-white">{link._count.clicks}</p>
+                                        <p className="text-xs text-zinc-500">klik</p>
+                                    </div>
+                                    <div className="w-24 bg-zinc-800 rounded-full h-1.5 flex-shrink-0">
+                                        <div
+                                            className="bg-primary h-1.5 rounded-full"
+                                            style={{
+                                                width: totalShortClicks > 0
+                                                    ? `${Math.round((link._count.clicks / totalShortClicks) * 100)}%`
+                                                    : "0%"
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </CardContent>
+                </Card>
+            )}
+
             {/* Microsite breakdown table */}
             {microsites.length > 0 && (
                 <Card className="bg-zinc-900/50 border-zinc-800">
@@ -191,7 +393,7 @@ export default async function AnalyticsPage() {
                                         <p className="text-sm font-semibold text-white">{ms._count.clicks}</p>
                                         <p className="text-xs text-zinc-500">klik</p>
                                     </div>
-                                    <div className="w-24 bg-zinc-800 rounded-full h-1.5">
+                                    <div className="w-24 bg-zinc-800 rounded-full h-1.5 flex-shrink-0">
                                         <div
                                             className="bg-primary h-1.5 rounded-full"
                                             style={{

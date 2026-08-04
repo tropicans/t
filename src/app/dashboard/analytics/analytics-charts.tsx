@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { format, subDays } from "date-fns";
+import { format, subDays, subHours } from "date-fns";
 import {
     Area,
     AreaChart,
@@ -16,12 +16,40 @@ interface ClickRecord {
     createdAt: Date;
 }
 
-export function AnalyticsCharts({ rawData }: { rawData: ClickRecord[] }) {
+export function AnalyticsCharts({
+    rawData,
+    range = "7d",
+}: {
+    rawData: ClickRecord[];
+    range?: string;
+}) {
     const chartData = useMemo(() => {
-        const last7Days = Array.from({ length: 7 }, (_, i) => {
-            const d = subDays(new Date(), 6 - i);
+        if (range === "24h") {
+            const last24Hours = Array.from({ length: 24 }, (_, i) => {
+                const d = subHours(new Date(), 23 - i);
+                return {
+                    date: format(d, "HH:00"),
+                    rawHour: format(d, "yyyy-MM-dd HH"),
+                    clicks: 0,
+                };
+            });
+
+            rawData.forEach((click) => {
+                const clickHour = format(new Date(click.createdAt), "yyyy-MM-dd HH");
+                const hourBin = last24Hours.find((h) => h.rawHour === clickHour);
+                if (hourBin) {
+                    hourBin.clicks += 1;
+                }
+            });
+
+            return last24Hours;
+        }
+
+        const dayCount = range === "30d" ? 30 : range === "all" ? 30 : 7;
+        const days = Array.from({ length: dayCount }, (_, i) => {
+            const d = subDays(new Date(), (dayCount - 1) - i);
             return {
-                date: format(d, "MMM dd"),
+                date: format(d, dayCount > 10 ? "dd MMM" : "MMM dd"),
                 rawDate: format(d, "yyyy-MM-dd"),
                 clicks: 0,
             };
@@ -29,14 +57,14 @@ export function AnalyticsCharts({ rawData }: { rawData: ClickRecord[] }) {
 
         rawData.forEach((click) => {
             const clickDate = format(new Date(click.createdAt), "yyyy-MM-dd");
-            const day = last7Days.find((d) => d.rawDate === clickDate);
+            const day = days.find((d) => d.rawDate === clickDate);
             if (day) {
                 day.clicks += 1;
             }
         });
 
-        return last7Days;
-    }, [rawData]);
+        return days;
+    }, [rawData, range]);
 
     return (
         <div className="h-[350px] w-full mt-4">
