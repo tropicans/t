@@ -22,7 +22,7 @@ Roadmap ini fokus pada perbaikan bug database/redirect, pengerasan keamanan rout
 **Goal:** Menyelesaikan drift skema database dan memperbaiki celah logika pada rute pengalihan (redirect).
 **Requirements:** DB-01, BUG-01, BUG-02
 **UI hint:** no
-**Status:** In Progress
+**Status:** Complete
 
 **Success Criteria**:
 
@@ -41,7 +41,7 @@ Roadmap ini fokus pada perbaikan bug database/redirect, pengerasan keamanan rout
 **Goal:** Mengaktifkan native Next.js middleware, mencegah tabrakan namespace rute, dan memvalidasi skema URL tujuan.
 **Requirements:** SEC-01, SEC-02, SEC-03
 **UI hint:** no
-**Status:** In Progress
+**Status:** Complete
 
 **Success Criteria**:
 
