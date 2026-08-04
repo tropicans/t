@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { QrCode, Download, Copy, Check } from "lucide-react";
-import QRCode from "react-qr-code";
+import { ModernQrCode } from "./modern-qr-code";
 import { Button } from "@/components/ui/button";
 import {
     Dialog,
@@ -47,39 +47,16 @@ export function QrCodeDialog({
     };
 
     const handleDownload = () => {
-        const svg = document.getElementById(uniqueId);
-        if (!svg) return;
+        const canvas = document.getElementById(uniqueId) as HTMLCanvasElement;
+        if (!canvas) return;
         
-        const svgData = new XMLSerializer().serializeToString(svg);
-        const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
-        const svgUrl = URL.createObjectURL(svgBlob);
-        
-        const img = new Image();
-        img.onload = () => {
-            const canvas = document.createElement("canvas");
-            const canvasSize = 512; // High resolution PNG
-            canvas.width = canvasSize;
-            canvas.height = canvasSize;
-            const ctx = canvas.getContext("2d");
-            if (ctx) {
-                // Fill with white background so it's readable on dark themes/images
-                ctx.fillStyle = "#ffffff";
-                ctx.fillRect(0, 0, canvasSize, canvasSize);
-                // Draw SVG image onto canvas
-                ctx.drawImage(img, 0, 0, canvasSize, canvasSize);
-                
-                // Create download link for PNG
-                const pngUrl = canvas.toDataURL("image/png");
-                const downloadLink = document.createElement("a");
-                downloadLink.href = pngUrl;
-                downloadLink.download = `${downloadFilename}.png`;
-                document.body.appendChild(downloadLink);
-                downloadLink.click();
-                document.body.removeChild(downloadLink);
-            }
-            URL.revokeObjectURL(svgUrl);
-        };
-        img.src = svgUrl;
+        const pngUrl = canvas.toDataURL("image/png");
+        const downloadLink = document.createElement("a");
+        downloadLink.href = pngUrl;
+        downloadLink.download = `${downloadFilename}.png`;
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
     };
 
     const defaultTrigger = trigger || (
@@ -118,11 +95,10 @@ export function QrCodeDialog({
                 <div className="flex flex-col items-center justify-center p-4 gap-6">
                     {/* QR Code Container */}
                     <div className="p-4 bg-white rounded-2xl flex items-center justify-center shadow-xl">
-                        <QRCode
+                        <ModernQrCode
                             id={uniqueId}
                             value={url}
                             size={200}
-                            className="w-full max-w-[200px] h-auto"
                         />
                     </div>
 
