@@ -1,6 +1,6 @@
 # External Integrations
 
-**Analysis Date:** 2026-06-26
+**Analysis Date:** 2026-08-04
 
 ## APIs & External Services
 
@@ -99,38 +99,6 @@
 
 ## Environment Configuration
 
-**Required env vars:**
-- `DATABASE_URL` - Prisma/PostgreSQL connection for app runtime and Prisma CLI; used in `src/lib/prisma.ts` and `prisma.config.ts`.
-- `NEXTAUTH_URL` - Auth callback/base URL; passed in `docker-compose.yml`.
-- `NEXTAUTH_SECRET` - NextAuth JWT/session secret; passed in `docker-compose.yml`.
-- `NEXT_PUBLIC_APP_URL` - Public base URL used for redirects, short-link display, and Open Graph URLs in `src/app/page.tsx`, `src/app/[username]/page.tsx`, `src/app/dashboard/links/short-link-list.tsx`, and `src/app/dashboard/links/short-link-form.tsx`.
-- `GOOGLE_CLIENT_ID` - Google OAuth client ID in `src/lib/auth.ts`.
-- `GOOGLE_CLIENT_SECRET` - Google OAuth client secret in `src/lib/auth.ts`.
-- `UPLOADTHING_TOKEN` - UploadThing service token passed in `docker-compose.yml`.
-
-**Optional env vars:**
-- `ALLOWED_EMAILS` - Optional Google login allowlist in `src/lib/auth.ts`.
-- `GLOBAL_DASHBOARD_VIEWER_EMAIL` - Viewer override in `src/lib/microsite-access.ts` and `docker-compose.yml`.
-- `GLOBAL_MICROSITE_VIEWER_EMAIL` - Alternate viewer override in `src/lib/microsite-access.ts`.
-
-**Secrets location:**
-- `.env` file present at repo root; contents not read.
-- `docker-compose.yml` wires env vars from shell/.env into app container. Note: file also contains development fallback values and local Postgres credentials in plaintext; treat those as local-only configuration.
-
-## Webhooks & Callbacks
-
-**Incoming:**
-- NextAuth OAuth callback and session endpoints: `src/app/api/auth/[...nextauth]/route.ts` handles `GET` and `POST` for `/api/auth/*`.
-- UploadThing callback/route handler: `src/app/api/uploadthing/route.ts` handles `GET` and `POST` for upload flow.
-- Microsite JSON API: `src/app/api/microsites/[slug]/route.ts` returns published microsite data with no-store headers.
-- Microsite link click redirect endpoint: `src/app/api/click/microsite-link/[linkId]/route.ts` records click then redirects to external link URL.
-
-**Outgoing:**
-- Redirect to user-provided short-link destination: `src/app/[username]/page.tsx` and `src/app/actions/short-link-redirect.ts`.
-- Redirect to microsite link destination: `src/app/api/click/microsite-link/[linkId]/route.ts`.
-- Google OAuth network flow managed by NextAuth provider in `src/lib/auth.ts`.
-- UploadThing file upload flow initiated by `src/components/cover-image-uploader.tsx` and `src/components/avatar-image-uploader.tsx` through `src/lib/uploadthing-client.ts`.
-
----
-
-*Integration audit: 2026-06-26*
+- Loaded via process environment.
+- Required: `DATABASE_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `NEXTAUTH_SECRET`, `UPLOADTHING_TOKEN`.
+- Optional: `ALLOWED_EMAILS`, `NEXTAUTH_URL`, `NEXT_PUBLIC_APP_URL`, `GLOBAL_DASHBOARD_VIEWER_EMAIL`, `GLOBAL_MICROSITE_VIEWER_EMAIL`.

@@ -1,6 +1,6 @@
 # Technology Stack
 
-**Analysis Date:** 2026-06-26
+**Analysis Date:** 2026-08-04
 
 ## Languages
 
@@ -70,7 +70,7 @@
 ## Configuration
 
 **Environment:**
-- Runtime env loaded from process environment; `.env` file present but contents not read.
+- Runtime env loaded from process environment; `.env` file present.
 - Prisma CLI loads `.env` via `prisma.config.ts` using `import "dotenv/config"` and `env("DATABASE_URL")`.
 - App DB client reads `DATABASE_URL` and falls back to local Postgres URL in `src/lib/prisma.ts`.
 - Auth env vars: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `NEXTAUTH_URL`, `NEXTAUTH_SECRET`, optional `ALLOWED_EMAILS` in `src/lib/auth.ts` and `docker-compose.yml`.
@@ -98,9 +98,3 @@
 
 **Production:**
 - Next standalone deployment from `Dockerfile` using `node server.js` on `0.0.0.0:4000`.
-- Container app service and Postgres service defined in `docker-compose.yml`.
-- Production needs real `DATABASE_URL`, `NEXTAUTH_SECRET`, Google OAuth credentials, and `UPLOADTHING_TOKEN`; avoid defaults from `docker-compose.yml` for production secrets.
-
----
-
-*Stack analysis: 2026-06-26*

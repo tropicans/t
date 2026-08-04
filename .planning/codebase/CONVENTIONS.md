@@ -1,11 +1,11 @@
 # Coding Conventions
 
-**Analysis Date:** 2026-06-26
+**Analysis Date:** 2026-08-04
 
 ## Naming Patterns
 
 **Files:**
-- Use kebab-case for route leaf components and feature files: `src/app/dashboard/links/short-link-form.tsx`, `src/app/dashboard/links/short-link-list.tsx`, `src/components/microsite-page-client.tsx`.
+- Use kebab-case for route leaf components and feature files: `src/app/dashboard/links/short-link-form.tsx`, `src/app/dashboard/links/short-link-list.tsx`, `src/components/microsite-page-client.tsx`, `src/lib/microsite-themes.ts`.
 - Use bracketed dynamic route segments for Next App Router params: `src/app/[username]/page.tsx`, `src/app/api/microsites/[slug]/route.ts`, `src/app/dashboard/microsites/[id]/page.tsx`.
 - Use `route.ts` for API route handlers: `src/app/api/click/microsite-link/[linkId]/route.ts`, `src/app/api/uploadthing/route.ts`.
 - Use `page.tsx` and `layout.tsx` for App Router screens and shells: `src/app/page.tsx`, `src/app/layout.tsx`, `src/app/dashboard/layout.tsx`.
@@ -20,7 +20,7 @@
 **Variables:**
 - Use camelCase for locals and state: `originalUrl`, `customAlias`, `rawPassword` in `src/app/actions/short.ts`; `isPending`, `errorMsg`, `copiedId` in `src/app/dashboard/links/short-link-form.tsx` and `src/app/dashboard/links/short-link-list.tsx`.
 - Use `is*` / `can*` boolean names: `isPending`, `isOwner`, `canViewAllLinks` in `src/app/dashboard/links/short-link-list.tsx`; `canManageAllMicrosites` in `src/app/actions/microsite.ts`.
-- Use uppercase constants for local fixed lists/config: `APP_URL` in `src/app/[username]/page.tsx`, `THEMES` in `src/app/dashboard/microsites/[id]/microsite-editor.tsx`.
+- Use uppercase constants for local fixed lists/config: `APP_URL` in `src/app/[username]/page.tsx`, `MICROSITE_THEMES` in `src/lib/microsite-themes.ts`.
 
 **Types:**
 - Use PascalCase for interfaces and type aliases: `CurrentUserAccess` in `src/app/actions/microsite.ts`, `ShortLinkWithOwner` and `ShortLinkListProps` in `src/app/dashboard/links/short-link-list.tsx`, `MicrositeWithLinks` in `src/app/dashboard/microsites/[id]/microsite-editor.tsx`.
@@ -44,9 +44,9 @@
 ## Import Organization
 
 **Order:**
-1. Framework/runtime imports: `react`, `next/*`, `next-auth`, `@prisma/client` as in `src/app/dashboard/links/short-link-list.tsx` and `src/app/actions/short.ts`.
-2. App aliases using `@/`: actions, lib helpers, UI components as in `src/app/dashboard/links/short-link-form.tsx`.
-3. Third-party UI/data packages: `lucide-react`, `date-fns`, `react-qr-code` as in `src/app/dashboard/links/short-link-list.tsx`.
+- Framework/runtime imports: `react`, `next/*`, `next-auth`, `@prisma/client` as in `src/app/dashboard/links/short-link-list.tsx` and `src/app/actions/short.ts`.
+- App aliases using `@/`: actions, lib helpers, UI components as in `src/app/dashboard/links/short-link-form.tsx`.
+- Third-party UI/data packages: `lucide-react`, `date-fns`, `react-qr-code` as in `src/app/dashboard/links/short-link-list.tsx`.
 
 **Path Aliases:**
 - Use `@/*` for `src/*`, configured in `tsconfig.json`.
@@ -97,17 +97,3 @@
 - Server actions for UI forms return plain serializable objects: `{ success: true, microsite }`, `{ error: "Failed to create short link" }`.
 - DB query helpers return Prisma promises/results directly: `getShortLinks()` in `src/app/actions/short.ts`.
 - Page components return JSX, `redirect()`, or `notFound()`; see `src/app/[username]/page.tsx`.
-
-## Module Design
-
-**Exports:**
-- Use named exports for server actions and reusable components: `createShortLink` in `src/app/actions/short.ts`, `ShortLinkForm` in `src/app/dashboard/links/short-link-form.tsx`, `Button` in `src/components/ui/button.tsx`.
-- Use default export for App Router pages/layouts: `src/app/[username]/page.tsx`, `src/app/page.tsx`, `src/app/dashboard/layout.tsx`.
-- Export shared singleton clients from `src/lib`: `prisma` from `src/lib/prisma.ts`, `authOptions` from `src/lib/auth.ts`.
-
-**Barrel Files:**
-- Not detected. Import UI components directly from component files, e.g. `@/components/ui/button`, `@/components/ui/card`.
-
----
-
-*Convention analysis: 2026-06-26*

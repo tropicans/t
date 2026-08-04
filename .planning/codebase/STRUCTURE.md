@@ -1,6 +1,6 @@
 # Codebase Structure
 
-**Analysis Date:** 2026-06-26
+**Analysis Date:** 2026-08-04
 
 ## Directory Layout
 
@@ -54,8 +54,8 @@ url-shortener/
 
 **`src/components`:**
 - Purpose: Shared React components independent from route file conventions.
-- Contains: Providers, public microsite client, share bar, uploaders, UI primitives, short-link password form.
-- Key files: `src/components/providers.tsx`, `src/components/microsite-page-client.tsx`, `src/components/share-bar.tsx`, `src/components/cover-image-uploader.tsx`, `src/components/avatar-image-uploader.tsx`.
+- Contains: Providers, public microsite client, share bar, uploaders, UI primitives, short-link password form, canvas QR code components.
+- Key files: `src/components/providers.tsx`, `src/components/microsite-page-client.tsx`, `src/components/share-bar.tsx`, `src/components/cover-image-uploader.tsx`, `src/components/avatar-image-uploader.tsx`, `src/components/modern-qr-code.tsx`, `src/components/qr-code-dialog.tsx`, `src/components/microsite-qr-code.tsx`.
 
 **`src/components/ui`:**
 - Purpose: Reusable shadcn/Radix-style primitives.
@@ -63,9 +63,9 @@ url-shortener/
 - Key files: `src/components/ui/button.tsx`, `src/components/ui/card.tsx`, `src/components/ui/dialog.tsx`, `src/components/ui/input.tsx`.
 
 **`src/lib`:**
-- Purpose: Shared services and helpers.
-- Contains: Auth config, Prisma client, UploadThing router, public microsite query, access helper, class utility.
-- Key files: `src/lib/auth.ts`, `src/lib/prisma.ts`, `src/lib/uploadthing.ts`, `src/lib/public-microsite.ts`, `src/lib/microsite-access.ts`, `src/lib/utils.ts`.
+- Purpose: Shared services, helper files, registries.
+- Contains: Auth config, Prisma client, UploadThing router, public microsite query, access helper, class utility, theme definitions.
+- Key files: `src/lib/auth.ts`, `src/lib/prisma.ts`, `src/lib/uploadthing.ts`, `src/lib/public-microsite.ts`, `src/lib/microsite-access.ts`, `src/lib/microsite-themes.ts`, `src/lib/utils.ts`.
 
 **`src/types`:**
 - Purpose: Project type augmentation.
@@ -98,133 +98,16 @@ url-shortener/
 - `src/app/api/auth/[...nextauth]/route.ts`: NextAuth HTTP entrypoint.
 
 **Configuration:**
-- `package.json`: npm scripts, Next/React/Prisma dependencies.
-- `tsconfig.json`: TypeScript strict mode and `@/*` alias to `src/*`.
-- `eslint.config.mjs`: ESLint config.
-- `components.json`: shadcn component config.
-- `postcss.config.mjs`: Tailwind/PostCSS config.
-- `prisma.config.ts`: Prisma CLI config.
-- `Dockerfile`: Production container build.
-- `docker-compose.yml`: Local PostgreSQL service.
-- `.env`: Environment configuration file present; do not read contents.
+- `prisma/schema.prisma`: Schema database models.
+- `next.config.ts`: Image whitelisting and standalone build config.
+- `tsconfig.json`: TypeScript compiler options and aliases.
+- `eslint.config.mjs`: ESLint style configurations.
+- `postcss.config.mjs`: PostCSS presets.
+- `components.json`: shadcn workspace config.
 
-**Core Logic:**
-- `src/lib/auth.ts`: NextAuth provider/callback/session policy.
-- `src/lib/prisma.ts`: Database client singleton.
-- `src/app/actions/short.ts`: Short-link CRUD.
-- `src/app/actions/microsite.ts`: Microsite and microsite link CRUD.
-- `src/app/actions/short-link-redirect.ts`: Short-link password and click tracking.
-- `src/lib/public-microsite.ts`: Public microsite DTO query.
-- `src/lib/microsite-access.ts`: Global viewer access helper.
+**Static Data / Registries:**
+- `src/lib/microsite-themes.ts`: Shared visual options and style mapping configurations.
 
-**Feature Pages:**
-- `src/app/dashboard/links/page.tsx`: Short-link list and creation page.
-- `src/app/dashboard/links/short-link-form.tsx`: Short-link creation client form.
-- `src/app/dashboard/links/short-link-list.tsx`: Short-link list client UI.
-- `src/app/dashboard/microsites/page.tsx`: Microsite list page.
-- `src/app/dashboard/microsites/new/page.tsx`: Microsite creation page.
-- `src/app/dashboard/microsites/[id]/page.tsx`: Microsite edit page bootstrap.
-- `src/app/dashboard/microsites/[id]/microsite-editor.tsx`: Microsite edit client UI.
-- `src/app/dashboard/analytics/page.tsx`: Analytics data aggregation page.
-- `src/app/dashboard/analytics/analytics-charts.tsx`: Analytics chart client UI.
-
-**API/Integration:**
-- `src/app/api/uploadthing/route.ts`: UploadThing handler.
-- `src/lib/uploadthing.ts`: UploadThing file router and auth middleware.
-- `src/lib/uploadthing-client.ts`: UploadThing client helpers.
-- `src/app/api/microsites/[slug]/route.ts`: Public microsite polling JSON.
-- `src/app/api/click/microsite-link/[linkId]/route.ts`: Microsite outbound click tracking redirect.
-
-**Testing:**
-- `test-prisma.cjs`: Standalone Prisma smoke/test script.
-- No `*.test.*` or `*.spec.*` files detected in app source during architecture scan.
-
-## Naming Conventions
-
-**Files:**
-- App Router route files use Next conventions: `page.tsx`, `layout.tsx`, `route.ts`.
-- Route-specific client components use kebab-case: `short-link-form.tsx`, `short-link-list.tsx`, `microsite-editor.tsx`, `analytics-charts.tsx`.
-- Shared components use kebab-case: `microsite-page-client.tsx`, `share-bar.tsx`, `cover-image-uploader.tsx`.
-- UI primitives use kebab-case: `dropdown-menu.tsx`, `button.tsx`, `textarea.tsx`.
-- Library modules use kebab-case or single noun: `public-microsite.ts`, `microsite-access.ts`, `prisma.ts`, `auth.ts`.
-- Dynamic route folders use bracket syntax: `[username]`, `[id]`, `[slug]`, `[linkId]`, `[...nextauth]`.
-
-**Directories:**
-- Feature routes live under route path directories: `src/app/dashboard/links`, `src/app/dashboard/microsites`, `src/app/dashboard/analytics`.
-- API routes mirror URL structure: `src/app/api/click/microsite-link/[linkId]`, `src/app/api/microsites/[slug]`.
-- Shared primitives live under `src/components/ui`.
-- Cross-cutting helpers live under `src/lib`.
-
-## Where to Add New Code
-
-**New Dashboard Feature:**
-- Primary route: `src/app/dashboard/<feature>/page.tsx`.
-- Feature client components: `src/app/dashboard/<feature>/<feature-component>.tsx`.
-- Shared components: `src/components/<component-name>.tsx` only if reused across features.
-- Mutations: `src/app/actions/<feature>.ts`.
-- Data helpers: `src/lib/<feature>.ts` when needed by multiple routes/actions.
-
-**New Public Route:**
-- Primary route: `src/app/<route>/page.tsx` for static route.
-- Dynamic route: `src/app/[param]/page.tsx` only if it belongs in global slug namespace.
-- Reserved slug list update: `src/app/actions/microsite.ts` when route competes with microsite slugs.
-
-**New API Endpoint:**
-- Implementation: `src/app/api/<resource>/route.ts`.
-- Dynamic resource endpoint: `src/app/api/<resource>/[id]/route.ts`.
-- Shared query code: `src/lib/<resource>.ts` when API and page both need same DTO.
-
-**New Database Model:**
-- Schema: `prisma/schema.prisma`.
-- Migration: `prisma/migrations/<timestamp>_<name>/migration.sql` via Prisma CLI.
-- Client regeneration: run `npx prisma generate` after schema change.
-- Data access: import `prisma` from `src/lib/prisma.ts`; do not instantiate new clients.
-
-**New Authenticated Mutation:**
-- Implementation: `src/app/actions/<domain>.ts`.
-- Pattern: call `getServerSession(authOptions)`, look up DB user by email, validate ownership, mutate Prisma, call `revalidatePath`.
-- Caller: client form component under route folder or shared component.
-
-**New UI Primitive:**
-- Implementation: `src/components/ui/<primitive>.tsx`.
-- Use for cross-feature primitives only; route-specific UI stays beside route under `src/app/dashboard/<feature>`.
-
-**Utilities:**
-- Shared helpers: `src/lib/utils.ts` for generic helpers.
-- Domain helpers: `src/lib/<domain>.ts` for reusable domain reads/policies.
-
-## Special Directories
-
-**`.next`:**
-- Purpose: Next.js build/dev output.
-- Generated: Yes.
-- Committed: No.
-
-**`node_modules`:**
-- Purpose: npm dependency install output.
-- Generated: Yes.
-- Committed: No.
-
-**`.agents`:**
-- Purpose: Agent skills, hooks, and settings for development workflows.
-- Generated: No; project tooling content.
-- Committed: Repository-specific; do not use for runtime app code.
-
-**`.planning`:**
-- Purpose: GSD planning and codebase map artifacts.
-- Generated: Yes.
-- Committed: Project planning docs.
-
-**`prisma/migrations`:**
-- Purpose: Database schema migration history.
-- Generated: By Prisma migration workflow.
-- Committed: Yes.
-
-**`public`:**
-- Purpose: Static web assets.
-- Generated: No.
-- Committed: Yes.
-
----
-
-*Structure analysis: 2026-06-26*
+**Custom Primitives:**
+- `src/components/modern-qr-code.tsx`: High-resolution rounded dot Canvas rendering logic.
+- `src/components/qr-code-dialog.tsx`: Popover frame supporting clipboard copy and image downloads.

@@ -1,6 +1,6 @@
 # Codebase Concerns
 
-**Analysis Date:** 2026-06-26
+**Analysis Date:** 2026-08-04
 
 ## Tech Debt
 
@@ -201,7 +201,3 @@
 - Files: `src/app/dashboard/analytics/page.tsx`, `src/app/dashboard/analytics/analytics-charts.tsx`
 - Risk: Dashboard can become slow or inaccurate as data grows.
 - Priority: Medium
-
----
-
-*Concerns audit: 2026-06-26*

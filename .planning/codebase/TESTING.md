@@ -1,6 +1,6 @@
 # Testing Patterns
 
-**Analysis Date:** 2026-06-26
+**Analysis Date:** 2026-08-04
 
 ## Test Framework
 
@@ -98,46 +98,5 @@ const shortLink = {
 
 ## Coverage
 
-**Requirements:** None enforced
-
-**View Coverage:**
-```bash
-# Not available: no coverage script configured in package.json
-```
-
-## Test Types
-
-**Unit Tests:**
-- Not used. Highest-value unit targets are pure/recoverable logic in `src/app/actions/short.ts`, `src/app/actions/microsite.ts`, `src/lib/auth.ts`, and `src/lib/utils.ts`.
-- Add tests for URL validation, alias uniqueness behavior, password hashing branch, reserved slug rejection, owner/global-viewer access checks, and result object shapes.
-
-**Integration Tests:**
-- Not used. Highest-value integration targets are Prisma-backed server actions and route handlers: `src/app/actions/short.ts`, `src/app/actions/microsite.ts`, `src/app/api/click/microsite-link/[linkId]/route.ts`, `src/app/api/microsites/[slug]/route.ts`.
-- Integration tests need isolated Postgres or transaction cleanup because runtime DB access goes through `src/lib/prisma.ts`.
-
-**E2E Tests:**
-- Not used. No Playwright/Cypress config detected.
-- Highest-value E2E flows: Google login redirect gate from `src/proxy.ts`, create short link in `src/app/dashboard/links/short-link-form.tsx`, delete/copy/QR actions in `src/app/dashboard/links/short-link-list.tsx`, public short-link resolution in `src/app/[username]/page.tsx`, microsite editor flow in `src/app/dashboard/microsites/[id]/microsite-editor.tsx`.
-
-## Common Patterns
-
-**Async Testing:**
-```typescript
-// No actual async test pattern exists.
-// Future tests should await server actions directly with real FormData:
-const formData = new FormData();
-formData.set("originalUrl", "https://example.com");
-const result = await createShortLink(formData);
-```
-
-**Error Testing:**
-```typescript
-// No actual error test pattern exists.
-// Future tests should cover both returned errors and thrown errors:
-// - `createShortLink()` returns `{ error: "Invalid URL provided." }` in `src/app/actions/short.ts`
-// - `createMicrosite()` throws `Error("Title is required")` in `src/app/actions/microsite.ts`
-```
-
----
-
-*Testing analysis: 2026-06-26*
+**Target:** Not applicable (no test runner is configured).
+**Requirements:** Future configurations should set coverage targets around core database transaction modules (mutations in `src/app/actions`) to protect against authorization bypasses and invalid data entries.
