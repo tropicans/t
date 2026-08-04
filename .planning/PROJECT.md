@@ -43,7 +43,15 @@ Microsite owners can create a more personalized public page and control link pri
 
 ### Active
 
-- None. All Phase 1, Phase 2, and Phase 3 requirements are validated.
+- DB-01: Resolving Prisma schema and migration drift for `Microsite.avatarImage`.
+- BUG-01: Checking `expiresAt` on password-protected redirects.
+- BUG-02: Checking `isActive` and `isPublished` on direct click redirects.
+- SEC-01: Standardizing middleware path routing by moving `proxy.ts` to `middleware.ts`.
+- SEC-02: Centralizing alias/slug validation to prevent namespace shadowing/collisions.
+- SEC-03: Enforcing URL protocol scheme validation to prevent open redirect abuse.
+- PERF-01: Adding database indexes on Click tables for analytics.
+- PERF-02: Parallelizing async count queries in the dashboard overview.
+- TEST-01: Setting up Vitest and writing unit tests for server actions.
 
 ### Out of Scope
 
@@ -100,4 +108,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-27 after v1.0 milestone completion*
+*Last updated: 2026-08-04 after starting v1.1 milestone*

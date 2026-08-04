@@ -1,0 +1,57 @@
+# Requirements: Perbaikan dan Optimasi (v1.1)
+
+**Defined:** 2026-08-04
+**Core Value:** Meningkatkan keandalan, keamanan, performa kueri dashboard, dan cakupan pengujian otomatis pada aplikasi Taut.
+
+## v1.1 Requirements
+
+### Bug Fixes & Schema Integrity (Phase 4)
+
+- [ ] **DB-01**: User/sistem dapat menjalankan kueri database dengan kolom `avatarImage` pada tabel `Microsite` tanpa kegagalan (mengatasi migrasi drift).
+- [ ] **BUG-01**: Sistem menolak pengalihan jika tautan yang dilindungi sandi telah kedaluwarsa (`expiresAt` terlewati) meskipun kata sandi yang dimasukkan benar.
+- [ ] **BUG-02**: Sistem menolak pengalihan langsung ke tautan microsite yang dinonaktifkan (`isActive = false`) atau berada pada microsite yang belum diterbitkan (`isPublished = false`).
+
+### Routing & Security Hardening (Phase 5)
+
+- [ ] **SEC-01**: Semua rute `/dashboard/:path*` dilindungi secara native oleh middleware Next.js dengan mengubah nama `src/proxy.ts` menjadi `src/middleware.ts`.
+- [ ] **SEC-02**: Sistem mencegah tabrakan nama rute (*shadowing*) dengan memvalidasi slug microsite dan alias kustom short link terhadap satu sama lain serta kata kunci yang dipesan (*reserved routes*).
+- [ ] **SEC-03**: Sistem memvalidasi URL tujuan pengalihan (hanya menerima protokol `http:` atau `https:`) untuk mencegah eksploitasi open redirect / URI tidak aman.
+
+### Performance Optimization & Testing (Phase 6)
+
+- [ ] **PERF-01**: Kueri analytics berjalan lebih cepat berkat adanya indeks database pada kolom pencarian tanggal dan ID klik.
+- [ ] **PERF-02**: Dashboard overview memuat data lebih cepat dengan memparalelkan penghitungan total klik short link dan microsite.
+- [ ] **TEST-01**: Tersedia automated testing suite menggunakan Vitest yang mencakup unit/integration test untuk server actions utama.
+
+### Verification
+
+- [ ] **VER-01**: `npm run lint` berhasil dilewati tanpa error.
+- [ ] **VER-02**: `npx tsc --noEmit` berhasil dilewati tanpa kesalahan kompilasi TypeScript.
+- [ ] **VER-03**: Automated tests (Vitest) berhasil dijalankan dan semua test case lulus (pass).
+
+## Traceability
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| DB-01       | Phase 4 | In Progress |
+| BUG-01      | Phase 4 | In Progress |
+| BUG-02      | Phase 4 | In Progress |
+| SEC-01      | Phase 5 | In Progress |
+| SEC-02      | Phase 5 | In Progress |
+| SEC-03      | Phase 5 | In Progress |
+| PERF-01     | Phase 6 | In Progress |
+| PERF-02     | Phase 6 | In Progress |
+| TEST-01     | Phase 6 | In Progress |
+| VER-01      | Phase 6 | In Progress |
+| VER-02      | Phase 6 | In Progress |
+| VER-03      | Phase 6 | In Progress |
+
+**Coverage:**
+
+- v1.1 requirements: 12 total
+- Mapped to phases: 12
+- Unmapped: 0 ✓
+
+---
+*Requirements defined: 2026-08-04*
+*Last updated: 2026-08-04*

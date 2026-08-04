@@ -2,6 +2,7 @@
 
 ## Milestones
 
+- [v1.1](milestones/v1.1-ROADMAP.md) — Perbaikan dan Optimasi (In Progress, 2026-08-04)
 - [v1.0](milestones/v1.0-ROADMAP.md) — Preset themes and link drag-and-drop ordering (Complete, 2026-06-27)
 
 ## Backlog
