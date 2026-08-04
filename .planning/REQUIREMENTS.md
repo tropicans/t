@@ -7,9 +7,9 @@
 
 ### Bug Fixes & Schema Integrity (Phase 4)
 
-- [ ] **DB-01**: User/sistem dapat menjalankan kueri database dengan kolom `avatarImage` pada tabel `Microsite` tanpa kegagalan (mengatasi migrasi drift).
-- [ ] **BUG-01**: Sistem menolak pengalihan jika tautan yang dilindungi sandi telah kedaluwarsa (`expiresAt` terlewati) meskipun kata sandi yang dimasukkan benar.
-- [ ] **BUG-02**: Sistem menolak pengalihan langsung ke tautan microsite yang dinonaktifkan (`isActive = false`) atau berada pada microsite yang belum diterbitkan (`isPublished = false`).
+- [x] **DB-01**: User/sistem dapat menjalankan kueri database dengan kolom `avatarImage` pada tabel `Microsite` tanpa kegagalan (mengatasi migrasi drift).
+- [x] **BUG-01**: Sistem menolak pengalihan jika tautan yang dilindungi sandi telah kedaluwarsa (`expiresAt` terlewati) meskipun kata sandi yang dimasukkan benar.
+- [x] **BUG-02**: Sistem menolak pengalihan langsung ke tautan microsite yang dinonaktifkan (`isActive = false`) atau berada pada microsite yang belum diterbitkan (`isPublished = false`).
 
 ### Routing & Security Hardening (Phase 5)
 
@@ -33,9 +33,9 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DB-01       | Phase 4 | In Progress |
-| BUG-01      | Phase 4 | In Progress |
-| BUG-02      | Phase 4 | In Progress |
+| DB-01       | Phase 4 | Complete |
+| BUG-01      | Phase 4 | Complete |
+| BUG-02      | Phase 4 | Complete |
 | SEC-01      | Phase 5 | In Progress |
 | SEC-02      | Phase 5 | In Progress |
 | SEC-03      | Phase 5 | In Progress |

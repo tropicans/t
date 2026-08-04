@@ -11,7 +11,7 @@ Roadmap ini fokus pada perbaikan bug database/redirect, pengerasan keamanan rout
 
 | Phase | Name | Goal | Requirements | UI hint |
 |-------|------|------|--------------|---------|
-| 4 | Bug Fixes & Schema Integrity | Menyelesaikan drift skema database dan memperbaiki celah logika pada rute pengalihan (redirect). | DB-01, BUG-01, BUG-02 | no |
+| 4 | Bug Fixes & Schema Integrity | 1/1 | Complete    | 2026-08-04 |
 | 5 | Routing & Security Hardening | Mengaktifkan native Next.js middleware, mencegah tabrakan namespace rute, dan memvalidasi skema URL tujuan. | SEC-01, SEC-02, SEC-03 | no |
 | 6 | Performance Optimization & Testing | Menambahkan indeks database untuk analytics, memparalelkan kueri dashboard, dan menyediakan unit testing suite (Vitest). | PERF-01, PERF-02, TEST-01, VER-01, VER-02, VER-03 | no |
 
@@ -97,7 +97,7 @@ Roadmap ini fokus pada perbaikan bug database/redirect, pengerasan keamanan rout
 **Goal:** [To be planned]
 **Requirements**: TBD
 **Depends on:** Phase 6
-**Plans:** 0 plans
+**Plans:** 1/1 plans complete
 
 Plans:
 

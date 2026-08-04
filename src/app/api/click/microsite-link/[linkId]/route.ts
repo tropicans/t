@@ -20,6 +20,14 @@ export async function GET(
         return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
+    if (!link.microsite || !link.microsite.isPublished) {
+        return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+
+    if (!link.isActive) {
+        return NextResponse.redirect(new URL("/" + link.microsite.slug, req.url));
+    }
+
     // Track click (fire & forget)
     try {
         const headersList = await headers();

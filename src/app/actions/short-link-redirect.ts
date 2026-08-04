@@ -37,6 +37,10 @@ export async function verifyPasswordAndRedirect(shortCode: string, formData: For
         redirect(`/${shortCode}?error=Invalid link`);
     }
 
+    if (link.expiresAt && link.expiresAt < new Date()) {
+        redirect(`/${shortCode}`);
+    }
+
     const isMatch = await bcrypt.compare(password, link.password);
 
     if (!isMatch) {
