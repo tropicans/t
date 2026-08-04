@@ -94,9 +94,34 @@ export default async function SlugPage({ params, searchParams }: Props) {
         // Track the initial page view only; client-side polling updates content separately.
         const h = await headers();
         const userAgent = h.get("user-agent") || "unknown";
-        const country = h.get("x-vercel-ip-country") || "unknown";
-        prisma.micrositeClick.create({
-            data: { micrositeId: microsite.id, userAgent, country },
+        const ip = h.get("x-forwarded-for")?.split(",")[0] || 
+                   h.get("x-real-ip") || 
+                   "";
+        
+        const cfCountry = h.get("cf-ipcountry");
+        const vercelCountry = h.get("x-vercel-ip-country");
+        const cfViewerCountry = h.get("cloudfront-viewer-country");
+
+        Promise.resolve().then(async () => {
+            let country = cfCountry || vercelCountry || cfViewerCountry || "unknown";
+
+            if (country === "unknown" && ip && ip !== "127.0.0.1" && ip !== "::1" && !ip.startsWith("192.168.") && !ip.startsWith("10.")) {
+                try {
+                    const res = await fetch(`http://ip-api.com/json/${ip}?fields=countryCode`, {
+                        signal: AbortSignal.timeout(2000),
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data.countryCode) {
+                            country = data.countryCode;
+                        }
+                    }
+                } catch {}
+            }
+
+            await prisma.micrositeClick.create({
+                data: { micrositeId: microsite.id, userAgent, country },
+            });
         }).catch(() => { });
 
         return (

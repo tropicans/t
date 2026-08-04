@@ -10,14 +10,40 @@ export async function trackShortLinkClick(link: ShortLink) {
     try {
         const headersList = await headers();
         const userAgent = headersList.get("user-agent") || "unknown";
-        const country = headersList.get("x-vercel-ip-country") || "unknown";
+        const ip = headersList.get("x-forwarded-for")?.split(",")[0] || 
+                   headersList.get("x-real-ip") || 
+                   "";
+        
+        const cfCountry = headersList.get("cf-ipcountry");
+        const vercelCountry = headersList.get("x-vercel-ip-country");
+        const cfViewerCountry = headersList.get("cloudfront-viewer-country");
 
-        await prisma.shortLinkClick.create({
-            data: {
-                shortLinkId: link.id,
-                userAgent,
-                country,
-            },
+        Promise.resolve().then(async () => {
+            let country = cfCountry || vercelCountry || cfViewerCountry || "unknown";
+
+            if (country === "unknown" && ip && ip !== "127.0.0.1" && ip !== "::1" && !ip.startsWith("192.168.") && !ip.startsWith("10.")) {
+                try {
+                    const res = await fetch(`http://ip-api.com/json/${ip}?fields=countryCode`, {
+                        signal: AbortSignal.timeout(2000),
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data.countryCode) {
+                            country = data.countryCode;
+                        }
+                    }
+                } catch {}
+            }
+
+            await prisma.shortLinkClick.create({
+                data: {
+                    shortLinkId: link.id,
+                    userAgent,
+                    country,
+                },
+            });
+        }).catch(err => {
+            console.error("Background short link track failed:", err);
         });
     } catch (error) {
         console.error("Failed to track short link click", error);

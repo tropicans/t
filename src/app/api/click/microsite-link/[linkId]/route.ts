@@ -28,18 +28,49 @@ export async function GET(
         return NextResponse.redirect(new URL("/" + link.microsite.slug, req.url));
     }
 
-    // Track click (fire & forget)
+    // Track click (fire & forget in background)
     try {
         const headersList = await headers();
-        await prisma.micrositeClick.create({
-            data: {
-                micrositeId: link.micrositeId,
-                linkId: link.id,
-                userAgent: headersList.get("user-agent") || "unknown",
-                country: headersList.get("x-vercel-ip-country") || "unknown",
-            },
+        const userAgent = headersList.get("user-agent") || "unknown";
+        const ip = headersList.get("x-forwarded-for")?.split(",")[0] || 
+                   headersList.get("x-real-ip") || 
+                   "";
+        
+        const cfCountry = headersList.get("cf-ipcountry");
+        const vercelCountry = headersList.get("x-vercel-ip-country");
+        const cfViewerCountry = headersList.get("cloudfront-viewer-country");
+
+        Promise.resolve().then(async () => {
+            let country = cfCountry || vercelCountry || cfViewerCountry || "unknown";
+
+            if (country === "unknown" && ip && ip !== "127.0.0.1" && ip !== "::1" && !ip.startsWith("192.168.") && !ip.startsWith("10.")) {
+                try {
+                    const res = await fetch(`http://ip-api.com/json/${ip}?fields=countryCode`, {
+                        signal: AbortSignal.timeout(2000),
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data.countryCode) {
+                            country = data.countryCode;
+                        }
+                    }
+                } catch {}
+            }
+
+            await prisma.micrositeClick.create({
+                data: {
+                    micrositeId: link.micrositeId,
+                    linkId: link.id,
+                    userAgent,
+                    country,
+                },
+            });
+        }).catch(err => {
+            console.error("Background microsite click track failed:", err);
         });
-    } catch { }
+    } catch (error) {
+        console.error("Failed to track microsite click", error);
+    }
 
     return NextResponse.redirect(link.url);
 }
