@@ -39,7 +39,7 @@
 **Goal:** Memungkinkan pengguna untuk mengedit slug URL microsite mereka secara aman dengan validasi collision dan revalidatePath.
 **Requirements:** SLUG-01, SLUG-02, SLUG-03, SLUG-04, SLUG-05
 **Depends on:** Phase 6
-- [ ] 07-01: Implementasi field input slug di dashboard editor UI, pembaruan server action updateMicrosite, dan penulisan unit tests.
+- [x] 07-01: Implementasi field input slug di dashboard editor UI, pembaruan server action updateMicrosite, dan penulisan unit tests.
 
 ---
 *Roadmap updated: 2026-08-04*

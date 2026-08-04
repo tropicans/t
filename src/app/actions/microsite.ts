@@ -76,6 +76,13 @@ export async function updateMicrosite(id: string, formData: FormData) {
     const access = await getCurrentUserAccess();
     const microsite = await getEditableMicrosite(id, access);
 
+    const oldSlug = microsite.slug;
+    let slug = oldSlug;
+    if (formData.has("slug")) {
+        const slugRaw = formData.get("slug") as string;
+        slug = await validateSlugCollision(slugRaw, id, true);
+    }
+
     const title = formData.has("title") ? (formData.get("title") as string)?.trim() : microsite.title;
     const description = formData.has("description") ? ((formData.get("description") as string)?.trim() || null) : microsite.description;
     const theme = formData.has("theme") ? normalizeMicrositeTheme(formData.get("theme")) : microsite.theme;
@@ -85,10 +92,13 @@ export async function updateMicrosite(id: string, formData: FormData) {
 
     const updated = await prisma.microsite.update({
         where: { id },
-        data: { title, description, theme, isPublished, coverImage, avatarImage },
+        data: { slug, title, description, theme, isPublished, coverImage, avatarImage },
     });
 
     revalidatePath(`/dashboard/microsites/${id}`);
+    if (oldSlug !== updated.slug) {
+        revalidatePath(`/${oldSlug}`);
+    }
     revalidatePath(`/${updated.slug}`);
     return { success: true, microsite: updated };
 }

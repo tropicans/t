@@ -9,11 +9,11 @@ Requirements for milestone v1.2 (Edit Link Microsite). Each maps to roadmap phas
 
 ### Edit Slug
 
-- [ ] **SLUG-01**: User can edit their microsite slug via the information form in the dashboard editor.
-- [ ] **SLUG-02**: Editing the slug must validate against collision with reserved routes and short-link codes.
-- [ ] **SLUG-03**: Server action `updateMicrosite` must handle slug validation and database updates.
-- [ ] **SLUG-04**: Changing the slug triggers path revalidation for both the old and new URLs.
-- [ ] **SLUG-05**: Write Vitest unit tests to verify slug updates, collision rejections, and validation outcomes.
+- [x] **SLUG-01**: User can edit their microsite slug via the information form in the dashboard editor.
+- [x] **SLUG-02**: Editing the slug must validate against collision with reserved routes and short-link codes.
+- [x] **SLUG-03**: Server action `updateMicrosite` must handle slug validation and database updates.
+- [x] **SLUG-04**: Changing the slug triggers path revalidation for both the old and new URLs.
+- [x] **SLUG-05**: Write Vitest unit tests to verify slug updates, collision rejections, and validation outcomes.
 
 ## v2 Requirements
 
@@ -35,15 +35,15 @@ Explicitly excluded. Documented to prevent scope creep.
 
 ## Traceability
 
-Which phases cover which requirements. Updated during roadmap creation.
+Traceability matrix mapping requirements to phases.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SLUG-01 | Phase 7 | Pending |
-| SLUG-02 | Phase 7 | Pending |
-| SLUG-03 | Phase 7 | Pending |
-| SLUG-04 | Phase 7 | Pending |
-| SLUG-05 | Phase 7 | Pending |
+| SLUG-01 | Phase 7 | Complete |
+| SLUG-02 | Phase 7 | Complete |
+| SLUG-03 | Phase 7 | Complete |
+| SLUG-04 | Phase 7 | Complete |
+| SLUG-05 | Phase 7 | Complete |
 
 **Coverage:**
 - v1 requirements: 5 total

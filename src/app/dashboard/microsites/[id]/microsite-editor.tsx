@@ -81,6 +81,35 @@ export function MicrositeEditor({ microsite }: { microsite: MicrositeWithLinks }
     const [coverImageUrl, setCoverImageUrl] = useState(microsite.coverImage || "");
     const [avatarImageUrl, setAvatarImageUrl] = useState(microsite.avatarImage || "");
 
+    const [slugValue, setSlugValue] = useState(microsite.slug);
+    const [domainPrefix, setDomainPrefix] = useState("/");
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            setDomainPrefix(`${window.location.host}/`);
+        }
+    }, []);
+
+    // Sync slugValue when props update
+    useEffect(() => {
+        setSlugValue(microsite.slug);
+    }, [microsite.slug]);
+
+    const cleanClientSlug = (val: string) => {
+        return val
+            .toLowerCase()
+            .replace(/[^a-z0-9-]/g, "-")
+            .replace(/-+/g, "-");
+    };
+
+    const handleSlugChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSlugValue(cleanClientSlug(e.target.value));
+    };
+
+    const handleSlugBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+        setSlugValue((prev) => prev.replace(/^-|-$/g, ""));
+    };
+
     // --- Links ordering state ---
     const [linksState, setLinksState] = useState(microsite.links);
     const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
@@ -380,6 +409,22 @@ export function MicrositeEditor({ microsite }: { microsite: MicrositeWithLinks }
                             <Label className="text-zinc-300">Judul</Label>
                             <Input name="title" defaultValue={microsite.title} required
                                 className="bg-zinc-950 border-zinc-800 text-white" />
+                        </div>
+                        <div className="space-y-2">
+                            <Label className="text-zinc-300">Slug URL</Label>
+                            <div className="flex items-center rounded-md bg-zinc-950 border border-zinc-800 focus-within:ring-1 focus-within:ring-ring focus-within:border-zinc-700">
+                                <span className="bg-zinc-900/50 text-zinc-400 px-3 py-2 text-sm rounded-l-md border-r border-zinc-800 select-none font-mono">
+                                    {domainPrefix}
+                                </span>
+                                <Input
+                                    name="slug"
+                                    value={slugValue}
+                                    onChange={handleSlugChange}
+                                    onBlur={handleSlugBlur}
+                                    required
+                                    className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-white rounded-r-md"
+                                />
+                            </div>
                         </div>
                         <div className="space-y-2">
                             <Label className="text-zinc-300">Deskripsi</Label>
