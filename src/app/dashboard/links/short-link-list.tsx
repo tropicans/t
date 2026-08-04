@@ -98,7 +98,8 @@ export function ShortLinkList({ initialLinks, viewerUserId, canViewAllLinks }: S
 
                                 <QrCodeDialog
                                     url={fullShortUrl}
-                                    title={link.originalUrl}
+                                    title={`/${link.shortCode}`}
+                                    subtitle={link.originalUrl}
                                     downloadFilename={`qrcode-${link.shortCode}`}
                                     dialogTitle="QR Code Link"
                                     variant="icon"

@@ -19,6 +19,7 @@ interface QrCodeDialogProps {
     dialogTitle?: string;
     variant?: "icon" | "button";
     trigger?: React.ReactNode;
+    subtitle?: string;
 }
 
 export function QrCodeDialog({
@@ -28,6 +29,7 @@ export function QrCodeDialog({
     dialogTitle = "QR Code",
     variant = "icon",
     trigger,
+    subtitle,
 }: QrCodeDialogProps) {
     const [copied, setCopied] = useState(false);
     
@@ -132,6 +134,11 @@ export function QrCodeDialog({
                         <p className="text-xs text-zinc-400 break-all select-all font-mono max-w-full px-4 text-center">
                             {url}
                         </p>
+                        {subtitle && (
+                            <p className="text-[10px] text-zinc-500 truncate max-w-full px-4 text-center mt-1" title={subtitle}>
+                                Tujuan: {subtitle}
+                            </p>
+                        )}
                     </div>
 
                     {/* Actions */}
