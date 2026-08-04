@@ -21,12 +21,12 @@
 - `ALLOWED_EMAILS` is an optional comma-separated allowlist for Google sign-in.
 
 ## Routing
-- Auth protection lives in `src/proxy.ts`, not `middleware.ts`, and only matches `/dashboard/:path*`.
+- Auth protection lives in `src/middleware.ts`, and only matches `/dashboard/:path*`.
 - `/` always redirects to `/dashboard`; there is no landing page.
 - `src/app/[username]/page.tsx` is the public entrypoint for both short links and microsites.
 - Resolution order in `[username]` is `ShortLink.shortCode` first, `Microsite.slug` second. If both use the same string, the short link wins.
-- When adding public routes, update the reserved microsite slug list in `src/app/actions/microsite.ts`.
-- Short-link custom aliases are only checked against existing short links. They are not validated against reserved routes or microsite slugs.
+- When adding public routes, update the reserved route list in `src/lib/validators.ts`.
+- Short-link custom aliases and microsite slugs are checked against reserved routes and each other to prevent collision and shadowing.
 
 ## Uploads And Deploy
 - UploadThing is wired through `src/lib/uploadthing.ts` and `src/app/api/uploadthing/route.ts`; uploads require an authenticated session.

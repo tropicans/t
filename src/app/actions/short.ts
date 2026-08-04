@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcrypt";
 import { nanoid } from "nanoid";
+import { validateAndCorrectUrl, validateSlugCollision } from "@/lib/validators";
 
 // Helper: get DB user from session email (reliable across hot reloads)
 async function getCurrentUser() {
@@ -28,32 +29,38 @@ export async function createShortLink(formData: FormData) {
     const user = await getCurrentUser();
     if (!user) return { error: "Unauthorized" };
 
-    const originalUrl = formData.get("originalUrl") as string;
+    const originalUrlRaw = formData.get("originalUrl") as string;
     const customAlias = formData.get("customAlias") as string;
     const rawPassword = formData.get("password") as string;
 
-    if (!originalUrl) return { error: "Original URL is required" };
+    if (!originalUrlRaw) return { error: "Original URL is required" };
 
+    let originalUrl: string;
     try {
-        new URL(originalUrl);
-    } catch {
-        return { error: "Invalid URL provided." };
+        originalUrl = validateAndCorrectUrl(originalUrlRaw);
+    } catch (error) {
+        return { error: error instanceof Error ? error.message : "Invalid URL provided." };
     }
 
     try {
         let shortCode = customAlias;
 
         if (customAlias) {
-            const existing = await prisma.shortLink.findUnique({
-                where: { shortCode: customAlias },
-            });
-            if (existing) return { error: "Custom alias is already in use." };
+            try {
+                shortCode = await validateSlugCollision(customAlias, undefined, false);
+            } catch (error) {
+                return { error: error instanceof Error ? error.message : "Validation failed." };
+            }
         } else {
             let isUnique = false;
             while (!isUnique) {
                 shortCode = nanoid(7);
-                const existing = await prisma.shortLink.findUnique({ where: { shortCode } });
-                if (!existing) isUnique = true;
+                try {
+                    await validateSlugCollision(shortCode, undefined, false);
+                    isUnique = true;
+                } catch {
+                    // Regenerate if collision exists
+                }
             }
         }
 

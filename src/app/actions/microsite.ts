@@ -6,6 +6,7 @@ import { isGlobalDashboardViewer } from "@/lib/microsite-access";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { normalizeMicrositeTheme } from "@/lib/microsite-themes";
+import { validateAndCorrectUrl, validateSlugCollision } from "@/lib/validators";
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
@@ -49,21 +50,12 @@ async function getEditableMicrositeLink(linkId: string, access: CurrentUserAcces
     return link;
 }
 
-function validateSlug(slug: string): string {
-    const clean = slug.toLowerCase().replace(/[^a-z0-9-]/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
-    if (!clean || clean.length < 2) throw new Error("Slug must be at least 2 characters");
-    if (clean.length > 60) throw new Error("Slug must be under 60 characters");
-    // Reserved routes
-    const reserved = ["dashboard", "login", "api", "l", "_next", "favicon.ico"];
-    if (reserved.includes(clean)) throw new Error(`"${clean}" is a reserved slug`);
-    return clean;
-}
-
 // ── Microsite CRUD ─────────────────────────────────────────────────────────────
 
 export async function createMicrosite(formData: FormData) {
     const { userId } = await getCurrentUserAccess();
-    const slug = validateSlug(formData.get("slug") as string);
+    const slugRaw = formData.get("slug") as string;
+    const slug = await validateSlugCollision(slugRaw, undefined, true);
     const title = (formData.get("title") as string)?.trim();
     const description = (formData.get("description") as string)?.trim() || null;
     const theme = normalizeMicrositeTheme(formData.get("theme"));
@@ -71,9 +63,6 @@ export async function createMicrosite(formData: FormData) {
     const avatarImage = (formData.get("avatarImage") as string)?.trim() || null;
 
     if (!title) throw new Error("Title is required");
-
-    const existing = await prisma.microsite.findUnique({ where: { slug } });
-    if (existing) throw new Error(`The slug "${slug}" is already taken`);
 
     const microsite = await prisma.microsite.create({
         data: { slug, title, description, theme, userId, coverImage, avatarImage },
@@ -120,8 +109,11 @@ export async function createMicrositeLink(micrositeId: string, formData: FormDat
     await getEditableMicrosite(micrositeId, access);
 
     const title = (formData.get("title") as string)?.trim();
-    const url = (formData.get("url") as string)?.trim();
+    const urlRaw = (formData.get("url") as string)?.trim();
     const icon = (formData.get("icon") as string)?.trim() || null;
+
+    if (!urlRaw) throw new Error("URL is required");
+    const url = validateAndCorrectUrl(urlRaw);
 
     // Get current max order
     const maxOrder = await prisma.micrositeLink.aggregate({
@@ -142,9 +134,12 @@ export async function updateMicrositeLink(linkId: string, formData: FormData) {
     const link = await getEditableMicrositeLink(linkId, access);
 
     const title = (formData.get("title") as string)?.trim();
-    const url = (formData.get("url") as string)?.trim();
+    const urlRaw = (formData.get("url") as string)?.trim();
     const icon = (formData.get("icon") as string)?.trim() || null;
     const isActive = formData.get("isActive") !== "false";
+
+    if (!urlRaw) throw new Error("URL is required");
+    const url = validateAndCorrectUrl(urlRaw);
 
     const updated = await prisma.micrositeLink.update({
         where: { id: linkId },
