@@ -2,21 +2,22 @@
 
 ## What This Is
 
-Taut is a Next.js URL shortener and link-in-bio product. This project has completed its first milestone (v1.0): expanding microsite visual theme choices (7 presets) and letting dashboard users reorder microsite links by drag-and-drop or keyboard chevrons.
+Taut is a Next.js URL shortener and link-in-bio product. This project has completed its first two milestones: expanding microsite visual theme choices and drag-and-drop link ordering (v1.0), and implementing database index optimizations, dashboard query parallelization, routing security hardening, and an automated testing suite (v1.1).
 
 ## Core Value
 
-Microsite owners can create a more personalized public page and control link priority without fighting manual editing order.
+Microsite owners can create a more personalized public page, control link priority, and experience fast, secure dashboard routing and analytics performance.
 
 ## Business Context
 
 - **Customer**: Authenticated Taut users who publish public microsites.
 - **Revenue model**: Product value/retention for existing short-link and microsite users; monetization model not defined in repository.
-- **Success metric**: Users can choose from more microsite themes and reorder links reliably, with public microsites reflecting the saved order.
+- **Success metric**: Fast dashboard loading speed, secure route access checks, collision-free short codes and slugs, and high codebase reliability verified by automated test suites.
 
 ## Current State
 
 - Shipped **v1.0** milestone delivering preset themes, drag-and-drop link ordering, Indonesian accessibility announcements/restoration, and mobile double-row responsive layout.
+- Shipped **v1.1** milestone delivering clicks database indexing, query parallelization using Promise.all, Next.js middleware protection migration, central route collision checks, protocol scheme validation, and a Vitest automated unit testing suite.
 
 ## Requirements
 
@@ -40,18 +41,19 @@ Microsite owners can create a more personalized public page and control link pri
 - ✓ Link reordering remains usable with keyboard/accessible Indonesian chevrons and focus restoration — v1.0.
 - ✓ Reorder UI provides clear visual drag lines and transient green save indicators — v1.0.
 - ✓ Theme and ordering changes do not break responsive public microsite layout on mobile and desktop — v1.0.
+- ✓ DB-01: Resolving Prisma schema and migration drift for `Microsite.avatarImage` — v1.1.
+- ✓ BUG-01: Checking `expiresAt` on password-protected redirects — v1.1.
+- ✓ BUG-02: Checking `isActive` and `isPublished` on direct click redirects — v1.1.
+- ✓ SEC-01: Standardizing middleware path routing by moving `proxy.ts` to `middleware.ts` — v1.1.
+- ✓ SEC-02: Centralizing alias/slug validation to prevent namespace shadowing/collisions — v1.1.
+- ✓ SEC-03: Enforcing URL protocol scheme validation to prevent open redirect abuse — v1.1.
+- ✓ PERF-01: Adding database indexes on Click tables for analytics — v1.1.
+- ✓ PERF-02: Parallelizing async count queries in the dashboard overview and analytics — v1.1.
+- ✓ TEST-01: Setting up Vitest and writing unit tests for server actions — v1.1.
 
 ### Active
 
-- DB-01: Resolving Prisma schema and migration drift for `Microsite.avatarImage`.
-- BUG-01: Checking `expiresAt` on password-protected redirects.
-- BUG-02: Checking `isActive` and `isPublished` on direct click redirects.
-- SEC-01: Standardizing middleware path routing by moving `proxy.ts` to `middleware.ts`.
-- SEC-02: Centralizing alias/slug validation to prevent namespace shadowing/collisions.
-- SEC-03: Enforcing URL protocol scheme validation to prevent open redirect abuse.
-- PERF-01: Adding database indexes on Click tables for analytics.
-- PERF-02: Parallelizing async count queries in the dashboard overview.
-- TEST-01: Setting up Vitest and writing unit tests for server actions.
+- [ ] TBD (run /gsd-new-milestone to define requirements for next milestone)
 
 ### Out of Scope
 
@@ -64,6 +66,9 @@ Microsite owners can create a more personalized public page and control link pri
 
 - Codebase is a Next.js 16 App Router monolith with React 19, Prisma 7, PostgreSQL, Tailwind CSS v4, shadcn/Radix UI, and server actions.
 - Theme presets registry is centralized in `src/lib/microsite-themes.ts`.
+- Centralized validation rules for URL syntax, loopback checks, and route collisions live in `src/lib/validators.ts`.
+- Next.js native middleware protection is handled via `src/middleware.ts`.
+- Vitest automated tests are co-located alongside target server actions (`src/app/actions/*.test.ts`) and configured in `vitest.config.ts`.
 - Microsite mutations live in `src/app/actions/microsite.ts` (with ownership validations and atomic transactions for reordering).
 - Public microsite data loading lives in `src/lib/public-microsite.ts`.
 - Microsite editor UI lives in `src/app/dashboard/microsites/[id]/microsite-editor.tsx` (implements HTML5 drag/drop, keyboard move actions, ARIA live region announcements, and focus restoration).
@@ -74,7 +79,7 @@ Microsite owners can create a more personalized public page and control link pri
 - **Tech stack**: Use existing Next.js App Router, React, Prisma, Tailwind, and shadcn/Radix patterns — avoid new framework choices.
 - **Data integrity**: Preserve ownership and global viewer access checks in microsite actions.
 - **Routing**: Keep `/:username` resolution order: short link first, microsite second.
-- **Verification**: Use `npm run lint`; use `npx tsc --noEmit` for TypeScript changes because repo has no test script.
+- **Verification**: Use `npm run lint`; use `npm run test` for automated Vitest unit testing, and `npx tsc --noEmit` for TypeScript compilation checks.
 - **Database**: If `prisma/schema.prisma` changes, run `npx prisma generate` and consider migration drift.
 
 ## Key Decisions
@@ -89,6 +94,12 @@ Microsite owners can create a more personalized public page and control link pri
 | Chevrons keyboard reordering | Provides screen-reader accessibility and keyboard-only fallbacks. | ✓ Completed |
 | Indonesian ARIA live region | Speaks reorder action start and success announcements in the user's language. | ✓ Completed |
 | Optimistic reordering updates | Updates client state instantly on drag/drop or chevron click with automatic transactional persist. | ✓ Completed |
+| Native Next.js middleware protection | Moving protected checks to `src/middleware.ts` allows native route control in Next.js. | ✓ Completed (v1.1) |
+| Centralized namespace validators | Checking custom aliases and slugs in `src/lib/validators.ts` prevents route collision/shadowing. | ✓ Completed (v1.1) |
+| Scheme and protocol auto-correction | Enforcing http/https and auto-prepending protocol improves UX and prevents redirects to data/javascript URIs. | ✓ Completed (v1.1) |
+| Database Indexing for clicks | Adding indices to `ShortLinkClick` and `MicrositeClick` accelerates analytics queries. | ✓ Completed (v1.1) |
+| Dashboards query parallelization | Utilizing Promise.all reduces query roundtrip latencies for loading dashboards. | ✓ Completed (v1.1) |
+| Vitest automated test suite | Co-located unit/integration tests with mocked prisma/sessions validates server actions regression-free. | ✓ Completed (v1.1) |
 
 ## Evolution
 
@@ -108,4 +119,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-08-04 after starting v1.1 milestone*
+*Last updated: 2026-08-04 after completing v1.1 milestone*

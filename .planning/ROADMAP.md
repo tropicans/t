@@ -1,107 +1,45 @@
-# Roadmap: Perbaikan dan Optimasi (v1.1)
+# Roadmap: Taut Microsite Enhancements
 
-**Created:** 2026-08-04
-**Project:** Taut Microsite Enhancements
-**Mode:** Fixes & Optimizations
-**Granularity:** Coarse
+## Milestones
 
-## Summary
-
-Roadmap ini fokus pada perbaikan bug database/redirect, pengerasan keamanan routing, optimasi kueri analytics/dashboard, dan implementasi automated testing suite.
-
-| Phase | Name | Goal | Requirements | UI hint |
-|-------|------|------|--------------|---------|
-| 4 | Bug Fixes & Schema Integrity | 1/1 | Complete    | 2026-08-04 |
-| 5 | Routing & Security Hardening | Mengaktifkan native Next.js middleware, mencegah tabrakan namespace rute, dan memvalidasi skema URL tujuan. | SEC-01, SEC-02, SEC-03 | no |
-| 6 | Performance Optimization & Testing | Menambahkan indeks database untuk analytics, memparalelkan kueri dashboard, dan menyediakan unit testing suite (Vitest). | PERF-01, PERF-02, TEST-01, VER-01, VER-02, VER-03 | no |
+- ✅ **v1.0 Theme & Ordering MVP** — Phases 1-3 (shipped 2026-06-27)
+- ✅ **v1.1 Perbaikan dan Optimasi** — Phases 4-6 (shipped 2026-08-04)
+- 📋 **v2.0 TBD** — Phase 7 (planned)
 
 ## Phases
 
+<details>
+<summary>✅ Shipped Milestones (Phases 1-6)</summary>
+
+### Phase 1: Microsite Theme Variants
+- [x] Preset themes registry & Selection UI (2 plans) — completed 2026-06-27
+
+### Phase 2: Drag and Drop Link Ordering
+- [x] Link drag & drop reordering & persistence (1 plan) — completed 2026-06-27
+
+### Phase 3: Accessibility and Verification Hardening
+- [x] Chevron-based reordering, ARIA announcements & mobile layouts (1 plan) — completed 2026-06-27
+
 ### Phase 4: Bug Fixes & Schema Integrity
-
-**Goal:** Menyelesaikan drift skema database dan memperbaiki celah logika pada rute pengalihan (redirect).
-**Requirements:** DB-01, BUG-01, BUG-02
-**UI hint:** no
-**Status:** Complete
-
-**Success Criteria**:
-
-1. Migrasi Prisma berhasil ditambahkan untuk menyertakan `avatarImage` ke tabel `Microsite` agar sesuai dengan skema aktif.
-2. Fungsi `verifyPasswordAndRedirect` memeriksa `expiresAt` sebelum verifikasi password dan redirect.
-3. API pengalihan klik tautan microsite `/api/click/microsite-link/[linkId]` memfilter tautan berdasarkan status aktif (`isActive: true`) dan status publikasi microsite (`isPublished: true`).
-
-**Canonical refs:**
-
-- `.planning/PROJECT.md` — project scope.
-- `.planning/REQUIREMENTS.md` — v1.1 requirements.
-- `.planning/codebase/CONCERNS.md` — schema drift and redirect bugs documentation.
+- [x] prisma/schema.prisma migration for avatarImage, expiresAt validations & published status checks (1 plan) — completed 2026-08-04
 
 ### Phase 5: Routing & Security Hardening
-
-**Goal:** Mengaktifkan native Next.js middleware, mencegah tabrakan namespace rute, dan memvalidasi skema URL tujuan.
-**Requirements:** SEC-01, SEC-02, SEC-03
-**UI hint:** no
-**Status:** Complete
-
-**Success Criteria**:
-
-1. Berkas proteksi rute `src/proxy.ts` dipindahkan ke `src/middleware.ts` sehingga berjalan secara native di Next.js.
-2. Fungsi validasi alias/slug diperluas untuk memastikan tabrakan antara slug microsite dan alias kustom short link tidak terjadi.
-3. Input URL tujuan divalidasi skema/protokolnya (hanya `http:` dan `https:`) sebelum disimpan untuk mencegah open redirect tak aman.
-
-**Canonical refs:**
-
-- `.planning/REQUIREMENTS.md` — v1.1 security requirements.
-- `AGENTS.md` — middleware routing instructions.
+- [x] src/middleware.ts native protection, route collision validators & URL scheme parsing (1 plan) — completed 2026-08-04
 
 ### Phase 6: Performance Optimization & Testing
+- [x] clicks database indexes, query parallelization & Vitest integration (1 plan) — completed 2026-08-04
 
-**Goal:** Menambahkan indeks database untuk analytics, memparalelkan kueri dashboard, dan menyediakan unit testing suite (Vitest).
-**Requirements:** PERF-01, PERF-02, TEST-01, VER-01, VER-02, VER-03
-**UI hint:** no
-**Status:** Complete
-
-**Success Criteria**:
-
-1. Indeks database ditambahkan pada tabel `ShortLinkClick` dan `MicrositeClick` untuk kolom filter kueri analytics.
-2. Kueri overview dashboard di `src/app/dashboard/page.tsx` dijalankan secara paralel menggunakan `Promise.all`.
-3. Vitest terintegrasi dalam repositori dengan test cases pertama yang memvalidasi server actions utama (seperti pembuatan/pengalihan link).
-4. `npm run lint` dan `npx tsc --noEmit` lulus verifikasi tanpa error.
-
-**Canonical refs:**
-
-- `.planning/codebase/TESTING.md` — testing conventions.
-- `.planning/codebase/CONCERNS.md` — performance bottlenecks.
-
-## Requirement Coverage
-
-| Requirement | Phase |
-|-------------|-------|
-| DB-01       | Phase 4 |
-| BUG-01      | Phase 4 |
-| BUG-02      | Phase 4 |
-| SEC-01      | Phase 5 |
-| SEC-02      | Phase 5 |
-| SEC-03      | Phase 5 |
-| PERF-01     | Phase 6 |
-| PERF-02     | Phase 6 |
-| TEST-01     | Phase 6 |
-| VER-01      | Phase 6 |
-| VER-02      | Phase 6 |
-| VER-03      | Phase 6 |
-
-**Coverage:** 12/12 requirements mapped.
-
-### Phase 7: Bug Fixes & Schema Integrity
-
-**Goal:** [To be planned]
-**Requirements**: TBD
-**Depends on:** Phase 6
-**Plans:** 1/1 plans complete
-
-Plans:
-
-- [ ] TBD (run /gsd-plan-phase 7 to break down)
+</details>
 
 ---
-*Roadmap created: 2026-08-04*
+
+### 📋 v2.0 TBD (Planned)
+
+#### Phase 7: Next Enhancements
+**Goal:** [To be planned]
+**Requirements:** TBD
+**Depends on:** Phase 6
+- [ ] TBD (run `/gsd-plan-phase 7` to break down)
+
+---
+*Roadmap updated: 2026-08-04*
