@@ -8,6 +8,11 @@ requirements:
   - AUTH-01
   - AUTH-02
   - TEST-01
+requirements-completed:
+  - INV-03
+  - AUTH-01
+  - AUTH-02
+  - TEST-01
 ---
 
 # Summary 14-01: Public Invitation Landing Page & NextAuth Integration

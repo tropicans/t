@@ -7,6 +7,10 @@ requirements:
   - INV-01
   - INV-02
   - TEST-01
+requirements-completed:
+  - INV-01
+  - INV-02
+  - TEST-01
 ---
 
 # Summary 13-01: Invitation Data Model, Migration & Validation Engine
