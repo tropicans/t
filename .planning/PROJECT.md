@@ -2,18 +2,11 @@
 
 ## What This Is
 
-Taut is a Next.js URL shortener and link-in-bio product. This project has completed its first two milestones: expanding microsite visual theme choices and drag-and-drop link ordering (v1.0), and implementing database index optimizations, dashboard query parallelization, routing security hardening, and an automated testing suite (v1.1).
+Taut is a Next.js URL shortener and link-in-bio product featuring Claude's warm terracotta editorial design system. The project has shipped four milestones: microsite visual theme variants and drag-and-drop link ordering (v1.0), database performance indexing, routing security, and automated testing (v1.1), microsite slug editing (v1.2), and Claude editorial design system integration (v1.3).
 
-## Current Milestone: v1.3 Claude Design System Integration
+## Next Milestone Goals
 
-**Goal:** Integrasikan tool dan repositori `awesome-design-md` / `getdesign`, terapkan spesifikasi Claude design system (`DESIGN.md`), serta implementasikan tema warm terracotta editorial ke dalam styling aplikasi Taut.
-
-**Target features:**
-- Instalasi tool `getdesign` / spesifikasi `awesome-design-md` dan integrasi Claude `DESIGN.md`.
-- Konfigurasi token Tailwind CSS v4 untuk palet Claude (warm terracotta `#cc785c`, cream canvas `#faf9f5`, dark surfaces `#181715`, editorial typography).
-- Pembaruan komponen UI & Dashboard agar konsisten dengan Claude warm terracotta editorial design.
-- Penambahan preset tema microsite Claude (`claude` / warm terracotta) di `src/lib/microsite-themes.ts`.
-- Verifikasi bebas regresi dengan Vitest automated tests dan TypeScript compiler.
+To be defined via `/gsd-new-milestone`.
 
 ## Core Value
 
@@ -30,6 +23,7 @@ Microsite owners can create a more personalized public page, control link priori
 - Shipped **v1.0** milestone delivering preset themes, drag-and-drop link ordering, Indonesian accessibility announcements/restoration, and mobile double-row responsive layout.
 - Shipped **v1.1** milestone delivering clicks database indexing, query parallelization using Promise.all, Next.js middleware protection migration, central route collision checks, protocol scheme validation, and a Vitest automated unit testing suite.
 - Shipped **v1.2** milestone delivering microsite slug editing UI, collision-free validators, server action updates, path revalidation, and automated Vitest unit tests.
+- Shipped **v1.3** milestone delivering `awesome-design-md` / `getdesign` tooling integration, active `DESIGN.md` specification, Tailwind CSS v4 design tokens and CSS custom properties for Claude's warm terracotta palette (`#cc785c`, `#faf9f5`, `#181715`), Google Font `Newsreader` serif typography, editorial refresh of UI primitives and dashboard layouts, `claude` microsite theme preset, and comprehensive unit test verification (24/24 tests passing).
 
 ## Requirements
 
@@ -67,14 +61,18 @@ Microsite owners can create a more personalized public page, control link priori
 - ✓ SLUG-03: Server action `updateMicrosite` must handle slug validation and database updates. — v1.2
 - ✓ SLUG-04: Changing the slug triggers path revalidation for both the old and new URLs. — v1.2
 - ✓ SLUG-05: Write Vitest unit tests to verify slug updates, collision rejections, and validation outcomes. — v1.2
+- ✓ TOOL-01: Install and configure `awesome-design-md` / `getdesign` tooling and pull Claude `DESIGN.md` specification — v1.3.
+- ✓ TOOL-02: Project agent guidelines (`AGENTS.md`) reference `DESIGN.md` as the visual design system contract — v1.3.
+- ✓ TOKEN-01: Configure Tailwind CSS v4 design tokens and CSS variables adhering to Claude design system — v1.3.
+- ✓ TOKEN-02: Define typography rules, font fallback hierarchy, and border radius variables matching Claude editorial specifications — v1.3.
+- ✓ UI-01: Refresh dashboard and shared UI components (cards, buttons, typography, inputs) to match the Claude warm terracotta editorial theme — v1.3.
+- ✓ UI-02: Update core interactive components (buttons, cards, inputs, and badges) to reflect Claude design tokens — v1.3.
+- ✓ THEME-01: Add Claude-inspired preset theme to microsite theme registry (`src/lib/microsite-themes.ts`) — v1.3.
+- ✓ TEST-01: Verify all unit tests, route validations, and TypeScript typechecking remain passing — v1.3.
 
 ### Active
 
-- [x] TOOL-01: Install and configure `awesome-design-md` / `getdesign` tooling and pull Claude `DESIGN.md` specification (Phase 8).
-- [x] TOKEN-01: Configure Tailwind CSS v4 design tokens and CSS variables adhering to Claude design system (Phase 8).
-- [ ] UI-01: Refresh dashboard and shared UI components (cards, buttons, typography, inputs) to match the Claude warm terracotta editorial theme.
-- [ ] THEME-01: Add Claude-inspired preset theme to microsite theme registry (`src/lib/microsite-themes.ts`).
-- [ ] TEST-01: Verify all unit tests, route validations, and TypeScript typechecking remain passing.
+(None currently active — run `/gsd-new-milestone` to start next cycle)
 
 ### Out of Scope
 
@@ -86,10 +84,12 @@ Microsite owners can create a more personalized public page, control link priori
 ## Context
 
 - Codebase is a Next.js 16 App Router monolith with React 19, Prisma 7, PostgreSQL, Tailwind CSS v4, shadcn/Radix UI, and server actions.
+- Active visual design system follows Claude's warm terracotta editorial style (`DESIGN.md`, referenced in `AGENTS.md`).
+- Primary brand accent is terracotta (`#cc785c`), hover (`#a9583e`), with light canvas (`#faf9f5`), dark surfaces (`#181715`), and Google Font `Newsreader` (`--font-serif`).
 - Theme presets registry is centralized in `src/lib/microsite-themes.ts`.
 - Centralized validation rules for URL syntax, loopback checks, and route collisions live in `src/lib/validators.ts`.
 - Next.js native middleware protection is handled via `src/middleware.ts`.
-- Vitest automated tests are co-located alongside target server actions (`src/app/actions/*.test.ts`) and configured in `vitest.config.ts`.
+- Vitest automated tests are co-located alongside target server actions (`src/app/actions/*.test.ts`, `src/lib/*.test.ts`) and configured in `vitest.config.ts`.
 - Microsite mutations live in `src/app/actions/microsite.ts` (with ownership validations and atomic transactions for reordering).
 - Public microsite data loading lives in `src/lib/public-microsite.ts`.
 - Microsite editor UI lives in `src/app/dashboard/microsites/[id]/microsite-editor.tsx` (implements HTML5 drag/drop, keyboard move actions, ARIA live region announcements, and focus restoration).
@@ -128,6 +128,11 @@ Microsite owners can create a more personalized public page, control link priori
 | Card-level error banner | Provides clear, inline user feedback when slug validation or collision check fails. | ✓ Completed (v1.2) |
 | Atomic server action validations | Ensures database updates only occur if all validation and collision checks pass. | ✓ Completed (v1.2) |
 | Selective cache revalidation | Triggers path revalidation for old slug, new slug, and editor routes to keep cache fresh. | ✓ Completed (v1.2) |
+| Claude terracotta as primary accent | Warm human editorial aesthetic matching Claude design system. | ✓ Completed (v1.3) |
+| Newsreader serif headlines with system sans fallback | Editorial typography hierarchy for brand and section titles. | ✓ Completed (v1.3) |
+| Semantic CSS tokens over hardcoded zinc colors | Supports cohesive theming across sidebar, cards, buttons, badges, and charts. | ✓ Completed (v1.3) |
+| `claude` microsite preset theme | Allows public link-in-bio pages to reflect Claude's warm cream and terracotta style. | ✓ Completed (v1.3) |
+| Co-located theme unit tests | Ensures schema contracts, fallbacks, and token definitions are verified in automated test suite. | ✓ Completed (v1.3) |
 
 ## Evolution
 
@@ -147,4 +152,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-08-04 after completing v1.2 milestone*
+*Last updated: 2026-09-07 after completing v1.3 milestone*

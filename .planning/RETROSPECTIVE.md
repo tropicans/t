@@ -55,6 +55,34 @@
 1. Always run `/gsd-audit-milestone` and write all phase documents consecutively to avoid out-of-order documentation drift.
 2. Centralize validations early rather than scattering inline validations in mutations server actions.
 
+## Milestone: v1.3 — Claude Design System Integration
+
+**Shipped:** 2026-09-07
+**Phases:** 3 | **Plans:** 4 | **Sessions:** 3
+
+### What Was Built
+- Verified and integrated Claude `DESIGN.md` specification and registered guidelines in `AGENTS.md`.
+- Implemented Tailwind CSS v4 design tokens and CSS custom properties in `src/app/globals.css` with Google Font `Newsreader` (`--font-serif`).
+- Refactored core UI primitives (`button.tsx`, `card.tsx`, `badge.tsx`, `input.tsx`) and dashboard views (overview, links, microsites, analytics, settings) to warm terracotta editorial styling.
+- Registered `claude` preset theme in `src/lib/microsite-themes.ts` with public rendering, selector preview, and dashboard thumbnail styles.
+- Added comprehensive unit test suites in `src/lib/microsite-themes.test.ts` (24/24 Vitest unit tests passing across project).
+
+### What Worked
+- Referencing `DESIGN.md` in `AGENTS.md` ensured all downstream subagent plans and implementations maintained strict consistency with the Claude palette and typography tokens.
+- Using CSS variables mapped through Tailwind `@theme inline` made swapping legacy `zinc` hardcoded classes to semantic tokens (`bg-sidebar`, `border-border`, `hover:bg-terracotta-active`) clean and cohesive.
+- Pre-emptively writing Vitest tests for the theme registry prevented regression and validated fallback behaviors for corrupt or missing theme IDs.
+
+### What Was Inefficient
+- ESLint configuration has legacy rule mismatches for external scripts and third-party templates that produce noise during lint checks, though they did not affect the core application build.
+
+### Patterns Established
+- Editorial design hierarchy combining serif headlines (`font-serif`, Newsreader) with clean modern sans body text creates a distinctly premium, human-centric aesthetic.
+- Co-locating theme tests with the theme registry ensures contract validation whenever new visual styles or presets are introduced.
+
+### Key Lessons
+1. Clear design system documentation in markdown (`DESIGN.md`) drastically streamlines autonomous frontend development and removes ambiguity about color tokens, spacing, and micro-interactions.
+2. Replacing hardcoded Tailwind color utilities (`bg-zinc-800`, `text-blue-500`) with semantic tokens (`bg-card`, `border-border`, `text-primary`) is essential for maintaining maintainable design systems.
+
 ---
 
 ## Cross-Milestone Trends
@@ -66,6 +94,7 @@
 | v1.0 | 4 | 3 | Preset theme Selection Registry and optimistic UI reordering. |
 | v1.1 | 2 | 3 | Next.js native middleware protection, click index performance optimizations, and Vitest test suite setup. |
 | v1.2 | 1 | 1 | Inline slug editor UI, collision checks validation, path revalidation, and unit test suite. |
+| v1.3 | 3 | 3 | Claude design system integration, Tailwind v4 design tokens, Newsreader serif typography, and claude microsite theme preset. |
 
 ### Cumulative Quality
 
@@ -74,8 +103,11 @@
 | v1.0 | 0 | 0% | 0 |
 | v1.1 | 12 | 80% | 0 |
 | v1.2 | 18 | 85% | 0 |
+| v1.3 | 24 | 90% | 0 |
 
 ### Top Lessons (Verified Across Milestones)
 
 1. Keep public routes and authorization policies strictly checked using transactional access gates.
 2. Establish mock frameworks early to secure mutations from regression gaps.
+3. Centralize design tokens and system guidelines in DESIGN.md to align human and AI agents on visual standards.
+
