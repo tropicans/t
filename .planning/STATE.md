@@ -1,31 +1,31 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.4
-milestone_name: Dashboard UX & Mobile Navigation Polish
-status: complete
-last_updated: "2026-09-07T07:29:45.000Z"
+milestone: v1.5
+milestone_name: Invitation Link & Dynamic User Onboarding
+status: in_progress
+last_updated: "2026-09-07T07:48:00.000Z"
 last_activity: 2026-09-07
 progress:
-  total_phases: 2
-  completed_phases: 2
-  total_plans: 2
-  completed_plans: 2
-  percent: 100
+  total_phases: 3
+  completed_phases: 0
+  total_plans: 3
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
 
 **Project:** Taut Microsite Enhancements
 **Initialized:** 2026-06-26
-**Current Phase:** Phase 12: Dashboard Recent Activity, Onboarding & System Verification
-**Status:** Complete (v1.4)
+**Current Phase:** Phase 13: Invitation Data Model, Migration & Validation Engine
+**Status:** In Progress (v1.5)
 
 ## Project Reference
 
 See: `.planning/PROJECT.md` (updated 2026-09-07)
 
 **Core value:** Microsite owners can create a more personalized public page, control link priority, and experience fast, secure dashboard routing and analytics performance.
-**Current focus:** Milestone v1.4 — Dashboard UX & Mobile Navigation Polish (Completed)
+**Current focus:** Milestone v1.5 — Invitation Link & Dynamic User Onboarding
 
 ## Active Roadmap
 
@@ -33,15 +33,16 @@ See: `.planning/ROADMAP.md`
 
 | Phase | Status | Progress |
 |-------|--------|----------|
-| Phase 11: Mobile Navigation Drawer & Metric Card Micro-interactions | Complete | 100% |
-| Phase 12: Dashboard Recent Activity, Onboarding & System Verification | Complete | 100% |
+| Phase 13: Invitation Data Model, Migration & Validation Engine | Not Started | 0% |
+| Phase 14: Public Invitation Landing Page & NextAuth Integration | Not Started | 0% |
+| Phase 15: Dashboard Invitation Management & System Verification | Not Started | 0% |
 
 ## Requirements
 
 See: `.planning/REQUIREMENTS.md`
 
-- v1.4 requirements: 7
-- Mapped to phases: 7
+- v1.5 requirements: 6
+- Mapped to phases: 6
 - Unmapped: 0
 
 ## Codebase Context
@@ -68,27 +69,27 @@ Research exists in `.planning/research/`:
 
 ## Next Action
  
-Execute Phase 11 with `/gsd-plan-phase 11` or implement directly.
+Execute Phase 13 with `/gsd-plan-phase 13` or implement directly.
  
 ---
 *State initialized: 2026-06-26*
  
 ## Session
  
-**Last session:** 2026-09-07T07:25:00.000Z
-**Stopped at:** Milestone v1.4 initialized
+**Last session:** 2026-09-07T07:48:00.000Z
+**Stopped at:** Milestone v1.5 initialized
 **Resume file:** .planning/ROADMAP.md
  
 ## Current Position
 
-Phase: Phase 11: Mobile Navigation Drawer & Metric Card Micro-interactions
+Phase: Phase 13: Invitation Data Model, Migration & Validation Engine
 Plan: Ready to plan
-Status: Milestone v1.4 initialized
-Last activity: 2026-09-07 — Milestone v1.4 started and roadmap created
+Status: Milestone v1.5 initialized
+Last activity: 2026-09-07 — Milestone v1.5 started and roadmap created
 
 ## Operator Next Steps
  
-- Run `/gsd-plan-phase 11` to plan Phase 11 implementation.
+- Run `/gsd-plan-phase 13` to plan Phase 13 implementation.
 
 ## Quick Tasks Completed
 

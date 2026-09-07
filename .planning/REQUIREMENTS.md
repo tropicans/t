@@ -1,55 +1,21 @@
-# Requirements: Taut Microsite Enhancements
- 
-**Defined:** 2026-09-07
-**Core Value:** Microsite owners can create a more personalized public page, control link priority, and experience fast, secure dashboard routing and analytics performance.
+# Requirements: Milestone v1.5 — Invitation Link & Dynamic User Onboarding
 
-## v1.4 Requirements
+## Scope
+Enable dynamic and secure user onboarding via invitation links so administrators can invite users without editing `.env`. Supports hybrid links (open links with usage limits/expiration, and email-specific links) with a dedicated invitation acceptance landing page and NextAuth Google sign-in bridge.
 
-Requirements for Milestone v1.4: Dashboard UX & Mobile Navigation Polish.
+## Requirements
 
-### Mobile Navigation & Header
+### Data Model & Routing
+- **INV-01**: Define Prisma `Invitation` model with fields `id`, `token` (unique), `email` (optional), `invitedById` (relation to User), `maxUses` (default 1), `usesCount` (default 0), `expiresAt` (optional DateTime), `status` (`PENDING`, `ACCEPTED`, `EXPIRED`, `REVOKED`), `createdAt`, and `updatedAt`.
+- **INV-02**: Protect the `/invite` route namespace by adding `invite` to `RESERVED_SLUGS` in `src/lib/validators.ts` to prevent conflicts with short links and microsite slugs.
 
-- [x] **NAV-01**: User on mobile screens (`< 768px`) can tap a hamburger menu button in the mobile header to toggle a responsive slide-out navigation drawer with all dashboard links, active route highlight, user profile details, and sign-out button.
-- [x] **NAV-02**: Navigation drawer supports smooth open/close transitions, backdrop dismissal, and keyboard accessibility (ESC key).
+### Public Invitation Acceptance & Auth Bridge
+- **INV-03**: Create public invitation landing page at `src/app/invite/[token]/page.tsx` that validates the token and renders an editorial welcome card with inviter name, invitation type/expiration, and an action button to "Masuk dengan Google".
+- **AUTH-01**: Update NextAuth `signIn` callback in `src/lib/auth.ts` to allow users holding a valid invitation token: create new account in Prisma `User` table, increment `usesCount`, update `status`, and permit access to `/dashboard`.
+- **AUTH-02**: Permit any previously registered user existing in `prisma.user` to sign in freely, while preserving `ALLOWED_EMAILS` from `.env` as the superadmin bootstrap allowlist.
 
-### Metric Cards & Visual Polish
+### Dashboard Management & Administration
+- **ADMIN-01**: Build Invitation Management UI in the dashboard (accessible from Settings or dedicated section) allowing users to create new invitations (choose Open link with custom max uses / expiration or Email-specific), view active/expired invitations, copy invite URLs, and revoke invitations.
 
-- [x] **CARD-01**: Dashboard metric stat cards feature subtle hover lift (`-translate-y-0.5`), smooth shadow transition, and cohesive icon accent styling.
-- [x] **CARD-02**: Small action links on metric cards adopt WCAG AA contrast compliant terracotta color (`#b25e43` / `#a04e35` on light surfaces) ensuring ≥ 4.5:1 contrast.
-
-### Dashboard Overview Content & Onboarding
-
-- [x] **ACT-01**: Dashboard overview displays a Recent Activity section with recently updated microsites and short links with direct manage actions.
-- [x] **ONBOARD-01**: New users with zero items see an editorial warm onboarding guidance card with quick creation triggers.
-
-### System Verification
-
-- [x] **TEST-01**: All automated Vitest unit tests pass and `npx tsc --noEmit` compiles cleanly without regression.
-
-## Out of Scope
-
-| Feature | Reason |
-|---------|--------|
-| Multi-tenant team roles / workspaces | Out of scope for link-in-bio personal dashboard |
-| Real-time WebSocket notifications | Existing polling / standard server actions suffice |
-| Full CMS WYSIWYG editor | Existing form cards and markdown/text fields suffice |
-
-## Traceability
-
-| Requirement | Phase | Status |
-|-------------|-------|--------|
-| NAV-01 | Phase 11 | Complete |
-| NAV-02 | Phase 11 | Complete |
-| CARD-01 | Phase 11 | Complete |
-| CARD-02 | Phase 11 | Complete |
-| ACT-01 | Phase 12 | Complete |
-| ONBOARD-01 | Phase 12 | Complete |
-| TEST-01 | Phase 12 | Complete |
-
-**Coverage:**
-- v1.4 requirements: 7 total
-- Mapped to phases: 7
-- Unmapped: 0 ✓
-
----
-*Requirements defined: 2026-09-07*
+### Verification & Testing
+- **TEST-01**: Comprehensive Vitest automated unit test suite verifying token generation, collision protection with reserved routes, invitation validation logic (expiration, max uses, email match), and NextAuth sign-in authorization rules.

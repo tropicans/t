@@ -4,15 +4,17 @@
 
 Taut is a Next.js URL shortener and link-in-bio product featuring Claude's warm terracotta editorial design system. The project has shipped four milestones: microsite visual theme variants and drag-and-drop link ordering (v1.0), database performance indexing, routing security, and automated testing (v1.1), microsite slug editing (v1.2), and Claude editorial design system integration (v1.3).
 
-## Current Milestone: v1.4 Dashboard UX & Mobile Navigation Polish
+## Current Milestone: v1.5 Invitation Link & Dynamic User Onboarding
 
-**Goal:** Implement the recommendations from the UI Designer audit to elevate the dashboard experience: add mobile responsive drawer navigation, introduce subtle micro-interactions on stat cards, ensure WCAG AA contrast compliance for small link texts, add recent activities overview, and provide friendly onboarding empty states.
+**Goal:** Enable secure, dynamic user onboarding through invitation links so administrators can invite new users without modifying `.env`. Supports hybrid invitation links (open link with usage limits/expiration, or email-specific) with Google OAuth registration bridge, dashboard invitation management, and reserved routing.
 
 **Target features:**
-- Mobile Navigation Drawer: Hamburger menu & responsive sliding sheet on mobile screens (`md:hidden`) with full navigation items, user avatar, and sign-out button.
-- Dashboard Stat Cards Polish & Micro-interactions: Add subtle hover lifts (`-translate-y-0.5`), consistent iconography, and WCAG AA contrast compliant accent link colors (`#b25e43` / `#a04e35`).
-- Recent Activities Overview: Display recently created microsites and active short links with quick copy/manage buttons directly on the dashboard overview page.
-- Onboarding & Empty States: Friendly editorial welcome banners and guidance when zero links/microsites exist.
+- Invitation Data Model & Migration: Prisma schema for `Invitation` supporting unique token, optional specific target email, `maxUses`, `usesCount`, `expiresAt`, and status (`PENDING`, `ACCEPTED`, `EXPIRED`, `REVOKED`).
+- Public Invitation Page: Beautiful Claude-editorial landing page at `/invite/[token]` displaying invitation status, inviter details, and direct "Masuk dengan Google" action.
+- NextAuth Invitation Bridge: Extended `signIn` callback allowing users with valid invitation tokens to create accounts in Prisma and access dashboard, while preserving `ALLOWED_EMAILS` as bootstrap/superadmin allowlist and letting previously registered users log in seamlessly.
+- Dashboard Invitation Management: Interface in `/dashboard/settings` (or `/dashboard/invitations`) to generate links, copy invitation URLs, set expiration/quota, and revoke active invitations.
+- Reserved Routes & Validation: Add `invite` to `RESERVED_SLUGS` to protect the invitation path from short-link and microsite namespace collisions.
+- Automated Tests: Vitest suite verifying token generation, expiry checks, usage limits, collision validation, and auth flow.
 
 ## Core Value
 
@@ -20,7 +22,7 @@ Microsite owners can create a more personalized public page, control link priori
 
 ## Business Context
 
-- **Customer**: Authenticated Taut users who publish public microsites.
+- **Customer**: Authenticated Taut users who publish public microsites and manage team invitations.
 - **Revenue model**: Product value/retention for existing short-link and microsite users; monetization model not defined in repository.
 - **Success metric**: Fast dashboard loading speed, secure route access checks, collision-free short codes and slugs, and high codebase reliability verified by automated test suites.
 
@@ -30,6 +32,8 @@ Microsite owners can create a more personalized public page, control link priori
 - Shipped **v1.1** milestone delivering clicks database indexing, query parallelization using Promise.all, Next.js middleware protection migration, central route collision checks, protocol scheme validation, and a Vitest automated unit testing suite.
 - Shipped **v1.2** milestone delivering microsite slug editing UI, collision-free validators, server action updates, path revalidation, and automated Vitest unit tests.
 - Shipped **v1.3** milestone delivering `awesome-design-md` / `getdesign` tooling integration, active `DESIGN.md` specification, Tailwind CSS v4 design tokens and CSS custom properties for Claude's warm terracotta palette (`#cc785c`, `#faf9f5`, `#181715`), Google Font `Newsreader` serif typography, editorial refresh of UI primitives and dashboard layouts, `claude` microsite theme preset, and comprehensive unit test verification (24/24 tests passing).
+- Shipped **v1.4** milestone delivering mobile responsive sliding navigation drawer (`layout.tsx`), stat cards micro-interactions with WCAG AA compliant link contrast, editorial onboarding guidance cards for new users, and side-by-side recent activities feeds for microsites and short links.
+- Shipped brand logo quick task delivering the bespoke *Interlocking Tension Weave* vector logo, standalone SVG assets (`logo.svg`, `logo-mark.svg`, `icon.svg`, `favicon.svg`), and reusable `BrandLogo` component.
 
 ## Requirements
 
