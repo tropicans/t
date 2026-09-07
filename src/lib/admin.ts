@@ -1,3 +1,5 @@
+import { prisma } from "@/lib/prisma";
+
 /**
  * Admin authorization utility.
  * Admins are defined either in ALLOWED_EMAILS (superadmin allowlist)
@@ -29,3 +31,64 @@ export function isUserAdmin(email?: string | null): boolean {
 
     return false;
 }
+
+export interface AdminUserItem {
+    id: string;
+    name: string | null;
+    email: string | null;
+    image: string | null;
+    createdAt: Date;
+    isAdmin: boolean;
+    invitationId: string | null;
+    invitation: {
+        id: string;
+        token: string;
+        invitedBy: {
+            id: string;
+            name: string | null;
+            email: string | null;
+        } | null;
+    } | null;
+    _count: {
+        shortLinks: number;
+        microsites: number;
+    };
+}
+
+/**
+ * Fetches all registered users for administrators, annotating with admin status and metadata.
+ */
+export async function getAllUsersForAdmin(): Promise<AdminUserItem[]> {
+    const users = await prisma.user.findMany({
+        include: {
+            invitation: {
+                select: {
+                    id: true,
+                    token: true,
+                    invitedBy: {
+                        select: {
+                            id: true,
+                            name: true,
+                            email: true,
+                        },
+                    },
+                },
+            },
+            _count: {
+                select: {
+                    shortLinks: true,
+                    microsites: true,
+                },
+            },
+        },
+        orderBy: {
+            createdAt: "desc",
+        },
+    });
+
+    return users.map((user) => ({
+        ...user,
+        isAdmin: isUserAdmin(user.email),
+    }));
+}
+

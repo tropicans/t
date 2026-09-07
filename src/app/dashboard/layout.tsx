@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { LinkIcon, Home, BarChart2, Settings, LogOut, Globe, Menu, X, UserPlus } from "lucide-react";
+import { LinkIcon, Home, BarChart2, Settings, LogOut, Globe, Menu, X, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BrandLogo } from "@/components/brand-logo";
 
@@ -58,9 +58,10 @@ export default function DashboardLayout({
         { name: "Microsites", href: "/dashboard/microsites", icon: Globe },
         { name: "Short Links", href: "/dashboard/links", icon: LinkIcon },
         { name: "Analytics", href: "/dashboard/analytics", icon: BarChart2 },
-        ...(session?.user?.isAdmin ? [{ name: "Invitations", href: "/dashboard/invitations", icon: UserPlus }] : []),
+        ...(session?.user?.isAdmin ? [{ name: "Users & Invites", href: "/dashboard/invitations", icon: Users }] : []),
         { name: "Settings", href: "/dashboard/settings", icon: Settings },
     ];
+
 
     return (
         <div className="min-h-screen bg-background text-foreground flex">
