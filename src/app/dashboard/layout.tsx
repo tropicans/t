@@ -58,7 +58,7 @@ export default function DashboardLayout({
         { name: "Microsites", href: "/dashboard/microsites", icon: Globe },
         { name: "Short Links", href: "/dashboard/links", icon: LinkIcon },
         { name: "Analytics", href: "/dashboard/analytics", icon: BarChart2 },
-        { name: "Invitations", href: "/dashboard/invitations", icon: UserPlus },
+        ...(session?.user?.isAdmin ? [{ name: "Invitations", href: "/dashboard/invitations", icon: UserPlus }] : []),
         { name: "Settings", href: "/dashboard/settings", icon: Settings },
     ];
 

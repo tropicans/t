@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { createInvitation, revokeInvitation } from "@/lib/invitations";
 import { isGlobalDashboardViewer } from "@/lib/microsite-access";
+import { isUserAdmin } from "@/lib/admin";
 
 // Helper: get DB user from session email
 async function getCurrentUser() {
@@ -24,6 +25,10 @@ export async function createInvitationAction(input: CreateInvitationInput) {
     const user = await getCurrentUser();
     if (!user) {
         return { error: "Sesi tidak valid atau tidak terotentikasi." };
+    }
+
+    if (!isUserAdmin(user.email)) {
+        return { error: "Hanya admin yang memiliki izin untuk membuat undangan." };
     }
 
     let cleanedEmail: string | null = null;
@@ -70,6 +75,10 @@ export async function revokeInvitationAction(invitationId: string) {
     const user = await getCurrentUser();
     if (!user) {
         return { error: "Sesi tidak valid atau tidak terotentikasi." };
+    }
+
+    if (!isUserAdmin(user.email)) {
+        return { error: "Hanya admin yang memiliki izin untuk mencabut undangan." };
     }
 
     if (!invitationId) {

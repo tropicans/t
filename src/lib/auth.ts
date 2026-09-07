@@ -3,6 +3,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { cookies } from "next/headers";
 import { prisma } from "./prisma";
 import { getInvitationByToken, validateInvitationStatus } from "./invitations";
+import { isUserAdmin } from "./admin";
 
 export interface AuthorizeSignInInput {
     email: string;
@@ -221,6 +222,10 @@ export const authOptions: NextAuthOptions = {
             return true;
         },
         async jwt({ token, user }) {
+            const email = user?.email || token?.email;
+            if (email) {
+                token.isAdmin = isUserAdmin(email);
+            }
             if (user?.email) {
                 try {
                     const dbUser = await prisma.user.findUnique({ where: { email: user.email } });
@@ -236,6 +241,7 @@ export const authOptions: NextAuthOptions = {
         async session({ session, token }) {
             if (token && session.user) {
                 session.user.id = token.id as string;
+                session.user.isAdmin = Boolean(token.isAdmin);
             }
             return session;
         },

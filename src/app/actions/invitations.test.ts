@@ -30,6 +30,8 @@ vi.mock("next/cache", () => ({
 describe("Invitation Actions & Queries (ADMIN-01 & TEST-01)", () => {
     beforeEach(() => {
         vi.resetAllMocks();
+        process.env.ALLOWED_EMAILS = "admin@example.com,owner@example.com";
+        process.env.GLOBAL_DASHBOARD_VIEWER_EMAIL = "globalviewer@example.com";
     });
 
     describe("createInvitationAction", () => {
@@ -38,6 +40,19 @@ describe("Invitation Actions & Queries (ADMIN-01 & TEST-01)", () => {
 
             const res = await createInvitationAction({ maxUses: 5 });
             expect(res.error).toContain("tidak valid atau tidak terotentikasi");
+        });
+
+        it("rejects creation if user is not an admin", async () => {
+            vi.mocked(getServerSession).mockResolvedValue({
+                user: { email: "regular@example.com" },
+            });
+            vi.mocked(prisma.user.findUnique).mockResolvedValue({
+                id: "user_regular",
+                email: "regular@example.com",
+            } as any);
+
+            const res = await createInvitationAction({ maxUses: 5 });
+            expect(res.error).toContain("Hanya admin yang memiliki izin untuk membuat undangan.");
         });
 
         it("returns error if email format is invalid", async () => {
@@ -163,13 +178,27 @@ describe("Invitation Actions & Queries (ADMIN-01 & TEST-01)", () => {
             expect(res.error).toContain("tidak ditemukan");
         });
 
-        it("rejects revocation by a user who is not the creator or admin", async () => {
+        it("rejects revocation if user is not an admin", async () => {
             vi.mocked(getServerSession).mockResolvedValue({
-                user: { email: "stranger@example.com" },
+                user: { email: "regular@example.com" },
             });
             vi.mocked(prisma.user.findUnique).mockResolvedValue({
-                id: "user_stranger",
-                email: "stranger@example.com",
+                id: "user_regular",
+                email: "regular@example.com",
+            } as any);
+
+            const res = await revokeInvitationAction("inv_123");
+            expect(res.error).toContain("Hanya admin yang memiliki izin untuk mencabut undangan.");
+            expect(prisma.invitation.update).not.toHaveBeenCalled();
+        });
+
+        it("rejects revocation by an admin who is not the creator or global viewer", async () => {
+            vi.mocked(getServerSession).mockResolvedValue({
+                user: { email: "admin@example.com" },
+            });
+            vi.mocked(prisma.user.findUnique).mockResolvedValue({
+                id: "user_admin",
+                email: "admin@example.com",
             } as any);
             vi.mocked(prisma.invitation.findUnique).mockResolvedValue({
                 id: "inv_123",

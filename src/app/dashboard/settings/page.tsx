@@ -1,5 +1,6 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { isUserAdmin } from "@/lib/admin";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 import Link from "next/link";
@@ -8,6 +9,7 @@ import { UserPlus, ArrowRight } from "lucide-react";
 
 export default async function SettingsPage() {
     const session = await getServerSession(authOptions);
+    const isAdmin = isUserAdmin(session?.user?.email);
 
     return (
         <div className="max-w-3xl mx-auto space-y-6">
@@ -35,31 +37,33 @@ export default async function SettingsPage() {
                 </CardContent>
             </Card>
 
-            <Card className="border-border">
-                <CardHeader>
-                    <div className="flex items-center gap-2">
-                        <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                            <UserPlus className="w-5 h-5" />
+            {isAdmin && (
+                <Card className="border-border">
+                    <CardHeader>
+                        <div className="flex items-center gap-2">
+                            <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                                <UserPlus className="w-5 h-5" />
+                            </div>
+                            <div>
+                                <CardTitle className="text-foreground">Manajemen Undangan</CardTitle>
+                                <CardDescription className="text-muted-foreground">
+                                    Buat dan kelola tautan undangan untuk pengguna baru tanpa allowlist manual.
+                                </CardDescription>
+                            </div>
                         </div>
-                        <div>
-                            <CardTitle className="text-foreground">Manajemen Undangan</CardTitle>
-                            <CardDescription className="text-muted-foreground">
-                                Buat dan kelola tautan undangan untuk pengguna baru tanpa allowlist manual.
-                            </CardDescription>
-                        </div>
-                    </div>
-                </CardHeader>
-                <CardContent className="flex items-center justify-between pt-2 border-t border-border/40">
-                    <p className="text-sm text-muted-foreground">
-                        Atur batas kuota, masa aktif, dan pantau akun yang telah mengklaim undangan.
-                    </p>
-                    <Button asChild className="bg-primary hover:bg-terracotta-active text-primary-foreground text-xs rounded-xl">
-                        <Link href="/dashboard/invitations" className="flex items-center gap-1.5">
-                            Buka Undangan <ArrowRight className="w-3.5 h-3.5" />
-                        </Link>
-                    </Button>
-                </CardContent>
-            </Card>
+                    </CardHeader>
+                    <CardContent className="flex items-center justify-between pt-2 border-t border-border/40">
+                        <p className="text-sm text-muted-foreground">
+                            Atur batas kuota, masa aktif, dan pantau akun yang telah mengklaim undangan.
+                        </p>
+                        <Button asChild className="bg-primary hover:bg-terracotta-active text-primary-foreground text-xs rounded-xl">
+                            <Link href="/dashboard/invitations" className="flex items-center gap-1.5">
+                                Buka Undangan <ArrowRight className="w-3.5 h-3.5" />
+                            </Link>
+                        </Button>
+                    </CardContent>
+                </Card>
+            )}
         </div>
     );
 }

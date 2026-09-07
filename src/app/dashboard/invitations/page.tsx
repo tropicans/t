@@ -1,7 +1,9 @@
 import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { isGlobalDashboardViewer } from "@/lib/microsite-access";
+import { isUserAdmin } from "@/lib/admin";
 import { getUserInvitations } from "@/lib/invitations";
 import { InvitationForm } from "./invitation-form";
 import { InvitationList } from "./invitation-list";
@@ -10,7 +12,11 @@ import { Users, UserPlus, CheckCircle, Clock } from "lucide-react";
 export default async function InvitationsPage() {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
-        return null;
+        redirect("/login");
+    }
+
+    if (!isUserAdmin(session.user.email)) {
+        redirect("/dashboard");
     }
 
     const dbUser = await prisma.user.findUnique({
@@ -18,7 +24,7 @@ export default async function InvitationsPage() {
     });
 
     if (!dbUser) {
-        return null;
+        redirect("/dashboard");
     }
 
     const isGlobalViewer = isGlobalDashboardViewer(session.user.email);

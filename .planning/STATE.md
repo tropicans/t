@@ -90,3 +90,4 @@ Last activity: 2026-09-07 — Milestone v1.5 complete
 |------|------|------|--------|
 | Enhance analytics dashboard | enhance-analytics-dashboard | 2026-08-04 | Complete |
 | Design and integrate brand logo | brand-logo-design | 2026-09-07 | Complete |
+| Restrict invitation management to admin only | admin-only-invitations | 2026-09-07 | Complete |
