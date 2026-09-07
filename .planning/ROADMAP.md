@@ -57,7 +57,7 @@
 ### 🚧 v1.5 Invitation Link & Dynamic User Onboarding
 
 ### Phase 13: Invitation Data Model, Migration & Validation Engine
-- [ ] Prisma schema model `Invitation`, migration deployment, and backend validation engine
+- [x] Prisma schema model `Invitation`, migration deployment, and backend validation engine (1 plan) — completed 2026-09-07
 **Goal:** Sediakan skema database untuk model `Invitation` dengan dukungan token unik, target email opsional, kuota pemakaian (`maxUses`), waktu kedaluwarsa (`expiresAt`), dan status. Lindungi rute `/invite` dari tabrakan slug di `RESERVED_SLUGS`.
 **Requirements:** INV-01, INV-02, TEST-01
 **Success Criteria:**

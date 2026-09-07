@@ -44,10 +44,13 @@ model User {
   // Custom app fields
   createdAt     DateTime  @default(now())
   
-  accounts      Account[]
-  sessions      Session[]
-  shortLinks    ShortLink[] // Independent shortened URLs
-  microsites    Microsite[] // New: Multiple microsites per user
+  accounts           Account[]
+  sessions           Session[]
+  shortLinks         ShortLink[] // Independent shortened URLs
+  microsites         Microsite[] // New: Multiple microsites per user
+  createdInvitations Invitation[] @relation("CreatedInvitations")
+  invitationId       String?
+  invitation         Invitation?  @relation("ClaimedInvitations", fields: [invitationId], references: [id], onDelete: SetNull)
 }
 
 
@@ -136,4 +139,25 @@ model ShortLinkClick {
   @@index([shortLinkId])
   @@index([createdAt])
 }
+
+model Invitation {
+  id          String    @id @default(cuid())
+  token       String    @unique
+  email       String?
+  invitedById String
+  invitedBy   User      @relation("CreatedInvitations", fields: [invitedById], references: [id], onDelete: Cascade)
+  maxUses     Int       @default(1)
+  usesCount   Int       @default(0)
+  expiresAt   DateTime?
+  status      String    @default("PENDING") // PENDING, ACCEPTED, EXPIRED, REVOKED
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  claimedUsers User[]   @relation("ClaimedInvitations")
+
+  @@index([token])
+  @@index([email])
+  @@index([status])
+}
+
 

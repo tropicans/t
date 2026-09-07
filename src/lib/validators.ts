@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 export const RESERVED_SLUGS = [
     "dashboard",
     "login",
+    "invite",
     "api",
     "l",
     "_next",
