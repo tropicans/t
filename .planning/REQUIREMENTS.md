@@ -19,12 +19,12 @@ Requirements for Milestone v1.4: Dashboard UX & Mobile Navigation Polish.
 
 ### Dashboard Overview Content & Onboarding
 
-- [ ] **ACT-01**: Dashboard overview displays a Recent Activity section with recently updated microsites and short links with direct manage actions.
-- [ ] **ONBOARD-01**: New users with zero items see an editorial warm onboarding guidance card with quick creation triggers.
+- [x] **ACT-01**: Dashboard overview displays a Recent Activity section with recently updated microsites and short links with direct manage actions.
+- [x] **ONBOARD-01**: New users with zero items see an editorial warm onboarding guidance card with quick creation triggers.
 
 ### System Verification
 
-- [ ] **TEST-01**: All automated Vitest unit tests pass and `npx tsc --noEmit` compiles cleanly without regression.
+- [x] **TEST-01**: All automated Vitest unit tests pass and `npx tsc --noEmit` compiles cleanly without regression.
 
 ## Out of Scope
 
@@ -42,9 +42,9 @@ Requirements for Milestone v1.4: Dashboard UX & Mobile Navigation Polish.
 | NAV-02 | Phase 11 | Complete |
 | CARD-01 | Phase 11 | Complete |
 | CARD-02 | Phase 11 | Complete |
-| ACT-01 | Phase 12 | Pending |
-| ONBOARD-01 | Phase 12 | Pending |
-| TEST-01 | Phase 12 | Pending |
+| ACT-01 | Phase 12 | Complete |
+| ONBOARD-01 | Phase 12 | Complete |
+| TEST-01 | Phase 12 | Complete |
 
 **Coverage:**
 - v1.4 requirements: 7 total

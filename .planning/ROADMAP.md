@@ -48,7 +48,7 @@
 ### 🚧 v1.4 Dashboard UX & Mobile Navigation Polish
 
 ### Phase 11: Mobile Navigation Drawer & Metric Card Micro-interactions
-- [ ] Mobile navigation drawer & stat cards visual polish (1 plan)
+- [x] Mobile navigation drawer & stat cards visual polish (1 plan) — completed 2026-09-07
 **Goal:** Tambahkan slide-out navigation drawer di tampilan mobile (`md:hidden`) dengan toggle hamburger menu, active indicators, dan user profile, serta tingkatkan interaktivitas hover dan kontras link WCAG AA pada kartu metrik dashboard.
 **Requirements:** NAV-01, NAV-02, CARD-01, CARD-02
 **Success Criteria:**
@@ -58,7 +58,7 @@
 4. Tautan aksi pada kartu metrik menggunakan kontras warna terracotta yang memenuhi standar WCAG AA (≥ 4.5:1).
 
 ### Phase 12: Dashboard Recent Activity, Onboarding & System Verification
-- [ ] Recent activity feeds, editorial onboarding state & system test verification (1 plan)
+- [x] Recent activity feeds, editorial onboarding state & system test verification (1 plan) — completed 2026-09-07
 **Goal:** Tampilkan feed aktivitas terkini (microsites & short links) pada overview dashboard, sediakan panduan onboarding editorial untuk akun baru tanpa tautan, dan pastikan seluruh test suite Vitest serta TypeScript lolos tanpa regresi.
 **Requirements:** ACT-01, ONBOARD-01, TEST-01
 **Success Criteria:**
