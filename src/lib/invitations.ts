@@ -256,3 +256,38 @@ export async function revokeInvitation(invitationId: string, invitedById: string
         },
     });
 }
+
+/**
+ * Fetches invitations for a user (or all if global viewer).
+ */
+export async function getUserInvitations(userId: string, isGlobalViewer?: boolean) {
+    return await prisma.invitation.findMany({
+        where: isGlobalViewer ? undefined : { invitedById: userId },
+        include: {
+            invitedBy: {
+                select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    image: true,
+                },
+            },
+            claimedUsers: {
+                select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    image: true,
+                    createdAt: true,
+                },
+                orderBy: {
+                    createdAt: "desc",
+                },
+            },
+        },
+        orderBy: {
+            createdAt: "desc",
+        },
+    });
+}
+

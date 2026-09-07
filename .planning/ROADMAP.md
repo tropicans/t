@@ -7,7 +7,8 @@
 - ✅ **v1.2 Edit Link Microsite** — Phase 7 (shipped 2026-08-04)
 - ✅ **v1.3 Claude Design System Integration** — Phases 8-10 (shipped 2026-09-07)
 - ✅ **v1.4 Dashboard UX & Mobile Navigation Polish** — Phases 11-12 (shipped 2026-09-07)
-- 🚧 **v1.5 Invitation Link & Dynamic User Onboarding** — Phases 13-15 (in progress)
+- ✅ **v1.5 Invitation Link & Dynamic User Onboarding** — Phases 13-15 (shipped 2026-09-07)
+
 
 ## Phases
 
@@ -54,7 +55,7 @@
 
 ---
 
-### 🚧 v1.5 Invitation Link & Dynamic User Onboarding
+### ✅ Shipped: v1.5 Invitation Link & Dynamic User Onboarding
 
 ### Phase 13: Invitation Data Model, Migration & Validation Engine
 - [x] Prisma schema model `Invitation`, migration deployment, and backend validation engine (1 plan) — completed 2026-09-07
@@ -77,8 +78,9 @@
 4. Login selanjutnya bagi pengguna yang sudah terdaftar tidak memerlukan token undangan lagi.
 
 ### Phase 15: Dashboard Invitation Management & System Verification
-- [ ] Antarmuka manajemen undangan di Dashboard dan verifikasi sistem end-to-end
+- [x] Antarmuka manajemen undangan di Dashboard dan verifikasi sistem end-to-end (1 plan) — completed 2026-09-07
 **Goal:** Buat UI di dashboard untuk mengelola undangan: formulir pembuatan link (open/email, kuota, masa aktif), daftar link aktif/kedaluwarsa, tombol salin link, dan tombol cabut (*revoke*), serta verifikasi build dan test suite menyeluruh.
+
 **Requirements:** ADMIN-01, TEST-01
 **Success Criteria:**
 1. Pengguna terotentikasi di dashboard dapat membuat link undangan baru dengan parameter kuota dan kedaluwarsa.
