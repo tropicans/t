@@ -1,5 +1,20 @@
 # Milestones
 
+## v1.5 Invitation Link & Dynamic User Onboarding (Shipped: 2026-09-07)
+
+**Phases completed:** 3 phases, 3 plans, 0 tasks
+
+**Key accomplishments:**
+
+- Defined Prisma `Invitation` schema with unique token generation, expiration timestamps, usage quotas, target email restrictions, and status lifecycle.
+- Protected `/invite` route namespace in `RESERVED_SLUGS` against short-link and microsite collisions.
+- Designed and built Claude warm editorial public invitation landing page at `/invite/[token]` with real-time status validation, inviter metadata, and Google sign-in action.
+- Implemented NextAuth 3-tier authorization callback in `src/lib/auth.ts`: unrestricted login for existing database users, superadmin bootstrap allowlist (`ALLOWED_EMAILS`), and secure cookie-based dynamic invitation claiming with atomic user provisioning.
+- Built Invitation Management dashboard in `/dashboard/invitations` with multi-use open and email-specific links generation, quota/expiry selectors, real-time status badges, claimed users accordion, copy-to-clipboard, and link revocation.
+- Verified system stability with 64/64 passing Vitest automated tests across 8 test suites, clean TypeScript compilation, 18-route Next.js production build, and successful production Docker image build targeting port 4000.
+
+---
+
 ## v1.3 Claude Design System Integration (Shipped: 2026-09-07)
 
 **Phases completed:** 3 phases, 4 plans, 0 tasks

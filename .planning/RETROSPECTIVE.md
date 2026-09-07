@@ -85,6 +85,37 @@
 
 ---
 
+## Milestone: v1.5 — Invitation Link & Dynamic User Onboarding
+
+**Shipped:** 2026-09-07
+**Phases:** 3 | **Plans:** 3 | **Sessions:** 3
+
+### What Was Built
+- Prisma schema `Invitation` model with unique tokens, optional target emails, usage quotas, expiration, and status lifecycle.
+- Route namespace protection preventing short-link or microsite collision with `/invite`.
+- Claude warm editorial landing page at `/invite/[token]` with token verification, inviter card, and Google OAuth action button.
+- NextAuth 3-tier authorization callback in `src/lib/auth.ts`: existing user login, `ALLOWED_EMAILS` bootstrap allowlist, and atomic invitation claiming with user provisioning.
+- Invitation Management dashboard at `/dashboard/invitations` with link generation, quota & expiration selectors, real-time badges, claimed users accordion, one-click link copying, and link revocation.
+- Comprehensive Vitest automated unit test suites expanding total repository tests to 64/64 passing.
+
+### What Worked
+- A 3-tier authorization architecture in NextAuth cleanly decoupled existing database accounts from new invitees, preserving superadmin bootstrap capabilities with zero downtime.
+- Using an HTTP-only secure cookie (`taut_invite_token`) allowed frictionless state preservation across external Google OAuth redirection without exposing tokens in callback URLs.
+- Co-locating unit tests with auth and server actions validated edge cases (such as revoked, expired, or exhausted invitations) ahead of UI integration.
+
+### What Was Inefficient
+- None; all three phases progressed systematically with zero blockers and zero regression gaps.
+
+### Patterns Established
+- Multi-tier NextAuth authorization patterns combined with transient cookie bridges provide a secure, battle-tested pattern for invite-only SaaS onboarding.
+- Status badge mapping combined with collapsible detail accordions provides an intuitive dashboard UX for complex relational models like invitations and claimed users.
+
+### Key Lessons
+1. Atomic Prisma transactions are essential when incrementing usage counts and provisioning new users simultaneously to prevent race conditions during concurrent sign-ins.
+2. Centralizing route collision checks in `src/lib/validators.ts` ensures that new root-level namespaces (like `/invite`) are universally protected across both short-link and microsite creation workflows.
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -95,6 +126,7 @@
 | v1.1 | 2 | 3 | Next.js native middleware protection, click index performance optimizations, and Vitest test suite setup. |
 | v1.2 | 1 | 1 | Inline slug editor UI, collision checks validation, path revalidation, and unit test suite. |
 | v1.3 | 3 | 3 | Claude design system integration, Tailwind v4 design tokens, Newsreader serif typography, and claude microsite theme preset. |
+| v1.5 | 3 | 3 | Dynamic user onboarding via invitation links, NextAuth 3-tier authorization bridge, dashboard invitation management, and Vitest test suite expansion. |
 
 ### Cumulative Quality
 
@@ -104,10 +136,13 @@
 | v1.1 | 12 | 80% | 0 |
 | v1.2 | 18 | 85% | 0 |
 | v1.3 | 24 | 90% | 0 |
+| v1.5 | 64 | 95% | 0 |
 
 ### Top Lessons (Verified Across Milestones)
 
 1. Keep public routes and authorization policies strictly checked using transactional access gates.
 2. Establish mock frameworks early to secure mutations from regression gaps.
 3. Centralize design tokens and system guidelines in DESIGN.md to align human and AI agents on visual standards.
+4. Protect application namespaces in a single centralized validator to prevent sub-paths from colliding with dynamic public slugs.
+
 

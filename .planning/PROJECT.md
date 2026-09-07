@@ -2,19 +2,7 @@
 
 ## What This Is
 
-Taut is a Next.js URL shortener and link-in-bio product featuring Claude's warm terracotta editorial design system. The project has shipped four milestones: microsite visual theme variants and drag-and-drop link ordering (v1.0), database performance indexing, routing security, and automated testing (v1.1), microsite slug editing (v1.2), and Claude editorial design system integration (v1.3).
-
-## Current Milestone: v1.5 Invitation Link & Dynamic User Onboarding
-
-**Goal:** Enable secure, dynamic user onboarding through invitation links so administrators can invite new users without modifying `.env`. Supports hybrid invitation links (open link with usage limits/expiration, or email-specific) with Google OAuth registration bridge, dashboard invitation management, and reserved routing.
-
-**Target features:**
-- Invitation Data Model & Migration: Prisma schema for `Invitation` supporting unique token, optional specific target email, `maxUses`, `usesCount`, `expiresAt`, and status (`PENDING`, `ACCEPTED`, `EXPIRED`, `REVOKED`).
-- Public Invitation Page: Beautiful Claude-editorial landing page at `/invite/[token]` displaying invitation status, inviter details, and direct "Masuk dengan Google" action.
-- NextAuth Invitation Bridge: Extended `signIn` callback allowing users with valid invitation tokens to create accounts in Prisma and access dashboard, while preserving `ALLOWED_EMAILS` as bootstrap/superadmin allowlist and letting previously registered users log in seamlessly.
-- Dashboard Invitation Management: Interface in `/dashboard/settings` (or `/dashboard/invitations`) to generate links, copy invitation URLs, set expiration/quota, and revoke active invitations.
-- Reserved Routes & Validation: Add `invite` to `RESERVED_SLUGS` to protect the invitation path from short-link and microsite namespace collisions.
-- Automated Tests: Vitest suite verifying token generation, expiry checks, usage limits, collision validation, and auth flow.
+Taut is a Next.js URL shortener and link-in-bio product featuring Claude's warm terracotta editorial design system. The project has shipped five major milestones: microsite visual theme variants and drag-and-drop link ordering (v1.0), database performance indexing, routing security, and automated testing (v1.1), microsite slug editing (v1.2), Claude editorial design system integration (v1.3), dashboard mobile UX & recent activity polish (v1.4), and dynamic user onboarding via hybrid invitation links (v1.5).
 
 ## Core Value
 
@@ -34,6 +22,7 @@ Microsite owners can create a more personalized public page, control link priori
 - Shipped **v1.3** milestone delivering `awesome-design-md` / `getdesign` tooling integration, active `DESIGN.md` specification, Tailwind CSS v4 design tokens and CSS custom properties for Claude's warm terracotta palette (`#cc785c`, `#faf9f5`, `#181715`), Google Font `Newsreader` serif typography, editorial refresh of UI primitives and dashboard layouts, `claude` microsite theme preset, and comprehensive unit test verification (24/24 tests passing).
 - Shipped **v1.4** milestone delivering mobile responsive sliding navigation drawer (`layout.tsx`), stat cards micro-interactions with WCAG AA compliant link contrast, editorial onboarding guidance cards for new users, and side-by-side recent activities feeds for microsites and short links.
 - Shipped brand logo quick task delivering the bespoke *Interlocking Tension Weave* vector logo, standalone SVG assets (`logo.svg`, `logo-mark.svg`, `icon.svg`, `favicon.svg`), and reusable `BrandLogo` component.
+- Shipped **v1.5** milestone delivering dynamic user onboarding through hybrid invitation links (multi-use open links with usage limits/expiration, and email-specific links), NextAuth 3-tier sign-in authorization callback bridge, Claude editorial invitation landing page at `/invite/[token]`, dashboard invitation management UI with real-time badges, claimed users accordion, copy-to-clipboard, link revocation, `/invite` reserved route collision protection, and 64 automated Vitest unit tests across 8 test suites.
 
 ## Requirements
 
@@ -79,21 +68,28 @@ Microsite owners can create a more personalized public page, control link priori
 - ✓ UI-02: Update core interactive components (buttons, cards, inputs, and badges) to reflect Claude design tokens — v1.3.
 - ✓ THEME-01: Add Claude-inspired preset theme to microsite theme registry (`src/lib/microsite-themes.ts`) — v1.3.
 - ✓ TEST-01: Verify all unit tests, route validations, and TypeScript typechecking remain passing — v1.3.
+- ✓ NAV-01: Mobile responsive sliding navigation drawer (`layout.tsx`) — v1.4.
+- ✓ CARD-01: Stat cards micro-interactions with WCAG AA compliant link contrast — v1.4.
+- ✓ ACT-01: Dashboard recent activity feeds for microsites and short links — v1.4.
+- ✓ ONBOARD-01: Editorial onboarding guidance cards for first-time creation — v1.4.
+- ✓ INV-01: Prisma schema `Invitation` model with token, email, maxUses, usesCount, expiresAt, and status lifecycle — v1.5.
+- ✓ INV-02: Route protection by adding `invite` to `RESERVED_SLUGS` in `src/lib/validators.ts` — v1.5.
+- ✓ INV-03: Claude editorial public invitation landing page at `/invite/[token]` — v1.5.
+- ✓ AUTH-01: NextAuth `signIn` callback invitation claim transaction, dynamic user creation, and quota increments — v1.5.
+- ✓ AUTH-02: Unrestricted login for existing database users and superadmin `ALLOWED_EMAILS` bootstrap allowlist — v1.5.
+- ✓ ADMIN-01: Dashboard invitation management UI (open/email links, quotas, expirations, copy, revocation) — v1.5.
+- ✓ TEST-01: Automated Vitest test suite with 64/64 passing tests across 8 test suites — v1.5.
 
 ### Active
 
-- [ ] **NAV-01**: User on mobile screens can access a responsive slide-out navigation drawer with all dashboard links, user profile, and sign-out.
-- [ ] **CARD-01**: Dashboard metric cards feature subtle micro-interactions on hover, balanced iconography, and WCAG AA contrast compliant action link colors (`#b25e43`).
-- [ ] **ACT-01**: User can view recent short links and microsites directly on the dashboard overview with direct management access.
-- [ ] **ONBOARD-01**: User with zero links or microsites sees an editorial onboarding guidance card to accelerate first-time creation.
-- [ ] **TEST-01**: Verify all Vitest automated tests and TypeScript compilation pass cleanly without regression.
+(None currently active — run `/gsd-new-milestone` to define requirements for the next milestone)
 
 ### Out of Scope
 
-- New authentication providers — not needed for this microsite UI increment.
+- New authentication providers — Google OAuth remains the standard provider.
 - Payment tiers or gated themes — monetization not requested.
 - New public routing model — existing short-link-first resolution stays unchanged.
-- Full design-system rewrite — scope is microsite themes and link ordering only.
+- Full design-system rewrite — scope is complete.
 
 ## Context
 
@@ -101,21 +97,23 @@ Microsite owners can create a more personalized public page, control link priori
 - Active visual design system follows Claude's warm terracotta editorial style (`DESIGN.md`, referenced in `AGENTS.md`).
 - Primary brand accent is terracotta (`#cc785c`), hover (`#a9583e`), with light canvas (`#faf9f5`), dark surfaces (`#181715`), and Google Font `Newsreader` (`--font-serif`).
 - Theme presets registry is centralized in `src/lib/microsite-themes.ts`.
-- Centralized validation rules for URL syntax, loopback checks, and route collisions live in `src/lib/validators.ts`.
+- Centralized validation rules for URL syntax, loopback checks, route collisions, and invitation tokens live in `src/lib/validators.ts` and `src/lib/invitations.ts`.
 - Next.js native middleware protection is handled via `src/middleware.ts`.
+- NextAuth authentication with 3-tier access gate is handled via `src/lib/auth.ts`.
 - Vitest automated tests are co-located alongside target server actions (`src/app/actions/*.test.ts`, `src/lib/*.test.ts`) and configured in `vitest.config.ts`.
 - Microsite mutations live in `src/app/actions/microsite.ts` (with ownership validations and atomic transactions for reordering).
 - Public microsite data loading lives in `src/lib/public-microsite.ts`.
-- Microsite editor UI lives in `src/app/dashboard/microsites/[id]/microsite-editor.tsx` (implements HTML5 drag/drop, keyboard move actions, ARIA live region announcements, and focus restoration).
-- Public microsite client rendering lives in `src/components/microsite-page-client.tsx`.
+- Microsite editor UI lives in `src/app/dashboard/microsites/[id]/microsite-editor.tsx`.
+- Invitation management lives in `src/app/dashboard/invitations/`.
+- Public invitation landing page lives in `src/app/invite/[token]/`.
 
 ## Constraints
 
 - **Tech stack**: Use existing Next.js App Router, React, Prisma, Tailwind, and shadcn/Radix patterns — avoid new framework choices.
-- **Data integrity**: Preserve ownership and global viewer access checks in microsite actions.
-- **Routing**: Keep `/:username` resolution order: short link first, microsite second.
-- **Verification**: Use `npm run lint`; use `npm run test` for automated Vitest unit testing, and `npx tsc --noEmit` for TypeScript compilation checks.
-- **Database**: If `prisma/schema.prisma` changes, run `npx prisma generate` and consider migration drift.
+- **Data integrity**: Preserve ownership and global viewer access checks in microsite and invitation actions.
+- **Routing**: Keep `/:username` resolution order: short link first, microsite second. Protect reserved paths in `RESERVED_SLUGS`.
+- **Verification**: Use `npm run test` for automated Vitest unit testing, and `npx tsc --noEmit` for TypeScript compilation checks.
+- **Database**: If `prisma/schema.prisma` changes, run `npx prisma generate` and execute migrations.
 
 ## Key Decisions
 
@@ -147,6 +145,14 @@ Microsite owners can create a more personalized public page, control link priori
 | Semantic CSS tokens over hardcoded zinc colors | Supports cohesive theming across sidebar, cards, buttons, badges, and charts. | ✓ Completed (v1.3) |
 | `claude` microsite preset theme | Allows public link-in-bio pages to reflect Claude's warm cream and terracotta style. | ✓ Completed (v1.3) |
 | Co-located theme unit tests | Ensures schema contracts, fallbacks, and token definitions are verified in automated test suite. | ✓ Completed (v1.3) |
+| Mobile slide-out navigation drawer | Provides touch-friendly access to all dashboard routes on small viewports | ✓ Completed (v1.4) |
+| Onboarding guidance card for empty states | Accelerates activation for users with zero links or microsites | ✓ Completed (v1.4) |
+| Side-by-side recent activities feed | Gives overview of newest microsites and short links on dashboard landing | ✓ Completed (v1.4) |
+| Database-driven `Invitation` schema with status lifecycle | Eliminates manual .env edits and provides scalable multi-use quota tracking | ✓ Completed (v1.5) |
+| Route namespace reservation for `/invite` | Prevents short links and microsites from shadowing the invitation route | ✓ Completed (v1.5) |
+| 3-tier NextAuth authorization bridge | Allows existing users, superadmin bootstrap allowlist, and valid invitation holders seamless access | ✓ Completed (v1.5) |
+| Secure HTTP-only cookie bridge across OAuth | Passes verified invite token across external Google OAuth redirect securely | ✓ Completed (v1.5) |
+| Dashboard invitation management with real-time feedback | Full administrative visibility over link quotas, expirations, clipboard copying, and revocation | ✓ Completed (v1.5) |
 
 ## Evolution
 
@@ -166,4 +172,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-09-07 after completing v1.3 milestone*
+*Last updated: 2026-09-07 after completing v1.5 milestone*

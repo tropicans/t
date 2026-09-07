@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.5
 milestone_name: Invitation Link & Dynamic User Onboarding
 status: complete
-last_updated: "2026-09-07T08:21:00.000Z"
+last_updated: "2026-09-07T08:30:00.000Z"
 last_activity: 2026-09-07
 progress:
   total_phases: 3
@@ -17,34 +17,26 @@ progress:
 
 **Project:** Taut Microsite Enhancements
 **Initialized:** 2026-06-26
-**Current Phase:** Phase 15: Dashboard Invitation Management & System Verification
-**Status:** Complete (v1.5)
+**Current Milestone:** Milestone v1.5 — Invitation Link & Dynamic User Onboarding (Shipped)
+**Status:** Complete
 
 ## Project Reference
 
-See: `.planning/PROJECT.md` (updated 2026-09-07)
+See: `.planning/PROJECT.md` (updated 2026-09-07 after completing v1.5 milestone)
 
 **Core value:** Microsite owners can create a more personalized public page, control link priority, and experience fast, secure dashboard routing and analytics performance.
-**Current focus:** Milestone v1.5 — Invitation Link & Dynamic User Onboarding (Complete)
+**Current focus:** Planning next milestone
 
 ## Active Roadmap
 
 See: `.planning/ROADMAP.md`
 
-| Phase | Status | Progress |
-|-------|--------|----------|
-| Phase 13: Invitation Data Model, Migration & Validation Engine | Complete | 100% |
-| Phase 14: Public Invitation Landing Page & NextAuth Integration | Complete | 100% |
-| Phase 15: Dashboard Invitation Management & System Verification | Complete | 100% |
-
+All phases in v1.5 (Phases 13, 14, and 15) are complete and archived in `.planning/milestones/v1.5-ROADMAP.md`.
 
 ## Requirements
 
-See: `.planning/REQUIREMENTS.md`
-
-- v1.5 requirements: 6
-- Mapped to phases: 6
-- Unmapped: 0
+Requirements for v1.5 archived to `.planning/milestones/v1.5-REQUIREMENTS.md`.
+Fresh requirements will be initialized with `/gsd-new-milestone`.
 
 ## Codebase Context
 
@@ -70,28 +62,27 @@ Research exists in `.planning/research/`:
 
 ## Next Action
  
-Run `/gsd-audit-milestone` to review Milestone v1.5 completion against requirements.
+Run `/gsd-new-milestone` to start planning the next milestone.
  
 ---
 *State initialized: 2026-06-26*
  
 ## Session
  
-**Last session:** 2026-09-07T08:21:00.000Z
-**Stopped at:** Phase 15 executed, verified, and complete
-**Resume file:** .planning/phases/15-dashboard-invitation-management-system-verification/15-01-SUMMARY.md
+**Last session:** 2026-09-07T08:30:00.000Z
+**Stopped at:** Milestone v1.5 archived and tagged
+**Resume file:** .planning/milestones/v1.5-ROADMAP.md
  
 ## Current Position
 
-Phase: Phase 15: Dashboard Invitation Management & System Verification
-Plan: 15-01 Complete
-Status: Verified and Passed
-Last activity: 2026-09-07 — Phase 15 implementation, test suite, and container build verified
+Milestone: v1.5 Invitation Link & Dynamic User Onboarding (Shipped)
+Phases: 13-15 Complete
+Status: Verified, Passed, and Archived
+Last activity: 2026-09-07 — Milestone v1.5 complete
 
 ## Operator Next Steps
  
-- Run `/gsd-audit-milestone` to audit Milestone v1.5 completion.
-
+- Run `/gsd-new-milestone` to define goals, requirements, and phases for the next version.
 
 ## Quick Tasks Completed
 
