@@ -28,8 +28,8 @@ export default async function ShortLinksPage() {
     return (
         <div className="max-w-4xl mx-auto space-y-6">
             <div className="flex flex-col gap-2">
-                <h1 className="text-3xl font-bold tracking-tight text-white">Short Links</h1>
-                <p className="text-zinc-400">
+                <h1 className="text-3xl font-serif font-bold tracking-tight text-foreground">Short Links</h1>
+                <p className="text-muted-foreground">
                     Create, manage, and track your shortened URLs.
                 </p>
             </div>
@@ -37,12 +37,12 @@ export default async function ShortLinksPage() {
             <ShortLinkForm />
 
             <div className="pt-6">
-                <h2 className="text-xl font-semibold text-white mb-4">
+                <h2 className="text-xl font-serif font-semibold text-foreground mb-4">
                     {canViewAllLinks ? "All Links" : "Your Links"}
                 </h2>
                 {links.length === 0 ? (
-                    <div className="text-center py-10 bg-zinc-900/50 border border-zinc-800 border-dashed rounded-xl">
-                        <p className="text-zinc-400">No short links yet. Create one above!</p>
+                    <div className="text-center py-10 bg-card/40 border border-border border-dashed rounded-xl">
+                        <p className="text-muted-foreground">No short links yet. Create one above!</p>
                     </div>
                 ) : (
                     <ShortLinkList

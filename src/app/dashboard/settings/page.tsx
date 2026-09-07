@@ -8,25 +8,25 @@ export default async function SettingsPage() {
     return (
         <div className="max-w-3xl mx-auto space-y-6">
             <div className="flex flex-col gap-2">
-                <h1 className="text-3xl font-bold tracking-tight text-white">Settings</h1>
-                <p className="text-zinc-400">
+                <h1 className="text-3xl font-serif font-bold tracking-tight text-foreground">Settings</h1>
+                <p className="text-muted-foreground">
                     Manage your account settings and profile preferences.
                 </p>
             </div>
 
-            <Card className="bg-zinc-900/50 border-zinc-800">
+            <Card>
                 <CardHeader>
-                    <CardTitle className="text-white">Account</CardTitle>
-                    <CardDescription className="text-zinc-400">
+                    <CardTitle className="text-foreground">Account</CardTitle>
+                    <CardDescription className="text-muted-foreground">
                         Your account information.
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-2">
-                    <p className="text-sm text-zinc-300">
-                        <span className="text-zinc-500">Name: </span>{session?.user?.name}
+                    <p className="text-sm text-foreground">
+                        <span className="text-muted-foreground">Name: </span>{session?.user?.name}
                     </p>
-                    <p className="text-sm text-zinc-300">
-                        <span className="text-zinc-500">Email: </span>{session?.user?.email}
+                    <p className="text-sm text-foreground">
+                        <span className="text-muted-foreground">Email: </span>{session?.user?.email}
                     </p>
                 </CardContent>
             </Card>

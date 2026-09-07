@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useEffect } from "react";
+import { useState, useTransition, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { createMicrosite } from "@/app/actions/microsite";
 import { Button } from "@/components/ui/button";
@@ -14,11 +14,11 @@ import { CoverImageUploader } from "@/components/cover-image-uploader";
 import { AvatarImageUploader } from "@/components/avatar-image-uploader";
 import { MICROSITE_THEMES } from "@/lib/microsite-themes";
 
-
-
 function getErrorMessage(error: unknown): string {
     return error instanceof Error ? error.message : "Terjadi kesalahan";
 }
+
+const emptySubscribe = () => () => {};
 
 export default function NewMicrositePage() {
     const router = useRouter();
@@ -28,11 +28,7 @@ export default function NewMicrositePage() {
     const [slugValue, setSlugValue] = useState("");
     const [coverImageUrl, setCoverImageUrl] = useState("");
     const [avatarImageUrl, setAvatarImageUrl] = useState("");
-    const [displayDomain, setDisplayDomain] = useState("");
-
-    useEffect(() => {
-        setDisplayDomain(window.location.host);
-    }, []);
+    const displayDomain = useSyncExternalStore(emptySubscribe, () => window.location.host, () => "");
 
     function handleSlugChange(e: React.ChangeEvent<HTMLInputElement>) {
         const cleaned = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-").replace(/-+/g, "-");

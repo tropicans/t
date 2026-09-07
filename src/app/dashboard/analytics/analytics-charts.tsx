@@ -72,33 +72,33 @@ export function AnalyticsCharts({
                 <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                     <defs>
                         <linearGradient id="colorClicks" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-                            <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                            <stop offset="5%" stopColor="#cc785c" stopOpacity={0.35} />
+                            <stop offset="95%" stopColor="#cc785c" stopOpacity={0} />
                         </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#27272a" />
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" strokeOpacity={0.6} />
                     <XAxis
                         dataKey="date"
-                        stroke="#71717a"
+                        stroke="#8e8b82"
                         fontSize={12}
                         tickLine={false}
                         axisLine={false}
                     />
                     <YAxis
-                        stroke="#71717a"
+                        stroke="#8e8b82"
                         fontSize={12}
                         tickLine={false}
                         axisLine={false}
                         tickFormatter={(value) => `${value}`}
                     />
                     <Tooltip
-                        contentStyle={{ backgroundColor: "#18181b", borderColor: "#27272a", color: "#fff", borderRadius: "8px" }}
-                        itemStyle={{ color: "#3b82f6" }}
+                        contentStyle={{ backgroundColor: "var(--card)", borderColor: "var(--border)", color: "var(--foreground)", borderRadius: "8px" }}
+                        itemStyle={{ color: "#cc785c" }}
                     />
                     <Area
                         type="monotone"
                         dataKey="clicks"
-                        stroke="#3b82f6"
+                        stroke="#cc785c"
                         strokeWidth={2}
                         fillOpacity={1}
                         fill="url(#colorClicks)"

@@ -56,13 +56,13 @@ export default async function MicrositesPage() {
             {/* Header */}
             <div className="flex items-end justify-between">
                 <div>
-                    <h1 className="text-3xl font-extrabold text-white tracking-tight">Microsites</h1>
-                    <p className="text-zinc-400 mt-1 text-sm">
+                    <h1 className="text-3xl font-serif font-bold text-foreground tracking-tight">Microsites</h1>
+                    <p className="text-muted-foreground mt-1 text-sm">
                         Kelola dan pantau halaman microsite campaign kamu
                     </p>
                 </div>
                 <Link href="/dashboard/microsites/new">
-                    <Button className="bg-primary hover:bg-primary/90 text-white gap-2 shadow-lg shadow-blue-600/20 font-semibold">
+                    <Button className="gap-2 font-semibold">
                         <Plus className="w-4 h-4" />
                         Buat Microsite
                     </Button>
@@ -71,16 +71,16 @@ export default async function MicrositesPage() {
 
             {microsites.length === 0 ? (
                 /* Full empty state */
-                <div className="flex flex-col items-center justify-center py-24 border-2 border-dashed border-zinc-800 rounded-2xl text-center">
-                    <div className="w-16 h-16 bg-zinc-800 rounded-2xl flex items-center justify-center mb-4">
-                        <Layers className="w-7 h-7 text-zinc-500" />
+                <div className="flex flex-col items-center justify-center py-24 border-2 border-dashed border-border bg-card/40 rounded-2xl text-center">
+                    <div className="w-16 h-16 bg-muted rounded-2xl flex items-center justify-center mb-4">
+                        <Layers className="w-7 h-7 text-muted-foreground" />
                     </div>
-                    <h3 className="text-lg font-semibold text-white mb-2">Belum ada microsite</h3>
-                    <p className="text-zinc-500 text-sm mb-6 max-w-xs">
+                    <h3 className="text-lg font-serif font-semibold text-foreground mb-2">Belum ada microsite</h3>
+                    <p className="text-muted-foreground text-sm mb-6 max-w-xs">
                         Buat microsite pertamamu untuk mulai mengumpulkan link dalam satu halaman.
                     </p>
                     <Link href="/dashboard/microsites/new">
-                        <Button className="bg-primary hover:bg-primary/90 text-white gap-2">
+                        <Button className="gap-2">
                             <Plus className="w-4 h-4" /> Buat Microsite
                         </Button>
                     </Link>
@@ -93,20 +93,20 @@ export default async function MicrositesPage() {
                             return (
                                 <div
                                     key={ms.id}
-                                    className="bg-zinc-900/60 border border-zinc-800 hover:border-blue-500/40 rounded-xl p-5 group transition-all cursor-pointer"
+                                    className="bg-card border border-border hover:border-primary/40 rounded-xl p-5 group transition-all"
                                 >
                                     {/* Thumbnail */}
                                     <ThemeThumbnail theme={ms.theme} title={ms.title} />
 
                                     {/* Title + Badge */}
                                     <div className="flex items-start justify-between mb-1">
-                                        <h3 className="text-base font-bold text-white truncate max-w-[70%]">{ms.title}</h3>
+                                        <h3 className="text-base font-semibold text-foreground truncate max-w-[70%]">{ms.title}</h3>
                                         {ms.isPublished ? (
-                                            <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
+                                            <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
                                                 <Eye className="w-2.5 h-2.5" /> Publik
                                             </span>
                                         ) : (
-                                            <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-zinc-700/50 text-zinc-400 border border-zinc-700 flex items-center gap-1">
+                                            <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-muted text-muted-foreground border border-border flex items-center gap-1">
                                                 <EyeOff className="w-2.5 h-2.5" /> Draft
                                             </span>
                                         )}
@@ -115,14 +115,14 @@ export default async function MicrositesPage() {
                                     {/* Slug */}
                                     <p className="text-primary text-xs font-medium mb-3">/{ms.slug}</p>
                                     {canViewAllMicrosites && ms.userId !== dbUser.id ? (
-                                        <p className="text-xs text-zinc-500 mb-3">
+                                        <p className="text-xs text-muted-foreground mb-3">
                                             Owner: {ms.user.name || ms.user.email || "Tanpa nama"}
                                         </p>
                                     ) : null}
 
                                     {/* Stats + Actions */}
-                                    <div className="flex items-center justify-between pt-3 border-t border-zinc-800">
-                                        <div className="flex items-center gap-4 text-xs text-zinc-500">
+                                    <div className="flex items-center justify-between pt-3 border-t border-border">
+                                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
                                             <span className="flex items-center gap-1">
                                                 <Link2 className="w-3.5 h-3.5" />
                                                 {ms._count.links} links
@@ -134,13 +134,13 @@ export default async function MicrositesPage() {
                                         </div>
                                         <div className="flex items-center gap-1">
                                             <a href={`/${ms.slug}`} target="_blank" rel="noopener noreferrer">
-                                                <Button variant="ghost" size="icon" className="w-7 h-7 text-zinc-500 hover:text-white hover:bg-zinc-800" title="Buka Microsite">
+                                                <Button variant="ghost" size="icon" className="w-7 h-7 text-muted-foreground hover:text-foreground hover:bg-muted" title="Buka Microsite">
                                                     <ExternalLink className="w-3.5 h-3.5" />
                                                 </Button>
                                             </a>
                                             <MicrositeQrCode slug={ms.slug} title={ms.title} />
                                             <Link href={`/dashboard/microsites/${ms.id}`}>
-                                                <Button variant="outline" size="sm" className="h-7 px-2.5 text-xs bg-zinc-900 hover:bg-zinc-800 border-zinc-700 text-zinc-300 hover:text-white hover:border-zinc-500">
+                                                <Button variant="outline" size="sm" className="h-7 px-2.5 text-xs">
                                                     Edit
                                                 </Button>
                                             </Link>
@@ -152,13 +152,13 @@ export default async function MicrositesPage() {
                     </div>
 
                     {/* Add more CTA at bottom */}
-                    <div className="flex items-center justify-center p-10 border-2 border-dashed border-zinc-800 rounded-2xl">
+                    <div className="flex items-center justify-center p-10 border-2 border-dashed border-border bg-card/40 rounded-2xl">
                         <div className="text-center">
-                            <PlusCircle className="w-10 h-10 text-zinc-700 mx-auto mb-3" />
-                            <p className="text-zinc-500 text-sm">
+                            <PlusCircle className="w-10 h-10 text-muted-foreground/60 mx-auto mb-3" />
+                            <p className="text-muted-foreground text-sm">
                                 Butuh halaman baru?{" "}
-                                <Link href="/dashboard/microsites/new" className="text-primary font-semibold hover:text-blue-400 transition-colors">
-                                    Buat microsite baru
+                                <Link href="/dashboard/microsites/new" className="text-primary font-semibold hover:text-terracotta-active transition-colors">
+                                    + Buat microsite lainnya
                                 </Link>
                             </p>
                         </div>

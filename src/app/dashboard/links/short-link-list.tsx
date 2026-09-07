@@ -37,6 +37,7 @@ export function ShortLinkList({ initialLinks, viewerUserId, canViewAllLinks }: S
         }
     };
 
+
     const copyToClipboard = async (id: string, shortCode: string) => {
         const fullUrl = `${baseUrl}/${shortCode}`;
         await navigator.clipboard.writeText(fullUrl);
@@ -51,7 +52,7 @@ export function ShortLinkList({ initialLinks, viewerUserId, canViewAllLinks }: S
                 const isOwner = link.userId === viewerUserId;
 
                 return (
-                    <Card key={link.id} className="bg-zinc-900/50 border-zinc-800 transition-all hover:bg-zinc-800/50">
+                    <Card key={link.id} className="bg-card border-border transition-all hover:border-primary/40">
                         <CardContent className="p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4">
 
                             <div className="flex-1 min-w-0 w-full">
@@ -60,36 +61,36 @@ export function ShortLinkList({ initialLinks, viewerUserId, canViewAllLinks }: S
                                         href={fullShortUrl}
                                         target="_blank"
                                         rel="noreferrer"
-                                        className="text-base font-semibold text-primary hover:text-primary/80 truncate"
+                                        className="text-base font-semibold text-primary hover:text-terracotta-active truncate"
                                     >
                                         {baseUrl.replace(/^https?:\/\//, "")}/{link.shortCode}
                                     </a>
                                     {link.password && (
                                         <span title="Password Protected" className="flex items-center">
-                                            <Lock className="w-3.5 h-3.5 text-zinc-500" />
+                                            <Lock className="w-3.5 h-3.5 text-muted-foreground" />
                                         </span>
                                     )}
                                 </div>
 
-                                <p className="text-sm text-zinc-400 truncate flex items-center gap-1">
+                                <p className="text-sm text-muted-foreground truncate flex items-center gap-1">
                                     <ExternalLink className="w-3 h-3 flex-shrink-0" />
                                     {link.originalUrl}
                                 </p>
-                                <div className="text-xs text-zinc-600 mt-2">
+                                <div className="text-xs text-muted-foreground mt-2">
                                     Created {formatDistanceToNow(new Date(link.createdAt), { addSuffix: true })}
                                 </div>
                                 {canViewAllLinks && !isOwner ? (
-                                    <div className="text-xs text-zinc-500 mt-1">
+                                    <div className="text-xs text-muted-foreground mt-1">
                                         Owner: {link.user?.name || link.user?.email || "Tanpa nama"}
                                     </div>
                                 ) : null}
                             </div>
 
-                            <div className="flex items-center gap-2 w-full sm:w-auto justify-end mt-2 sm:mt-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-zinc-800">
+                            <div className="flex items-center gap-2 w-full sm:w-auto justify-end mt-2 sm:mt-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-border">
                                 <Button
                                     variant="ghost"
                                     size="sm"
-                                    className="text-zinc-400 hover:text-white hover:bg-zinc-800"
+                                    className="text-muted-foreground hover:text-foreground hover:bg-muted"
                                     onClick={() => copyToClipboard(link.id, link.shortCode)}
                                 >
                                     <Copy className="w-4 h-4 mr-2" />
@@ -109,7 +110,7 @@ export function ShortLinkList({ initialLinks, viewerUserId, canViewAllLinks }: S
                                     <Button
                                         variant="ghost"
                                         size="icon"
-                                        className="text-zinc-500 hover:text-red-400 hover:bg-red-400/10"
+                                        className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                                         onClick={() => handleDelete(link.id)}
                                         disabled={isPending}
                                     >

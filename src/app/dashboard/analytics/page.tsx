@@ -152,12 +152,12 @@ export default async function AnalyticsPage({
         <div className="max-w-6xl mx-auto space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex flex-col gap-2">
-                    <h1 className="text-3xl font-bold tracking-tight text-white">Analytics</h1>
-                    <p className="text-zinc-400">Pantau performa Short Links dan Microsites kamu.</p>
+                    <h1 className="text-3xl font-serif font-bold tracking-tight text-foreground">Analytics</h1>
+                    <p className="text-muted-foreground">Pantau performa Short Links dan Microsites kamu.</p>
                 </div>
 
                 {/* Time range selector */}
-                <div className="flex bg-zinc-950 p-1 rounded-lg border border-zinc-800/80 w-fit self-start md:self-auto">
+                <div className="flex bg-muted/60 p-1 rounded-lg border border-border w-fit self-start md:self-auto">
                     {[
                         { label: "24 Jam", value: "24h" },
                         { label: "7 Hari", value: "7d" },
@@ -169,8 +169,8 @@ export default async function AnalyticsPage({
                             href={`/dashboard/analytics?range=${item.value}`}
                             className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all duration-200 ${
                                 range === item.value
-                                    ? "bg-zinc-850 text-white border-zinc-700 shadow"
-                                    : "text-zinc-400 hover:text-white"
+                                    ? "bg-card text-foreground border border-border shadow-xs"
+                                    : "text-muted-foreground hover:text-foreground"
                             }`}
                         >
                             {item.label}
@@ -181,46 +181,46 @@ export default async function AnalyticsPage({
 
             {/* Summary cards */}
             <div className="grid gap-4 md:grid-cols-3">
-                <Card className="bg-zinc-900/50 border-zinc-800">
+                <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium text-zinc-400">Total Klik</CardTitle>
-                        <Activity className="h-4 w-4 text-zinc-500" />
+                        <CardTitle className="text-sm font-medium text-muted-foreground">Total Klik</CardTitle>
+                        <Activity className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold text-white">{totalClicks.toLocaleString()}</div>
-                        <p className="text-xs text-zinc-500 mt-1">Rentang waktu terpilih</p>
+                        <div className="text-2xl font-bold text-foreground">{totalClicks.toLocaleString()}</div>
+                        <p className="text-xs text-muted-foreground mt-1">Rentang waktu terpilih</p>
                     </CardContent>
                 </Card>
 
-                <Card className="bg-zinc-900/50 border-zinc-800">
+                <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium text-zinc-400">Microsite Views</CardTitle>
+                        <CardTitle className="text-sm font-medium text-muted-foreground">Microsite Views</CardTitle>
                         <Globe className="h-4 w-4 text-primary" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold text-white">{totalMicrositeClicks.toLocaleString()}</div>
-                        <p className="text-xs text-zinc-500 mt-1">Dari {micrositesCount} microsite</p>
+                        <div className="text-2xl font-bold text-foreground">{totalMicrositeClicks.toLocaleString()}</div>
+                        <p className="text-xs text-muted-foreground mt-1">Dari {micrositesCount} microsite</p>
                     </CardContent>
                 </Card>
 
-                <Card className="bg-zinc-900/50 border-zinc-800">
+                <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium text-zinc-400">Short Link Klik</CardTitle>
-                        <LinkIcon className="h-4 w-4 text-zinc-500" />
+                        <CardTitle className="text-sm font-medium text-muted-foreground">Short Link Klik</CardTitle>
+                        <LinkIcon className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold text-white">{totalShortClicks.toLocaleString()}</div>
-                        <p className="text-xs text-zinc-500 mt-1">Dari {shortLinksCount} link</p>
+                        <div className="text-2xl font-bold text-foreground">{totalShortClicks.toLocaleString()}</div>
+                        <p className="text-xs text-muted-foreground mt-1">Dari {shortLinksCount} link</p>
                     </CardContent>
                 </Card>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
                 {/* Chart */}
-                <Card className="col-span-4 bg-zinc-900/50 border-zinc-800">
+                <Card className="col-span-4">
                     <CardHeader>
-                        <CardTitle className="text-white">Performance Chart</CardTitle>
-                        <CardDescription className="text-zinc-400">Total klik harian dari semua link & microsite</CardDescription>
+                        <CardTitle className="text-foreground">Performance Chart</CardTitle>
+                        <CardDescription className="text-muted-foreground">Total klik harian dari semua link & microsite</CardDescription>
                     </CardHeader>
                     <CardContent className="pl-2">
                         <AnalyticsCharts rawData={combinedClicks} range={range} />
@@ -228,30 +228,30 @@ export default async function AnalyticsPage({
                 </Card>
 
                 {/* Top items */}
-                <Card className="col-span-3 bg-zinc-900/50 border-zinc-800">
+                <Card className="col-span-3">
                     <CardHeader>
-                        <CardTitle className="text-white">Top Performing</CardTitle>
-                        <CardDescription className="text-zinc-400">Links & microsites dengan klik terbanyak</CardDescription>
+                        <CardTitle className="text-foreground">Top Performing</CardTitle>
+                        <CardDescription className="text-muted-foreground">Links & microsites dengan klik terbanyak</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-3">
                             {topItems.length === 0 ? (
-                                <p className="text-zinc-500 text-sm text-center py-4">Belum ada data klik.</p>
+                                <p className="text-muted-foreground text-sm text-center py-4">Belum ada data klik.</p>
                             ) : (
                                 topItems.map((item) => (
                                     <div key={item.id} className="flex items-center gap-3">
-                                        <div className={`w-8 h-8 rounded flex items-center justify-center flex-shrink-0 ${item.type === "microsite" ? "bg-primary/20" : "bg-zinc-800"}`}>
+                                        <div className={`w-8 h-8 rounded flex items-center justify-center flex-shrink-0 ${item.type === "microsite" ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"}`}>
                                             {item.type === "microsite" ? (
                                                 <Globe className="w-4 h-4 text-primary" />
                                             ) : (
-                                                <LinkIcon className="w-4 h-4 text-zinc-400" />
+                                                <LinkIcon className="w-4 h-4 text-muted-foreground" />
                                             )}
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <p className="text-sm font-medium text-white truncate">{item.label}</p>
-                                            <p className="text-xs text-zinc-500 truncate">{item.sub}</p>
+                                            <p className="text-sm font-medium text-foreground truncate">{item.label}</p>
+                                            <p className="text-xs text-muted-foreground truncate">{item.sub}</p>
                                         </div>
-                                        <div className="ml-auto font-semibold text-white tabular-nums">
+                                        <div className="ml-auto font-semibold text-foreground tabular-nums">
                                             {item.clicks}
                                         </div>
                                     </div>
@@ -265,24 +265,24 @@ export default async function AnalyticsPage({
             {/* Telemetry Widgets Grid */}
             <div className="grid gap-4 md:grid-cols-2">
                 {/* Top Countries */}
-                <Card className="bg-zinc-900/50 border-zinc-800">
+                <Card>
                     <CardHeader>
-                        <CardTitle className="text-white">Negara Asal</CardTitle>
-                        <CardDescription className="text-zinc-400">Lokasi geografis pengunjung</CardDescription>
+                        <CardTitle className="text-foreground">Negara Asal</CardTitle>
+                        <CardDescription className="text-muted-foreground">Lokasi geografis pengunjung</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">
                             {topCountries.length === 0 ? (
-                                <p className="text-zinc-500 text-sm text-center py-4">Belum ada data negara.</p>
+                                <p className="text-muted-foreground text-sm text-center py-4">Belum ada data negara.</p>
                             ) : (
                                 topCountries.map((c) => (
                                     <div key={c.code} className="flex items-center gap-3">
                                         <span className="text-2xl select-none">{c.flag}</span>
                                         <div className="flex-1 min-w-0">
-                                            <p className="text-sm font-medium text-white truncate">{c.name}</p>
-                                            <p className="text-xs text-zinc-500">{c.code}</p>
+                                            <p className="text-sm font-medium text-foreground truncate">{c.name}</p>
+                                            <p className="text-xs text-muted-foreground">{c.code}</p>
                                         </div>
-                                        <div className="font-semibold text-white tabular-nums">
+                                        <div className="font-semibold text-foreground tabular-nums">
                                             {c.count} klik
                                         </div>
                                     </div>
@@ -293,25 +293,25 @@ export default async function AnalyticsPage({
                 </Card>
 
                 {/* Device & Browser Distribution */}
-                <Card className="bg-zinc-900/50 border-zinc-800">
+                <Card>
                     <CardHeader>
-                        <CardTitle className="text-white">Perangkat & Browser</CardTitle>
-                        <CardDescription className="text-zinc-400">Tipe device dan browser pengunjung</CardDescription>
+                        <CardTitle className="text-foreground">Perangkat & Browser</CardTitle>
+                        <CardDescription className="text-muted-foreground">Tipe device dan browser pengunjung</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
                         {/* Device Types */}
                         <div className="space-y-3">
-                            <h4 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Tipe Perangkat</h4>
+                            <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Tipe Perangkat</h4>
                             <div className="grid grid-cols-2 gap-4">
-                                <div className="bg-zinc-950 p-3 rounded-lg border border-zinc-800/80 text-center">
-                                    <p className="text-xs text-zinc-500">Mobile</p>
-                                    <p className="text-lg font-bold text-white mt-1 tabular-nums">
+                                <div className="bg-background/50 p-3 rounded-lg border border-border text-center">
+                                    <p className="text-xs text-muted-foreground">Mobile</p>
+                                    <p className="text-lg font-bold text-foreground mt-1 tabular-nums">
                                         {devicesCount.Mobile}
                                     </p>
                                 </div>
-                                <div className="bg-zinc-950 p-3 rounded-lg border border-zinc-800/80 text-center">
-                                    <p className="text-xs text-zinc-500">Desktop</p>
-                                    <p className="text-lg font-bold text-white mt-1 tabular-nums">
+                                <div className="bg-background/50 p-3 rounded-lg border border-border text-center">
+                                    <p className="text-xs text-muted-foreground">Desktop</p>
+                                    <p className="text-lg font-bold text-foreground mt-1 tabular-nums">
                                         {devicesCount.Desktop}
                                     </p>
                                 </div>
@@ -320,15 +320,15 @@ export default async function AnalyticsPage({
 
                         {/* Top Browsers */}
                         <div className="space-y-3">
-                            <h4 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Browser Terpopuler</h4>
+                            <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Browser Terpopuler</h4>
                             <div className="space-y-2">
                                 {topBrowsers.length === 0 ? (
-                                    <p className="text-zinc-500 text-sm py-1">Belum ada data browser.</p>
+                                    <p className="text-muted-foreground text-sm py-1">Belum ada data browser.</p>
                                 ) : (
                                     topBrowsers.map((b) => (
                                         <div key={b.name} className="flex justify-between items-center text-sm">
-                                            <span className="text-zinc-300">{b.name}</span>
-                                            <span className="font-semibold text-white tabular-nums">{b.count} klik</span>
+                                            <span className="text-muted-foreground">{b.name}</span>
+                                            <span className="font-semibold text-foreground tabular-nums">{b.count} klik</span>
                                         </div>
                                     ))
                                 )}
@@ -340,24 +340,24 @@ export default async function AnalyticsPage({
 
             {/* Short Link breakdown table */}
             {shortLinks.length > 0 && (
-                <Card className="bg-zinc-900/50 border-zinc-800">
+                <Card>
                     <CardHeader>
-                        <CardTitle className="text-white">Short Link Breakdown</CardTitle>
-                        <CardDescription className="text-zinc-400">Detail performa setiap short link</CardDescription>
+                        <CardTitle className="text-foreground">Short Link Breakdown</CardTitle>
+                        <CardDescription className="text-muted-foreground">Detail performa setiap short link</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-2">
                             {shortLinks.map((link) => (
-                                <div key={link.id} className="flex items-center gap-4 py-2 border-b border-zinc-800 last:border-0">
+                                <div key={link.id} className="flex items-center gap-4 py-2 border-b border-border last:border-0">
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-medium text-white">/{link.shortCode}</p>
-                                        <p className="text-xs text-zinc-500 truncate">{link.originalUrl}</p>
+                                        <p className="text-sm font-medium text-foreground">/{link.shortCode}</p>
+                                        <p className="text-xs text-muted-foreground truncate">{link.originalUrl}</p>
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-sm font-semibold text-white">{link._count.clicks}</p>
-                                        <p className="text-xs text-zinc-500">klik</p>
+                                        <p className="text-sm font-semibold text-foreground">{link._count.clicks}</p>
+                                        <p className="text-xs text-muted-foreground">klik</p>
                                     </div>
-                                    <div className="w-24 bg-zinc-800 rounded-full h-1.5 flex-shrink-0">
+                                    <div className="w-24 bg-muted rounded-full h-1.5 flex-shrink-0">
                                         <div
                                             className="bg-primary h-1.5 rounded-full"
                                             style={{
@@ -376,24 +376,24 @@ export default async function AnalyticsPage({
 
             {/* Microsite breakdown table */}
             {microsites.length > 0 && (
-                <Card className="bg-zinc-900/50 border-zinc-800">
+                <Card>
                     <CardHeader>
-                        <CardTitle className="text-white">Microsite Breakdown</CardTitle>
-                        <CardDescription className="text-zinc-400">Detail performa setiap microsite</CardDescription>
+                        <CardTitle className="text-foreground">Microsite Breakdown</CardTitle>
+                        <CardDescription className="text-muted-foreground">Detail performa setiap microsite</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-2">
                             {microsites.map((ms) => (
-                                <div key={ms.id} className="flex items-center gap-4 py-2 border-b border-zinc-800 last:border-0">
+                                <div key={ms.id} className="flex items-center gap-4 py-2 border-b border-border last:border-0">
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-medium text-white">{ms.title}</p>
-                                        <p className="text-xs text-zinc-500">/{ms.slug}</p>
+                                        <p className="text-sm font-medium text-foreground">{ms.title}</p>
+                                        <p className="text-xs text-muted-foreground">/{ms.slug}</p>
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-sm font-semibold text-white">{ms._count.clicks}</p>
-                                        <p className="text-xs text-zinc-500">klik</p>
+                                        <p className="text-sm font-semibold text-foreground">{ms._count.clicks}</p>
+                                        <p className="text-xs text-muted-foreground">klik</p>
                                     </div>
-                                    <div className="w-24 bg-zinc-800 rounded-full h-1.5 flex-shrink-0">
+                                    <div className="w-24 bg-muted rounded-full h-1.5 flex-shrink-0">
                                         <div
                                             className="bg-primary h-1.5 rounded-full"
                                             style={{
