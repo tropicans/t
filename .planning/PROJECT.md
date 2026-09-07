@@ -4,12 +4,16 @@
 
 Taut is a Next.js URL shortener and link-in-bio product. This project has completed its first two milestones: expanding microsite visual theme choices and drag-and-drop link ordering (v1.0), and implementing database index optimizations, dashboard query parallelization, routing security hardening, and an automated testing suite (v1.1).
 
-## Current Milestone: Planning next milestone
+## Current Milestone: v1.3 Claude Design System Integration
 
-**Goal:** Menentukan kebutuhan dan merancang arsitektur untuk milestone berikutnya.
+**Goal:** Integrasikan tool dan repositori `awesome-design-md` / `getdesign`, terapkan spesifikasi Claude design system (`DESIGN.md`), serta implementasikan tema warm terracotta editorial ke dalam styling aplikasi Taut.
 
 **Target features:**
-- (TBD)
+- Instalasi tool `getdesign` / spesifikasi `awesome-design-md` dan integrasi Claude `DESIGN.md`.
+- Konfigurasi token Tailwind CSS v4 untuk palet Claude (warm terracotta `#cc785c`, cream canvas `#faf9f5`, dark surfaces `#181715`, editorial typography).
+- Pembaruan komponen UI & Dashboard agar konsisten dengan Claude warm terracotta editorial design.
+- Penambahan preset tema microsite Claude (`claude` / warm terracotta) di `src/lib/microsite-themes.ts`.
+- Verifikasi bebas regresi dengan Vitest automated tests dan TypeScript compiler.
 
 ## Core Value
 
@@ -66,7 +70,11 @@ Microsite owners can create a more personalized public page, control link priori
 
 ### Active
 
-(None yet)
+- [ ] TOOL-01: Install and configure `awesome-design-md` / `getdesign` tooling and pull Claude `DESIGN.md` specification.
+- [ ] TOKEN-01: Configure Tailwind CSS v4 design tokens and CSS variables adhering to Claude design system.
+- [ ] UI-01: Refresh dashboard and shared UI components (cards, buttons, typography, inputs) to match the Claude warm terracotta editorial theme.
+- [ ] THEME-01: Add Claude-inspired preset theme to microsite theme registry (`src/lib/microsite-themes.ts`).
+- [ ] TEST-01: Verify all unit tests, route validations, and TypeScript typechecking remain passing.
 
 ### Out of Scope
 
