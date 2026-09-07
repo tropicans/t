@@ -2,7 +2,7 @@
 
 import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
-import { LinkIcon } from "lucide-react";
+import { BrandLogo } from "@/components/brand-logo";
 import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
@@ -14,17 +14,15 @@ function LoginContent() {
         <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background">
             <div className="relative z-10 w-full max-w-md p-6">
                 {/* Brand Logo Header */}
-                <div className="flex flex-col items-center mb-10 space-y-4">
-                    <div className="relative flex items-center justify-center w-16 h-16 rounded-2xl bg-primary shadow-lg">
-                        <LinkIcon className="w-8 h-8 text-white" />
-                    </div>
+                <div className="flex flex-col items-center mb-8">
+                    <BrandLogo size="xl" variant="full" textClassName="text-3xl" />
                 </div>
 
                 {/* Main Login Card */}
                 <div className="relative rounded-3xl bg-card border border-border shadow-2xl p-8 overflow-hidden">
                     <div className="text-center space-y-2 mb-8">
-                        <h1 className="font-heading text-3xl font-bold tracking-tight text-white">Welcome to Taut</h1>
-                        <p className="font-sans text-sm text-zinc-400">
+                        <h1 className="font-heading text-3xl font-bold tracking-tight text-foreground">Welcome to Taut</h1>
+                        <p className="font-sans text-sm text-muted-foreground">
                             Masuk untuk mulai mengelola Shortened URLs dan Microsites Anda.
                         </p>
                     </div>
@@ -41,7 +39,7 @@ function LoginContent() {
                     )}
 
                     <Button
-                        className="w-full h-12 bg-white text-black font-sans font-semibold rounded-full flex items-center justify-center gap-3 transition-colors duration-300 hover:bg-zinc-200"
+                        className="w-full h-12 bg-primary text-primary-foreground font-sans font-semibold rounded-full flex items-center justify-center gap-3 transition-colors duration-300 hover:bg-terracotta-active shadow-xs"
                         onClick={() => signIn("google", { callbackUrl })}
                     >
                         <span className="flex items-center gap-3">
@@ -67,7 +65,7 @@ function LoginContent() {
                         </span>
                     </Button>
 
-                    <div className="mt-8 text-center text-xs text-zinc-500">
+                    <div className="mt-8 text-center text-xs text-muted-foreground">
                         Dengan masuk, Anda menyetujui<br />Syarat Layanan dan Kebijakan Privasi kami.
                     </div>
                 </div>
@@ -78,7 +76,7 @@ function LoginContent() {
 
 export default function LoginPage() {
     return (
-        <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-background p-4 text-white">Loading...</div>}>
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-background p-4 text-foreground">Loading...</div>}>
             <LoginContent />
         </Suspense>
     );

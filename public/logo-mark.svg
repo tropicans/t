@@ -1,0 +1,20 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="taut-grad" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#E2896C" />
+      <stop offset="60%" stop-color="#CC785C" />
+      <stop offset="100%" stop-color="#A55238" />
+    </linearGradient>
+  </defs>
+  <!-- Squircle container -->
+  <rect width="48" height="48" rx="14" fill="url(#taut-grad)" />
+  <!-- Interlocking Weave Link Geometry -->
+  <g transform="rotate(-45 24 24)">
+    <!-- Link 2 (Base) -->
+    <rect x="20" y="17.5" width="20" height="13" rx="6.5" stroke="#FAF9F5" stroke-width="3.2" fill="none" />
+    <!-- Link 1 (Base) -->
+    <rect x="8" y="17.5" width="20" height="13" rx="6.5" stroke="#FAF9F5" stroke-width="3.2" fill="none" />
+    <!-- Overlap weave: top of Link 1 crosses over Link 2 -->
+    <path d="M19 17.5H21.5C25.0899 17.5 28 20.4101 28 24C28 24.5 27.9 25 27.7 25.5" stroke="#FAF9F5" stroke-width="3.2" stroke-linecap="round" fill="none" />
+  </g>
+</svg>

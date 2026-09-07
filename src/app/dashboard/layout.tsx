@@ -7,6 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { LinkIcon, Home, BarChart2, Settings, LogOut, Globe, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { BrandLogo } from "@/components/brand-logo";
 
 export default function DashboardLayout({
     children,
@@ -65,11 +66,8 @@ export default function DashboardLayout({
             {/* Desktop Sidebar */}
             <aside className="w-64 border-r border-sidebar-border bg-sidebar text-sidebar-foreground flex flex-col hidden md:flex">
                 <div className="h-16 flex items-center px-6 border-b border-sidebar-border">
-                    <Link href="/dashboard" className="flex items-center gap-2 font-serif font-bold text-foreground text-lg tracking-tight">
-                        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground shadow-xs">
-                            <LinkIcon className="w-4 h-4 text-primary-foreground" />
-                        </div>
-                        Taut
+                    <Link href="/dashboard" className="flex items-center group">
+                        <BrandLogo size="md" variant="full" />
                     </Link>
                 </div>
 
@@ -145,12 +143,9 @@ export default function DashboardLayout({
                     <Link
                         href="/dashboard"
                         onClick={() => setIsMobileNavOpen(false)}
-                        className="flex items-center gap-2 font-serif font-bold text-foreground text-lg tracking-tight"
+                        className="flex items-center group"
                     >
-                        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground shadow-xs">
-                            <LinkIcon className="w-4 h-4 text-primary-foreground" />
-                        </div>
-                        Taut
+                        <BrandLogo size="md" variant="full" />
                     </Link>
                     <button
                         type="button"
@@ -219,11 +214,8 @@ export default function DashboardLayout({
             <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
                 {/* Mobile Header */}
                 <div className="md:hidden h-16 border-b border-sidebar-border bg-sidebar flex items-center justify-between px-4 shrink-0">
-                    <Link href="/dashboard" className="flex items-center gap-2 font-serif font-bold text-foreground text-lg tracking-tight">
-                        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground shadow-xs">
-                            <LinkIcon className="w-4 h-4 text-primary-foreground" />
-                        </div>
-                        Taut
+                    <Link href="/dashboard" className="flex items-center group">
+                        <BrandLogo size="md" variant="full" />
                     </Link>
                     <button
                         type="button"

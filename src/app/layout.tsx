@@ -22,6 +22,11 @@ const newsreaderSerif = Newsreader({
 export const metadata: Metadata = {
   title: "Taut - Microsite & URL Shortener",
   description: "Create beautiful microsites and trackable short links.",
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/favicon.svg",
+    apple: "/logo-mark.svg",
+  },
 };
 
 export default function RootLayout({

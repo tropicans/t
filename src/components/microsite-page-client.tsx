@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import Image from "next/image";
 import { ExternalLink } from "lucide-react";
 import { ShareBar } from "@/components/share-bar";
+import { BrandLogo } from "@/components/brand-logo";
 import type { PublicMicrositeData } from "@/lib/public-microsite";
 import { getMicrositeTheme } from "@/lib/microsite-themes";
 
@@ -198,8 +199,8 @@ export function MicrositePageClient({ initialMicrosite, pageUrl }: MicrositePage
                         dividerClass={styles.divider}
                     />
 
-                    <p className={`text-center text-[11px] mt-12 tracking-wide uppercase ${styles.footer}`}>
-                        Powered by <span className={`font-semibold ${styles.footerBrand}`}>Taut</span>
+                    <p className={`text-center text-[11px] mt-12 tracking-wide uppercase flex items-center justify-center gap-1.5 ${styles.footer}`}>
+                        Powered by <span className={`font-semibold inline-flex items-center gap-1.5 ${styles.footerBrand}`}><BrandLogo variant="mark" size="xs" /> Taut</span>
                     </p>
                 </div>
             </div>

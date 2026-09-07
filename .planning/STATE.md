@@ -95,3 +95,4 @@ Last activity: 2026-09-07 — Milestone v1.4 started and roadmap created
 | Task | Slug | Date | Status |
 |------|------|------|--------|
 | Enhance analytics dashboard | enhance-analytics-dashboard | 2026-08-04 | Complete |
+| Design and integrate brand logo | brand-logo-design | 2026-09-07 | Complete |

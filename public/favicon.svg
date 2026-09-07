@@ -1,0 +1,15 @@
+<svg width="32" height="32" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="taut-fav-grad" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#E2896C" />
+      <stop offset="60%" stop-color="#CC785C" />
+      <stop offset="100%" stop-color="#A55238" />
+    </linearGradient>
+  </defs>
+  <rect width="48" height="48" rx="14" fill="url(#taut-fav-grad)" />
+  <g transform="rotate(-45 24 24)">
+    <rect x="20" y="17.5" width="20" height="13" rx="6.5" stroke="#FAF9F5" stroke-width="3.4" fill="none" />
+    <rect x="8" y="17.5" width="20" height="13" rx="6.5" stroke="#FAF9F5" stroke-width="3.4" fill="none" />
+    <path d="M19 17.5H21.5C25.0899 17.5 28 20.4101 28 24C28 24.5 27.9 25 27.7 25.5" stroke="#FAF9F5" stroke-width="3.4" stroke-linecap="round" fill="none" />
+  </g>
+</svg>
