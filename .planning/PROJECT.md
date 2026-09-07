@@ -4,9 +4,15 @@
 
 Taut is a Next.js URL shortener and link-in-bio product featuring Claude's warm terracotta editorial design system. The project has shipped four milestones: microsite visual theme variants and drag-and-drop link ordering (v1.0), database performance indexing, routing security, and automated testing (v1.1), microsite slug editing (v1.2), and Claude editorial design system integration (v1.3).
 
-## Next Milestone Goals
+## Current Milestone: v1.4 Dashboard UX & Mobile Navigation Polish
 
-To be defined via `/gsd-new-milestone`.
+**Goal:** Implement the recommendations from the UI Designer audit to elevate the dashboard experience: add mobile responsive drawer navigation, introduce subtle micro-interactions on stat cards, ensure WCAG AA contrast compliance for small link texts, add recent activities overview, and provide friendly onboarding empty states.
+
+**Target features:**
+- Mobile Navigation Drawer: Hamburger menu & responsive sliding sheet on mobile screens (`md:hidden`) with full navigation items, user avatar, and sign-out button.
+- Dashboard Stat Cards Polish & Micro-interactions: Add subtle hover lifts (`-translate-y-0.5`), consistent iconography, and WCAG AA contrast compliant accent link colors (`#b25e43` / `#a04e35`).
+- Recent Activities Overview: Display recently created microsites and active short links with quick copy/manage buttons directly on the dashboard overview page.
+- Onboarding & Empty States: Friendly editorial welcome banners and guidance when zero links/microsites exist.
 
 ## Core Value
 
@@ -72,7 +78,11 @@ Microsite owners can create a more personalized public page, control link priori
 
 ### Active
 
-(None currently active — run `/gsd-new-milestone` to start next cycle)
+- [ ] **NAV-01**: User on mobile screens can access a responsive slide-out navigation drawer with all dashboard links, user profile, and sign-out.
+- [ ] **CARD-01**: Dashboard metric cards feature subtle micro-interactions on hover, balanced iconography, and WCAG AA contrast compliant action link colors (`#b25e43`).
+- [ ] **ACT-01**: User can view recent short links and microsites directly on the dashboard overview with direct management access.
+- [ ] **ONBOARD-01**: User with zero links or microsites sees an editorial onboarding guidance card to accelerate first-time creation.
+- [ ] **TEST-01**: Verify all Vitest automated tests and TypeScript compilation pass cleanly without regression.
 
 ### Out of Scope
 

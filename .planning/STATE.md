@@ -1,34 +1,31 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.3
-milestone_name: Claude Design System Integration
-current_phase: "Phase 10: Microsite Theme Preset & System Verification"
-status: completed
-stopped_at: Milestone v1.3 audited and passed
-last_updated: "2026-09-07T07:04:56.683Z"
+milestone: v1.4
+milestone_name: Dashboard UX & Mobile Navigation Polish
+status: planning
+last_updated: "2026-09-07T07:25:36.423Z"
 last_activity: 2026-09-07
-last_activity_desc: Milestone v1.3 completed and archived
 progress:
-  total_phases: 3
-  completed_phases: 3
-  total_plans: 4
-  completed_plans: 4
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
 
 **Project:** Taut Microsite Enhancements
 **Initialized:** 2026-06-26
-**Current Phase:** Phase 10: Microsite Theme Preset & System Verification
-**Status:** v1.3 milestone complete
+**Current Phase:** Phase 11: Mobile Navigation Drawer & Metric Card Micro-interactions
+**Status:** Planning (v1.4)
 
 ## Project Reference
 
 See: `.planning/PROJECT.md` (updated 2026-09-07)
 
 **Core value:** Microsite owners can create a more personalized public page, control link priority, and experience fast, secure dashboard routing and analytics performance.
-**Current focus:** Planning next milestone
+**Current focus:** Milestone v1.4 — Dashboard UX & Mobile Navigation Polish
 
 ## Active Roadmap
 
@@ -36,16 +33,15 @@ See: `.planning/ROADMAP.md`
 
 | Phase | Status | Progress |
 |-------|--------|----------|
-| Phase 8: Design System Tooling & Token Foundation | Complete | 100% |
-| Phase 9: Dashboard & UI Component Editorial Refresh | Complete | 100% |
-| Phase 10: Microsite Theme Preset & System Verification | Complete | 100% |
+| Phase 11: Mobile Navigation Drawer & Metric Card Micro-interactions | Not started | 0% |
+| Phase 12: Dashboard Recent Activity, Onboarding & System Verification | Not started | 0% |
 
 ## Requirements
 
-See: `.planning/milestones/v1.3-REQUIREMENTS.md`
+See: `.planning/REQUIREMENTS.md`
 
-- v1.3 requirements: 8
-- Mapped to phases: 8
+- v1.4 requirements: 7
+- Mapped to phases: 7
 - Unmapped: 0
 
 ## Codebase Context
@@ -72,29 +68,27 @@ Research exists in `.planning/research/`:
 
 ## Next Action
  
-Start the next milestone with `/gsd-new-milestone`.
+Execute Phase 11 with `/gsd-plan-phase 11` or implement directly.
  
 ---
 *State initialized: 2026-06-26*
  
 ## Session
  
-**Last session:** 2026-09-07T07:05:00.000Z
-**Stopped at:** Milestone v1.3 audited and passed
-**Resume file:** .planning/v1.3-MILESTONE-AUDIT.md
+**Last session:** 2026-09-07T07:25:00.000Z
+**Stopped at:** Milestone v1.4 initialized
+**Resume file:** .planning/ROADMAP.md
  
 ## Current Position
- 
 
-Phase: Milestone v1.3 complete
-Plan: —
-Status: Awaiting next milestone
-Last activity: 2026-09-07 — Milestone v1.3 completed and archived
+Phase: Phase 11: Mobile Navigation Drawer & Metric Card Micro-interactions
+Plan: Ready to plan
+Status: Milestone v1.4 initialized
+Last activity: 2026-09-07 — Milestone v1.4 started and roadmap created
 
 ## Operator Next Steps
  
-
-- Start the next milestone with /gsd-new-milestone
+- Run `/gsd-plan-phase 11` to plan Phase 11 implementation.
 
 ## Quick Tasks Completed
 
