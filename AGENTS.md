@@ -34,3 +34,9 @@
 
 ## Known Drift
 - `prisma/schema.prisma` contains `Microsite.avatarImage`, but the only checked-in migration does not add that column. Confirm DB state before relying on it.
+
+## Design System
+- Refer to `DESIGN.md` in the project root for UI styling rules, color palette, typography hierarchy, and component design specifications.
+- New brand design specifications can be previewed or added via `npx getdesign add <brand>` from VoltAgent/awesome-design-md.
+- The active UI system follows Claude's warm terracotta editorial style (terracotta `#cc785c`, tinted cream `#faf9f5`, dark surfaces `#181715`, and humanist/serif typography).
+
