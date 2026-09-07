@@ -38,40 +38,46 @@ export default async function DashboardPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Card>
+                <Card className="transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xs hover:border-primary/40">
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
                         <CardTitle className="text-sm font-medium text-muted-foreground">Microsites</CardTitle>
-                        <Globe className="w-4 h-4 text-primary" />
+                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                            <Globe className="w-4 h-4" />
+                        </div>
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold text-foreground">{micrositesCount}</div>
-                        <Link href="/dashboard/microsites" className="text-xs text-primary hover:text-terracotta-active mt-1 inline-block">
+                        <Link href="/dashboard/microsites" className="text-xs font-medium text-terracotta-active dark:text-primary hover:underline mt-2 inline-block">
                             Kelola microsites →
                         </Link>
                     </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xs hover:border-primary/40">
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
                         <CardTitle className="text-sm font-medium text-muted-foreground">Short Links</CardTitle>
-                        <LinkIcon className="w-4 h-4 text-muted-foreground" />
+                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                            <LinkIcon className="w-4 h-4" />
+                        </div>
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold text-foreground">{shortLinksCount}</div>
-                        <Link href="/dashboard/links" className="text-xs text-muted-foreground hover:text-foreground mt-1 inline-block">
+                        <Link href="/dashboard/links" className="text-xs font-medium text-terracotta-active dark:text-primary hover:underline mt-2 inline-block">
                             Kelola links →
                         </Link>
                     </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xs hover:border-primary/40">
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
                         <CardTitle className="text-sm font-medium text-muted-foreground">Total Klik</CardTitle>
-                        <BarChart3 className="w-4 h-4 text-muted-foreground" />
+                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                            <BarChart3 className="w-4 h-4" />
+                        </div>
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold text-foreground">{totalClicks.toLocaleString()}</div>
-                        <Link href="/dashboard/analytics" className="text-xs text-muted-foreground hover:text-foreground mt-1 inline-block">
+                        <Link href="/dashboard/analytics" className="text-xs font-medium text-terracotta-active dark:text-primary hover:underline mt-2 inline-block">
                             Lihat analytics →
                         </Link>
                     </CardContent>
