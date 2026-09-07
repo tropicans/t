@@ -154,8 +154,8 @@ export default function NewMicrositePage() {
                                     onClick={() => setSelectedTheme(t.id)}
                                     className={`relative rounded-xl overflow-hidden border-2 transition-all duration-200 text-left flex flex-col ${
                                         selectedTheme === t.id
-                                            ? "border-blue-500 shadow-lg shadow-blue-500/20"
-                                            : "border-zinc-800 hover:border-zinc-700 bg-zinc-900/50"
+                                            ? "border-primary shadow-lg shadow-primary/20"
+                                            : "border-border hover:border-muted-foreground/40 bg-card/60"
                                     }`}
                                 >
                                     {/* Mini preview */}
@@ -172,13 +172,13 @@ export default function NewMicrositePage() {
                                     </div>
                                     
                                     {/* Label & Tagline */}
-                                    <div className="p-2 flex-1 flex flex-col justify-between bg-zinc-950/40 w-full">
+                                    <div className="p-2 flex-1 flex flex-col justify-between bg-card w-full">
                                         <div>
-                                            <p className={`text-xs font-bold ${selectedTheme === t.id ? "text-blue-400" : "text-zinc-300"}`}>
+                                            <p className={`text-xs font-bold ${selectedTheme === t.id ? "text-primary" : "text-foreground"}`}>
                                                 {t.label}
                                                 {selectedTheme === t.id && " ✓"}
                                             </p>
-                                            <p className="text-[10px] text-zinc-500 leading-tight mt-0.5">{t.tagline}</p>
+                                            <p className="text-[10px] text-muted-foreground leading-tight mt-0.5">{t.tagline}</p>
                                         </div>
                                     </div>
                                 </button>

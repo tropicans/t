@@ -211,6 +211,36 @@ export const MICROSITE_THEMES = [
       avatar: "bg-white rounded-2xl w-14 h-14 flex items-center justify-center text-black text-2xl font-bold shadow-md group-hover:scale-110 transition-transform",
     },
   },
+  {
+    id: "claude",
+    label: "Claude",
+    tagline: "Editorial hangat terracotta & cream",
+    preview: {
+      bg: "bg-gradient-to-b from-[#faf9f5] to-[#efe9de]",
+      dot: "bg-[#cc785c]",
+      card: "bg-[#efe9de] border border-[#e6dfd8]",
+    },
+    public: {
+      page: "bg-[#faf9f5]",
+      hero: "from-[#faf9f5]/0 via-[#faf9f5]/60 to-[#faf9f5]",
+      title: "text-[#141413] font-serif",
+      description: "text-[#3d3d3a]",
+      avatar: "border-[#faf9f5] ring-2 ring-[#cc785c]/40",
+      card: "bg-[#efe9de] border border-[#e6dfd8] text-[#141413] hover:bg-[#e8e0d2] hover:border-[#cc785c]/40 hover:shadow-lg hover:shadow-[#cc785c]/10",
+      cardTitle: "text-[#141413]",
+      icon: "text-[#cc785c] group-hover:text-[#a9583e]",
+      empty: "text-[#6c6a64]",
+      footer: "text-[#8e8b82]",
+      footerBrand: "text-[#cc785c]",
+      divider: "bg-[#e6dfd8]",
+      share: "text-[#6c6a64] hover:text-[#cc785c]",
+      shareLabel: "text-[#8e8b82]",
+    },
+    thumbnail: {
+      container: "bg-[#f5f0e8] flex items-center justify-center overflow-hidden group-hover:bg-[#efe9de] transition-all",
+      avatar: "bg-[#efe9de] rounded-2xl w-14 h-14 flex items-center justify-center text-[#cc785c] text-2xl font-bold shadow-md group-hover:scale-110 transition-transform border border-[#e6dfd8]",
+    },
+  },
 ] as const;
 
 export type MicrositeThemeId = typeof MICROSITE_THEMES[number]["id"];
