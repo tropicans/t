@@ -54,6 +54,7 @@
 3. Seluruh alur user di dashboard tetap responsif dan fungsional.
 
 ### Phase 10: Microsite Theme Preset & System Verification
+- [ ] Preset tema claude & system verification suite (1 plan)
 **Goal:** Tambahkan preset tema `claude` pada microsite theme registry dan lakukan verifikasi menyeluruh melalui automated test suite serta TypeScript compiler.
 **Requirements:** THEME-01, TEST-01
 **Success Criteria:**
