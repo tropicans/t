@@ -1,99 +1,123 @@
 # Coding Conventions
 
-**Analysis Date:** 2026-08-04
+**Analysis Date:** 2026-09-07
 
 ## Naming Patterns
 
-**Files:**
-- Use kebab-case for route leaf components and feature files: `src/app/dashboard/links/short-link-form.tsx`, `src/app/dashboard/links/short-link-list.tsx`, `src/components/microsite-page-client.tsx`, `src/lib/microsite-themes.ts`.
-- Use bracketed dynamic route segments for Next App Router params: `src/app/[username]/page.tsx`, `src/app/api/microsites/[slug]/route.ts`, `src/app/dashboard/microsites/[id]/page.tsx`.
-- Use `route.ts` for API route handlers: `src/app/api/click/microsite-link/[linkId]/route.ts`, `src/app/api/uploadthing/route.ts`.
-- Use `page.tsx` and `layout.tsx` for App Router screens and shells: `src/app/page.tsx`, `src/app/layout.tsx`, `src/app/dashboard/layout.tsx`.
-- Use lowercase utility/module names in `src/lib`: `src/lib/auth.ts`, `src/lib/prisma.ts`, `src/lib/utils.ts`, `src/lib/public-microsite.ts`.
+**Files & Directories:**
+- Files: `kebab-case.ts` / `kebab-case.tsx` (e.g. `short-link-form.tsx`, `microsite-editor.tsx`, `user-agent.ts`)
+- Tests: `[name].test.ts` (e.g. `microsite.test.ts`, `short.test.ts`)
+- Route Folders: `kebab-case` and brackets for dynamic parameters (`[username]`, `[id]`, `[slug]`)
 
-**Functions:**
-- Use camelCase for helpers and event handlers: `getCurrentUser()` in `src/app/actions/short.ts`, `validateSlug()` in `src/app/actions/microsite.ts`, `handleDelete()` in `src/app/dashboard/microsites/[id]/microsite-editor.tsx`.
-- Prefix UI event handlers with `handle`: `handleUpdateInfo`, `handleAddLink`, `handleToggleLinkVisibility` in `src/app/dashboard/microsites/[id]/microsite-editor.tsx`.
-- Name exported server actions with imperative verbs: `createShortLink`, `deleteShortLink` in `src/app/actions/short.ts`; `createMicrosite`, `updateMicrosite`, `deleteMicrosite` in `src/app/actions/microsite.ts`.
-- Name route handlers with HTTP verbs: `GET` in `src/app/api/click/microsite-link/[linkId]/route.ts`.
+**Functions & Variables:**
+- Standard functions and variables: `camelCase` (e.g. `createShortLink`, `trackMicrositeClick`, `normalizeMicrositeTheme`)
+- React Components: `PascalCase` (e.g. `AnalyticsCharts`, `MicrositeEditor`, `ShortLinkList`)
+- Boolean flags / state: Prefixed with `is`, `has`, `can`, or `show` (e.g. `isPublished`, `isPending`, `canViewAllLinks`, `showAddForm`)
+- Constants & Enums: `UPPER_SNAKE_CASE` (e.g. `MICROSITE_THEMES`, `RESERVED_ROUTES`)
 
-**Variables:**
-- Use camelCase for locals and state: `originalUrl`, `customAlias`, `rawPassword` in `src/app/actions/short.ts`; `isPending`, `errorMsg`, `copiedId` in `src/app/dashboard/links/short-link-form.tsx` and `src/app/dashboard/links/short-link-list.tsx`.
-- Use `is*` / `can*` boolean names: `isPending`, `isOwner`, `canViewAllLinks` in `src/app/dashboard/links/short-link-list.tsx`; `canManageAllMicrosites` in `src/app/actions/microsite.ts`.
-- Use uppercase constants for local fixed lists/config: `APP_URL` in `src/app/[username]/page.tsx`, `MICROSITE_THEMES` in `src/lib/microsite-themes.ts`.
-
-**Types:**
-- Use PascalCase for interfaces and type aliases: `CurrentUserAccess` in `src/app/actions/microsite.ts`, `ShortLinkWithOwner` and `ShortLinkListProps` in `src/app/dashboard/links/short-link-list.tsx`, `MicrositeWithLinks` in `src/app/dashboard/microsites/[id]/microsite-editor.tsx`.
-- Prefer explicit prop interfaces/types for exported components: `ShortLinkListProps` in `src/app/dashboard/links/short-link-list.tsx`.
-- Use Prisma-generated model types where available: `type ShortLink` imported from `@prisma/client` in `src/app/dashboard/links/short-link-list.tsx`.
+**Types & Interfaces:**
+- Types: `PascalCase` (e.g. `MicrositeWithLinks`, `ClickRecord`, `ThemeConfig`)
+- Props Types: Co-located with component or declared inline (e.g. `{ microsite }: { microsite: MicrositeWithLinks }`)
 
 ## Code Style
 
-**Formatting:**
-- Formatter config not detected: no `.prettierrc*` or `prettier.config.*` exists.
-- Use TypeScript strict mode from `tsconfig.json`: `strict: true`, `noEmit: true`, `isolatedModules: true`, `jsx: react-jsx`.
-- Existing app/action files use semicolons and 4-space indentation: `src/app/actions/short.ts`, `src/app/actions/microsite.ts`, `src/app/dashboard/links/short-link-form.tsx`.
-- Existing shadcn UI files omit semicolons and use 2-space indentation: `src/components/ui/button.tsx`, `src/lib/utils.ts`. Preserve generated shadcn style when editing `src/components/ui/*`.
-- Keep Tailwind classes inline on JSX elements for app UI: `src/app/dashboard/links/short-link-form.tsx`, `src/app/dashboard/links/short-link-list.tsx`, `src/app/dashboard/microsites/[id]/microsite-editor.tsx`.
+**Formatting & Linting:**
+- Linter: ESLint 9 (`eslint.config.mjs`) extending `eslint-config-next`
+- Indentation: 4 spaces standard across TypeScript files
+- Semicolons: Always used
+- Quotes: Double quotes (`"`) for JSX attributes and strings, backticks for template strings
 
-**Linting:**
-- Use ESLint 9 with Next core-web-vitals and TypeScript presets from `eslint.config.mjs`.
-- Run `npm run lint`; script maps to `eslint` in `package.json`.
-- ESLint ignores generated/build output and local agent bundles: `.next/**`, `out/**`, `build/**`, `next-env.d.ts`, `.agents/**`, `test-prisma.cjs` in `eslint.config.mjs`.
+**Styling System:**
+- Tailwind CSS v4 with dark mode defaults (`bg-zinc-950`, `bg-zinc-900/60`, `border-zinc-800`, `text-white`, `text-zinc-400`)
+- Dynamic classes composed via `cn(...)` utility (`src/lib/utils.ts`) combining `clsx` and `tailwind-merge`
 
 ## Import Organization
 
 **Order:**
-- Framework/runtime imports: `react`, `next/*`, `next-auth`, `@prisma/client` as in `src/app/dashboard/links/short-link-list.tsx` and `src/app/actions/short.ts`.
-- App aliases using `@/`: actions, lib helpers, UI components as in `src/app/dashboard/links/short-link-form.tsx`.
-- Third-party UI/data packages: `lucide-react`, `date-fns`, `react-qr-code` as in `src/app/dashboard/links/short-link-list.tsx`.
+1. Next.js / React built-ins and framework directives (`"use client"`, `"use server"`, `useState`, `useRouter`)
+2. Third-party packages (`next-auth`, `recharts`, `lucide-react`, `date-fns`)
+3. Internal Server Actions (`@/app/actions/...`)
+4. Internal components (`@/components/...`)
+5. Internal libraries, helpers, and types (`@/lib/...`, `@/types/...`)
 
 **Path Aliases:**
-- Use `@/*` for `src/*`, configured in `tsconfig.json`.
-- Use `@/components`, `@/components/ui`, `@/lib`, `@/hooks`, `@/lib/utils` aliases from `components.json`.
-- Prefer `@/lib/prisma` over relative traversal for DB access, as in `src/app/actions/short.ts` and `src/app/api/click/microsite-link/[linkId]/route.ts`.
+- All internal project modules use the `@/` alias mapped to `./src/*` (configured in `tsconfig.json` and `vitest.config.ts`). Relative `../` imports are avoided across directories.
 
 ## Error Handling
 
-**Patterns:**
-- Server actions used by forms return result objects for recoverable form errors: `{ error: "Unauthorized" }`, `{ success: "Short link deleted" }` in `src/app/actions/short.ts`.
-- Server actions used by editor flows throw `Error` for auth/not-found/validation failures and let client handlers display message: `src/app/actions/microsite.ts` plus `getErrorMessage()` in `src/app/dashboard/microsites/[id]/microsite-editor.tsx`.
-- Client components catch action errors inside `startTransition` and store message in component state: `handleUpdateInfo`, `handleAddLink`, `handleEditLink` in `src/app/dashboard/microsites/[id]/microsite-editor.tsx`.
-- API routes return `NextResponse.json({ error: "Not found" }, { status: 404 })` for missing resources: `src/app/api/click/microsite-link/[linkId]/route.ts`.
-- Page-level auth failures redirect with `redirect("/login")`: `src/app/dashboard/microsites/page.tsx`, `src/app/dashboard/microsites/[id]/page.tsx`.
-- Missing public resources use `notFound()`: `src/app/[username]/page.tsx`, `src/app/dashboard/microsites/[id]/page.tsx`.
-- Fire-and-forget analytics failures are swallowed to keep redirects/pages working: `.catch(() => { })` in `src/app/[username]/page.tsx`, empty `catch { }` in `src/app/api/click/microsite-link/[linkId]/route.ts`.
+**Server Actions:**
+- Validate inputs early using validation helpers (`validateShortCode`, `validateUrl`, `validateReservedRoute`).
+- Throw explicit `Error("Deskripsi kesalahan...")` with user-friendly messages in Indonesian or English.
+- Revalidate relevant paths upon success using `revalidatePath("/dashboard/...")`.
 
-## Logging
+```typescript
+// Pattern in Server Actions (src/app/actions/microsite.ts)
+export async function createMicrosite(formData: FormData) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) throw new Error("Unauthorized");
 
-**Framework:** console
+    const slug = (formData.get("slug") as string)?.trim().toLowerCase();
+    if (!slug) throw new Error("Slug wajib diisi");
 
-**Patterns:**
-- Log auth allowlist denial with `console.log` in `src/lib/auth.ts`.
-- Log DB sign-in/upsert failures with `console.error` and normalized unknown errors via `getErrorMessage()` in `src/lib/auth.ts`.
-- Log server-action failures before returning generic user-facing messages in `src/app/actions/short.ts`.
-- Do not log expected validation errors from form actions; return/throw messages instead, as in `src/app/actions/short.ts` and `src/app/actions/microsite.ts`.
+    const validation = await validateShortCode(slug);
+    if (!validation.isValid) throw new Error(validation.error);
 
-## Comments
+    // Database mutation
+    return await prisma.microsite.create({ ... });
+}
+```
 
-**When to Comment:**
-- Use section comments to separate server-action domains: `// ── Microsite CRUD` and `// ── Microsite Link CRUD` in `src/app/actions/microsite.ts`.
-- Use short comments for non-obvious behavior: auth upsert rationale in `src/lib/auth.ts`, fire-and-forget tracking in `src/app/api/click/microsite-link/[linkId]/route.ts`, short-link priority in `src/app/[username]/page.tsx`.
-- Keep comments current and operational; avoid restating JSX or obvious assignments.
+**Client UI Forms:**
+- Use React `useTransition` (`isPending, startTransition`) to manage loading states.
+- Catch errors in transition blocks and extract error string via helper (`getErrorMessage(err)`).
+- Display errors inline using alert blocks (`text-red-400 bg-red-500/10 border border-red-500/20`).
 
-**JSDoc/TSDoc:**
-- Not detected. No JSDoc/TSDoc pattern in sampled app files.
+```typescript
+// Pattern in Client Components (src/app/dashboard/microsites/[id]/microsite-editor.tsx)
+function getErrorMessage(error: unknown): string {
+    return error instanceof Error ? error.message : "Terjadi kesalahan tak terduga";
+}
 
-## Function Design
+startTransition(async () => {
+    try {
+        await updateMicrosite(microsite.id, formData);
+        router.refresh();
+    } catch (err) {
+        setError(getErrorMessage(err));
+    }
+});
+```
 
-**Size:** Keep helper functions small and colocated with feature actions. Examples: `getCurrentUser()` in `src/app/actions/short.ts`, `validateSlug()` in `src/app/actions/microsite.ts`, `getErrorMessage()` in `src/lib/auth.ts`.
+## Logging & Telemetry
 
-**Parameters:**
-- Server actions receive `FormData` from forms and extract string fields inside action: `createShortLink(formData)` in `src/app/actions/short.ts`, `createMicrosite(formData)` in `src/app/actions/microsite.ts`.
-- Mutations needing identity receive explicit IDs plus `FormData`: `updateMicrosite(id, formData)`, `updateMicrositeLink(linkId, formData)` in `src/app/actions/microsite.ts`.
-- Route handlers type `params` as promises for Next 16 App Router: `{ params }: { params: Promise<{ linkId: string }> }` in `src/app/api/click/microsite-link/[linkId]/route.ts`.
+**Logging Guidelines:**
+- Use `console.error` for unexpected backend action failures or database communication errors.
+- Never log raw request authorization headers, session secrets, or user passwords.
 
-**Return Values:**
-- Server actions for UI forms return plain serializable objects: `{ success: true, microsite }`, `{ error: "Failed to create short link" }`.
-- DB query helpers return Prisma promises/results directly: `getShortLinks()` in `src/app/actions/short.ts`.
-- Page components return JSX, `redirect()`, or `notFound()`; see `src/app/[username]/page.tsx`.
+**Background Telemetry:**
+- Background tasks (such as click recording and IP geocoding) must run in non-blocking fashion using `Promise.resolve().then(...)` or unawaited async functions.
+- Catch all errors inside telemetry routines so background failures never abort user redirection.
+
+```typescript
+// Pattern in src/app/actions/short.ts
+export async function trackShortLinkClick(shortLinkId: string, headersList: Headers) {
+    Promise.resolve().then(async () => {
+        try {
+            // Asynchronously resolve country and record click
+            await prisma.shortLinkClick.create({ ... });
+        } catch (error) {
+            console.error("Failed to track short link click in background:", error);
+        }
+    });
+}
+```
+
+## Accessibility (a11y) & UX
+
+- Live status announcements for screen readers use visually hidden `aria-live="polite"` containers (e.g. `announcement` state in link reordering).
+- Action buttons have explicit `aria-label` or `title` attributes.
+- Keyboard navigation maintains focus using targeted element ref or `focusTarget` effects.
+
+---
+
+*Convention analysis: 2026-09-07*

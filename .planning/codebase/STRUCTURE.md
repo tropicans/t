@@ -1,113 +1,168 @@
 # Codebase Structure
 
-**Analysis Date:** 2026-08-04
+**Analysis Date:** 2026-09-07
 
 ## Directory Layout
 
 ```text
 url-shortener/
-├── src/                     # Application source
-│   ├── app/                 # Next.js App Router routes, layouts, API routes, server actions
-│   │   ├── actions/         # Server action mutation modules
-│   │   ├── api/             # Route handlers for auth, uploads, polling, click redirect
-│   │   ├── dashboard/       # Authenticated dashboard routes
-│   │   ├── login/           # Login page
-│   │   └── [username]/      # Public short-link/microsite resolver
-│   ├── components/          # Shared React components and UI primitives
-│   │   ├── short-link/      # Public short-link components
-│   │   └── ui/              # shadcn/Radix UI primitives
-│   ├── lib/                 # Shared server/client utilities and integrations
-│   └── types/               # Type augmentation
-├── prisma/                  # Prisma schema and migrations
-│   └── migrations/          # Checked-in migration SQL
-├── public/                  # Static assets
-├── .agents/                 # Agent skill library and settings
-├── .planning/codebase/      # Generated codebase maps
-├── package.json             # npm scripts and dependencies
-├── tsconfig.json            # TypeScript config and `@/*` path alias
-├── next.config.ts           # Next.js deployment/build config
-├── Dockerfile               # Container build
-└── docker-compose.yml       # Local Postgres service
+├── .agents/                      # GSD workflow orchestration, agent configs, and skills
+│   ├── agents/                   # Subagent role definitions (e.g. gsd-codebase-mapper.md)
+│   ├── gsd-core/                 # Core GSD scripts and workflow specifications
+│   └── skills/                   # Specialized task and workflow skills
+├── .planning/                    # Project tracking, state, roadmaps, and codebase maps
+│   ├── codebase/                 # 7 codebase documentation maps
+│   ├── milestones/               # Archived milestone completion summaries
+│   ├── phases/                   # Phase plans, specs, and execution logs
+│   ├── config.json               # GSD workflow configuration
+│   ├── PROJECT.md                # Project mission, scope, and core decisions
+│   ├── ROADMAP.md                # Multi-milestone release plan
+│   └── STATE.md                  # Project velocity, current milestone, and active state
+├── prisma/                       # Database schema and migration management
+│   ├── migrations/               # SQL migration files
+│   └── schema.prisma             # Core data model definitions
+├── public/                       # Static public assets (SVGs, icons, images)
+├── src/                          # Application source code
+│   ├── app/                      # Next.js App Router root
+│   │   ├── [username]/           # Dynamic public router for short codes & microsites
+│   │   ├── actions/              # Next.js Server Actions (mutations and backend queries)
+│   │   ├── api/                  # API route handlers (Auth, UploadThing, Clicks, Microsites)
+│   │   ├── dashboard/            # Authenticated dashboard views (Links, Microsites, Analytics, Settings)
+│   │   ├── login/                # Sign-in page
+│   │   ├── favicon.ico           # Application favicon
+│   │   ├── globals.css           # Tailwind CSS v4 directives and design tokens
+│   │   ├── layout.tsx            # Root HTML layout with providers and fonts
+│   │   └── page.tsx              # Root index page (redirects to /dashboard)
+│   ├── components/               # Reusable React components
+│   │   ├── short-link/           # Short-link specific components (password forms)
+│   │   ├── ui/                   # Primitive UI components (buttons, dialogs, cards, switches)
+│   │   ├── avatar-image-uploader.tsx
+│   │   ├── cover-image-uploader.tsx
+│   │   ├── microsite-page-client.tsx
+│   │   ├── microsite-qr-code.tsx
+│   │   ├── modern-qr-code.tsx
+│   │   ├── providers.tsx
+│   │   ├── qr-code-dialog.tsx
+│   │   └── share-bar.tsx
+│   ├── lib/                      # Core business utilities, clients, and helpers
+│   │   ├── auth.ts               # NextAuth configuration and callbacks
+│   │   ├── microsite-access.ts   # Role and global viewer permission checks
+│   │   ├── microsite-themes.ts   # Microsite color schemes and design tokens
+│   │   ├── prisma.ts             # PrismaClient singleton with Postgres adapter
+│   │   ├── public-microsite.ts   # Helper queries for public microsite presentation
+│   │   ├── uploadthing-client.ts # UploadThing React client helper
+│   │   ├── uploadthing.ts        # UploadThing file router definition
+│   │   ├── user-agent.ts         # User-agent string parser and IP geolocation resolver
+│   │   ├── utils.ts              # Classname merge helpers (cn)
+│   │   └── validators.ts         # Slug format validation and collision checks
+│   ├── middleware.ts             # NextAuth routing protection for /dashboard/*
+│   └── types/                    # Custom TypeScript declaration files
+├── docker-compose.yml            # Local development orchestration (App + Postgres on 5436)
+├── Dockerfile                    # Multi-stage production container build
+├── eslint.config.mjs             # ESLint configuration
+├── next.config.ts                # Next.js runtime, standalone, and external packages config
+├── package.json                  # NPM manifest and project scripts
+├── prisma.config.ts              # Prisma CLI configuration
+├── tsconfig.json                 # TypeScript compiler options
+└── vitest.config.ts              # Vitest unit test configuration
 ```
 
 ## Directory Purposes
 
-**`src/app`:**
-- Purpose: Own Next.js App Router application structure.
-- Contains: Pages, layouts, route handlers, server actions.
-- Key files: `src/app/layout.tsx`, `src/app/page.tsx`, `src/app/[username]/page.tsx`, `src/app/dashboard/layout.tsx`.
+**`src/app/`:**
+- Purpose: Contains all App Router pages, layouts, and route handlers
+- Key files:
+  - `src/app/[username]/page.tsx`: Single entry point handling `/my-slug` resolution for both short links and microsites
+  - `src/app/dashboard/layout.tsx`: Sidebar navigation, profile info, and breadcrumbs for management views
+  - `src/app/dashboard/analytics/page.tsx`: Aggregated telemetry visualization with range filtering
 
-**`src/app/actions`:**
-- Purpose: Server-side mutation boundary for dashboard and redirect workflows.
-- Contains: Authenticated CRUD, click tracking, password redirect actions.
-- Key files: `src/app/actions/short.ts`, `src/app/actions/microsite.ts`, `src/app/actions/short-link-redirect.ts`, `src/app/actions/user.ts`.
+**`src/app/actions/`:**
+- Purpose: Server Actions providing type-safe mutations directly callable from UI components
+- Key files:
+  - `src/app/actions/short.ts`: Short link creation, deletion, and background click recording
+  - `src/app/actions/microsite.ts`: Microsite management, link reordering, visibility toggling
+  - `src/app/actions/short-link-redirect.ts`: Password verification and redirect execution logic
 
-**`src/app/api`:**
-- Purpose: HTTP route handlers for integrations and browser polling/redirect endpoints.
-- Contains: NextAuth route, UploadThing route, public microsite JSON route, click redirect route.
-- Key files: `src/app/api/auth/[...nextauth]/route.ts`, `src/app/api/uploadthing/route.ts`, `src/app/api/microsites/[slug]/route.ts`, `src/app/api/click/microsite-link/[linkId]/route.ts`.
+**`src/app/api/`:**
+- Purpose: REST endpoints and third-party webhook integrations
+- Key files:
+  - `src/app/api/auth/[...nextauth]/route.ts`: NextAuth authentication endpoint
+  - `src/app/api/uploadthing/route.ts`: UploadThing media intake
+  - `src/app/api/microsites/[slug]/route.ts`: Public JSON API for microsite data
 
-**`src/app/dashboard`:**
-- Purpose: Authenticated product UI.
-- Contains: Overview, links, microsites, analytics, settings routes.
-- Key files: `src/app/dashboard/layout.tsx`, `src/app/dashboard/page.tsx`, `src/app/dashboard/links/page.tsx`, `src/app/dashboard/microsites/page.tsx`, `src/app/dashboard/analytics/page.tsx`.
+**`src/components/`:**
+- Purpose: Modular React client and server components
+- Key subdirectories:
+  - `src/components/ui/`: Primitive components styled with Tailwind CSS (Card, Button, Dialog, Input, Badge, Switch)
+  - `src/components/`: Composite components (e.g. `microsite-qr-code.tsx`, `modern-qr-code.tsx`, `cover-image-uploader.tsx`)
 
-**`src/components`:**
-- Purpose: Shared React components independent from route file conventions.
-- Contains: Providers, public microsite client, share bar, uploaders, UI primitives, short-link password form, canvas QR code components.
-- Key files: `src/components/providers.tsx`, `src/components/microsite-page-client.tsx`, `src/components/share-bar.tsx`, `src/components/cover-image-uploader.tsx`, `src/components/avatar-image-uploader.tsx`, `src/components/modern-qr-code.tsx`, `src/components/qr-code-dialog.tsx`, `src/components/microsite-qr-code.tsx`.
-
-**`src/components/ui`:**
-- Purpose: Reusable shadcn/Radix-style primitives.
-- Contains: Buttons, cards, dialogs, dropdowns, inputs, labels, switch, textarea, badge, avatar.
-- Key files: `src/components/ui/button.tsx`, `src/components/ui/card.tsx`, `src/components/ui/dialog.tsx`, `src/components/ui/input.tsx`.
-
-**`src/lib`:**
-- Purpose: Shared services, helper files, registries.
-- Contains: Auth config, Prisma client, UploadThing router, public microsite query, access helper, class utility, theme definitions.
-- Key files: `src/lib/auth.ts`, `src/lib/prisma.ts`, `src/lib/uploadthing.ts`, `src/lib/public-microsite.ts`, `src/lib/microsite-access.ts`, `src/lib/microsite-themes.ts`, `src/lib/utils.ts`.
-
-**`src/types`:**
-- Purpose: Project type augmentation.
-- Contains: NextAuth type declarations.
-- Key files: `src/types/next-auth.d.ts`.
-
-**`prisma`:**
-- Purpose: Database schema and migration history.
-- Contains: Prisma schema, migration lock, migration SQL.
-- Key files: `prisma/schema.prisma`, `prisma/migrations/20260226034550_remove_bio_links/migration.sql`, `prisma/migrations/migration_lock.toml`.
-
-**`public`:**
-- Purpose: Static assets served from web root.
-- Contains: SVG assets from Next template.
-- Key files: `public/next.svg`, `public/vercel.svg`, `public/globe.svg`, `public/file.svg`, `public/window.svg`.
-
-**`.planning/codebase`:**
-- Purpose: GSD-generated codebase reference docs.
-- Contains: Architecture and structure maps.
-- Key files: `.planning/codebase/ARCHITECTURE.md`, `.planning/codebase/STRUCTURE.md`.
+**`src/lib/`:**
+- Purpose: Infrastructure singletons, business rule validators, and utility libraries
+- Key files:
+  - `src/lib/prisma.ts`: Central database client export
+  - `src/lib/validators.ts`: Reserved route check and alias conflict prevention
+  - `src/lib/microsite-themes.ts`: Predefined themes (clean, ocean, sunset, emerald, etc.)
 
 ## Key File Locations
 
 **Entry Points:**
-- `src/app/page.tsx`: Root route redirects `/` to `/dashboard`.
-- `src/app/[username]/page.tsx`: Public resolver for short links and microsites.
-- `src/app/login/page.tsx`: Google sign-in page.
-- `src/app/dashboard/layout.tsx`: Dashboard shell.
-- `src/proxy.ts`: Dashboard route protection.
-- `src/app/api/auth/[...nextauth]/route.ts`: NextAuth HTTP entrypoint.
+- Web App Wildcard Resolver: `src/app/[username]/page.tsx`
+- Dashboard Home: `src/app/dashboard/page.tsx` (redirects to `/dashboard/links`)
+- Middleware Protection: `src/middleware.ts`
 
 **Configuration:**
-- `prisma/schema.prisma`: Schema database models.
-- `next.config.ts`: Image whitelisting and standalone build config.
-- `tsconfig.json`: TypeScript compiler options and aliases.
-- `eslint.config.mjs`: ESLint style configurations.
-- `postcss.config.mjs`: PostCSS presets.
-- `components.json`: shadcn workspace config.
+- Next.js: `next.config.ts`
+- Database Schema: `prisma/schema.prisma`
+- Database CLI: `prisma.config.ts`
+- Tests: `vitest.config.ts`
+- Docker: `docker-compose.yml` & `Dockerfile`
 
-**Static Data / Registries:**
-- `src/lib/microsite-themes.ts`: Shared visual options and style mapping configurations.
+**Testing:**
+- Action Tests: `src/app/actions/*.test.ts`
+  - `src/app/actions/short.test.ts`
+  - `src/app/actions/microsite.test.ts`
+  - `src/app/actions/short-link-redirect.test.ts`
 
-**Custom Primitives:**
-- `src/components/modern-qr-code.tsx`: High-resolution rounded dot Canvas rendering logic.
-- `src/components/qr-code-dialog.tsx`: Popover frame supporting clipboard copy and image downloads.
+## Naming Conventions
+
+**Files:**
+- React components and pages: `kebab-case.tsx` (e.g. `microsite-editor.tsx`, `short-link-form.tsx`)
+- Server action files: `kebab-case.ts` (e.g. `short-link-redirect.ts`)
+- Unit test files: `kebab-case.test.ts` (e.g. `microsite.test.ts`)
+- App Router special files: standard Next.js conventions (`page.tsx`, `layout.tsx`, `route.ts`)
+
+**Directories:**
+- App Router routes: `kebab-case` (e.g. `dashboard/analytics`, `dashboard/microsites/new`)
+- Dynamic parameters: `[parameter]` (e.g. `[username]`, `[id]`, `[slug]`, `[linkId]`)
+
+## Where to Add New Code
+
+**New Server Action / Backend Logic:**
+- Place in `src/app/actions/` (e.g. `src/app/actions/<feature>.ts`).
+- Accompany with unit test in `src/app/actions/<feature>.test.ts`.
+
+**New Dashboard Feature / Screen:**
+- Create route folder under `src/app/dashboard/<feature-name>/page.tsx`.
+- Place complex interactive UI forms in a co-located client component (e.g. `<feature-name>-editor.tsx`).
+- If linking from dashboard menu, add navigation entry in `src/app/dashboard/layout.tsx`.
+
+**New Public API Endpoint:**
+- Place handler in `src/app/api/<endpoint>/route.ts`.
+
+**New Shared UI Primitive:**
+- Place in `src/components/ui/<component>.tsx`.
+
+**New Utility or Helper:**
+- Place in `src/lib/<utility-name>.ts`.
+
+## Special Directories
+
+**`prisma/`:**
+- Contains `schema.prisma` and SQL migrations. Run `npx prisma generate` whenever modifying models.
+
+**`.planning/`:**
+- Tracks project milestones, architecture maps, and task states. Never contains committed secrets or API keys.
+
+---
+
+*Structure analysis: 2026-09-07*

@@ -1,102 +1,149 @@
 # Testing Patterns
 
-**Analysis Date:** 2026-08-04
+**Analysis Date:** 2026-09-07
 
 ## Test Framework
 
-**Runner:**
-- Not detected. No Jest, Vitest, Playwright, Cypress, or test runner config found in repository root.
-- Config: Not detected (`jest.config.*`, `vitest.config.*`, `playwright.config.*`, `cypress.config.*` absent).
-- `package.json` has no `test`, `typecheck`, or `coverage` script; only `dev`, `build`, `start`, and `lint` exist.
-
-**Assertion Library:**
-- Not detected. No `expect`, `describe`, `it`, `test`, `vitest`, `jest`, or `@testing-library/*` app test usage detected under `src`.
+**Runner & Configuration:**
+- Runner: Vitest (`vitest` `^4.1.10`) with `@vitejs/plugin-react` (`^6.0.5`)
+- Configuration File: `vitest.config.ts`
+- Test Environment: `node` (configured in `vitest.config.ts` with `globals: true` and path alias `@` -> `./src`)
 
 **Run Commands:**
 ```bash
-npm run lint              # Current verification command
-npx tsc --noEmit          # Manual TypeScript verification when needed
-npm run build             # Production build; injects mock DATABASE_URL via package.json
+npm test                               # Run all test suites once (vitest run)
+npx vitest                             # Run tests in watch mode
+npx vitest run                         # Explicit single-pass execution
+npx vitest run src/app/actions/short   # Run a targeted test file
 ```
+
+## Test Suite Inventory
+
+The codebase currently maintains 18 automated unit tests across 3 core action test files:
+
+| Test File | Focus Area | Test Count |
+|---|---|---|
+| `src/app/actions/short.test.ts` | Short link creation, deletion, alias collisions, and validation | 6 tests |
+| `src/app/actions/microsite.test.ts` | Microsite CRUD, link creation, reordering, and visibility toggling | 6 tests |
+| `src/app/actions/short-link-redirect.test.ts` | Public wildcard resolution, password checks, and redirect logic | 6 tests |
 
 ## Test File Organization
 
 **Location:**
-- Not detected. No `*.test.*` or `*.spec.*` files found.
-- No `__tests__` directory detected.
+- Co-located with server action modules under `src/app/actions/*.test.ts`.
+- When adding actions or lib utilities, place unit test files directly alongside the source file with `.test.ts` extension.
 
 **Naming:**
-- Not established. Future tests should use co-located `*.test.ts` / `*.test.tsx` near target files or a consistent `src/**/__tests__/*` pattern.
+- `<module-name>.test.ts` for unit test files.
 
-**Structure:**
-```text
-Not detected
-```
+## Mocking Patterns
 
-## Test Structure
+Tests use Vitest's `vi.mock` to stub Next.js framework utilities, NextAuth session getters, and the Prisma client singleton.
 
-**Suite Organization:**
+### Mocking Prisma
 ```typescript
-// No actual test suite pattern exists in this repo.
-// When adding tests, mirror source behavior boundaries:
-// describe("createShortLink", () => { ... }) for `src/app/actions/short.ts`
-// describe("validateSlug behavior", () => { ... }) for `src/app/actions/microsite.ts`
-// describe("GET /api/click/microsite-link/[linkId]", () => { ... }) for `src/app/api/click/microsite-link/[linkId]/route.ts`
+// Pattern in src/app/actions/short.test.ts & microsite.test.ts
+vi.mock("@/lib/prisma", () => ({
+    prisma: {
+        shortLink: {
+            findUnique: vi.fn(),
+            findMany: vi.fn(),
+            create: vi.fn(),
+            delete: vi.fn(),
+        },
+        microsite: {
+            findUnique: vi.fn(),
+            findMany: vi.fn(),
+            create: vi.fn(),
+            update: vi.fn(),
+            delete: vi.fn(),
+        },
+        micrositeLink: {
+            findMany: vi.fn(),
+            create: vi.fn(),
+            update: vi.fn(),
+            delete: vi.fn(),
+        },
+        user: {
+            findUnique: vi.fn(),
+            upsert: vi.fn(),
+        },
+        $transaction: vi.fn((callbacks) => (Array.isArray(callbacks) ? Promise.all(callbacks) : callbacks())),
+    },
+}));
 ```
 
-**Patterns:**
-- Setup pattern: Not detected.
-- Teardown pattern: Not detected.
-- Assertion pattern: Not detected.
-- Current validation relies on static linting via `npm run lint` and manual TypeScript checking via `npx tsc --noEmit`.
-
-## Mocking
-
-**Framework:** Not detected
-
-**Patterns:**
+### Mocking Next.js Navigation & Cache
 ```typescript
-// No actual mocking pattern exists.
-// Needed future mocks:
-// - `@/lib/prisma` for server actions in `src/app/actions/short.ts` and `src/app/actions/microsite.ts`
-// - `next-auth` `getServerSession` for auth-gated actions
-// - `next/cache` `revalidatePath` for mutation side effects
-// - `next/navigation` `redirect` / `notFound` for pages like `src/app/[username]/page.tsx`
+// Pattern in src/app/actions/short-link-redirect.test.ts
+vi.mock("next/navigation", () => ({
+    redirect: vi.fn((url: string) => {
+        const error = new Error("NEXT_REDIRECT");
+        (error as any).digest = `NEXT_REDIRECT;replace;${url};307;`;
+        throw error;
+    }),
+    notFound: vi.fn(() => {
+        const error = new Error("NEXT_NOT_FOUND");
+        (error as any).digest = "NEXT_NOT_FOUND";
+        throw error;
+    }),
+}));
+
+vi.mock("next/cache", () => ({
+    revalidatePath: vi.fn(),
+}));
 ```
 
-**What to Mock:**
-- Mock Prisma client calls when unit testing server actions: `prisma.shortLink.findUnique`, `prisma.shortLink.create`, `prisma.microsite.update` in `src/app/actions/short.ts` and `src/app/actions/microsite.ts`.
-- Mock `getServerSession(authOptions)` for authenticated branches in `src/app/actions/short.ts`, `src/app/actions/microsite.ts`, and dashboard pages.
-- Mock `revalidatePath` for mutation actions in `src/app/actions/short.ts` and `src/app/actions/microsite.ts`.
-- Mock browser APIs for client components: `navigator.clipboard.writeText` in `src/app/dashboard/links/short-link-list.tsx`, `confirm` in `src/app/dashboard/links/short-link-list.tsx` and `src/app/dashboard/microsites/[id]/microsite-editor.tsx`.
-
-**What NOT to Mock:**
-- Do not mock pure string/URL validation behavior; test inputs through actions such as `createShortLink()` in `src/app/actions/short.ts` and `validateSlug()` behavior through `createMicrosite()` in `src/app/actions/microsite.ts`.
-- Do not mock Next form serialization semantics; pass real `FormData` to server actions.
-- Do not mock Tailwind class merging utility `cn()` in `src/lib/utils.ts`; test output directly if component class behavior matters.
-
-## Fixtures and Factories
-
-**Test Data:**
+### Mocking NextAuth Session
 ```typescript
-// No actual fixture/factory pattern exists.
-// Useful future factory shape for `src/app/dashboard/links/short-link-list.tsx`:
-const shortLink = {
-  id: "link_1",
-  userId: "user_1",
-  shortCode: "abc1234",
-  originalUrl: "https://example.com",
-  password: null,
-  createdAt: new Date("2026-01-01T00:00:00.000Z"),
-  user: { name: "User", email: "user@example.com" },
-};
+vi.mock("next-auth", () => ({
+    getServerSession: vi.fn(() => Promise.resolve({
+        user: { email: "test@example.com", name: "Test User" },
+    })),
+}));
 ```
 
-**Location:**
-- Not detected. No `fixtures`, `factories`, or test support directories exist.
-- If added, keep shared factories under `src/test/factories/*` or co-located with tests for small feature-specific data.
+## Common Test Patterns
 
-## Coverage
+### Testing Server Actions Throwing Errors
+```typescript
+it("rejects unauthorized requests when user is not authenticated", async () => {
+    vi.mocked(getServerSession).mockResolvedValueOnce(null);
+    const formData = new FormData();
+    formData.append("slug", "my-slug");
 
-**Target:** Not applicable (no test runner is configured).
-**Requirements:** Future configurations should set coverage targets around core database transaction modules (mutations in `src/app/actions`) to protect against authorization bypasses and invalid data entries.
+    await expect(createMicrosite(formData)).rejects.toThrow("Unauthorized");
+});
+```
+
+### Testing Dynamic Slugs and Reserved Routes
+```typescript
+it("rejects short link code matching reserved system keywords", async () => {
+    const formData = new FormData();
+    formData.append("originalUrl", "https://example.com");
+    formData.append("customCode", "dashboard");
+
+    await expect(createShortLink(formData)).rejects.toThrow();
+});
+```
+
+### Testing Link Reordering Transactions
+```typescript
+it("updates order of links in transaction", async () => {
+    const orderedIds = ["link-3", "link-1", "link-2"];
+    const result = await reorderMicrositeLinks("ms-1", orderedIds);
+
+    expect(result.success).toBe(true);
+    expect(prisma.$transaction).toHaveBeenCalled();
+});
+```
+
+## Guidelines for New Tests
+
+1. **Reset Mocks Between Tests:** Include `beforeEach(() => { vi.clearAllMocks(); })` to prevent mock leakage across test cases.
+2. **Deterministic Inputs:** Avoid depending on network connections or live database instances in unit tests.
+3. **Type Verification:** Run `npx tsc --noEmit` alongside test suites to ensure strict TypeScript compliance.
+
+---
+
+*Testing analysis: 2026-09-07*
