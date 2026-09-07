@@ -70,8 +70,8 @@ Microsite owners can create a more personalized public page, control link priori
 
 ### Active
 
-- [ ] TOOL-01: Install and configure `awesome-design-md` / `getdesign` tooling and pull Claude `DESIGN.md` specification.
-- [ ] TOKEN-01: Configure Tailwind CSS v4 design tokens and CSS variables adhering to Claude design system.
+- [x] TOOL-01: Install and configure `awesome-design-md` / `getdesign` tooling and pull Claude `DESIGN.md` specification (Phase 8).
+- [x] TOKEN-01: Configure Tailwind CSS v4 design tokens and CSS variables adhering to Claude design system (Phase 8).
 - [ ] UI-01: Refresh dashboard and shared UI components (cards, buttons, typography, inputs) to match the Claude warm terracotta editorial theme.
 - [ ] THEME-01: Add Claude-inspired preset theme to microsite theme registry (`src/lib/microsite-themes.ts`).
 - [ ] TEST-01: Verify all unit tests, route validations, and TypeScript typechecking remain passing.

@@ -36,6 +36,7 @@
 </details>
 
 ### Phase 8: Design System Tooling & Token Foundation
+- [x] Setup tooling awesome-design-md, DESIGN.md, tokens globals.css & Newsreader font (1 plan) — completed 2026-09-07
 **Goal:** Setup tooling `awesome-design-md` / `getdesign`, validasi `DESIGN.md`, hubungkan ke `AGENTS.md`, dan konfigurasi CSS custom properties / Tailwind CSS v4 design tokens untuk palet Claude (terracotta, cream canvas, dark surfaces).
 **Requirements:** TOOL-01, TOOL-02, TOKEN-01, TOKEN-02
 **Success Criteria:**

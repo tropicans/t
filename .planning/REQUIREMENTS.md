@@ -9,13 +9,13 @@ Requirements for Milestone v1.3: Claude Design System Integration.
 
 ### Tooling & Design Specification
 
-- [ ] **TOOL-01**: Developer/Agents have access to `awesome-design-md` / `getdesign` CLI and active Claude `DESIGN.md` in repository root.
-- [ ] **TOOL-02**: Project agent guidelines (`AGENTS.md`) reference `DESIGN.md` as the visual design system contract.
+- [x] **TOOL-01**: Developer/Agents have access to `awesome-design-md` / `getdesign` CLI and active Claude `DESIGN.md` in repository root.
+- [x] **TOOL-02**: Project agent guidelines (`AGENTS.md`) reference `DESIGN.md` as the visual design system contract.
 
 ### Design Tokens & Foundation
 
-- [ ] **TOKEN-01**: Configure CSS custom properties and Tailwind CSS v4 variables in `src/app/globals.css` with Claude design system tokens (terracotta `#cc785c`, ink `#141413`, canvas `#faf9f5`, cards, and dark surfaces).
-- [ ] **TOKEN-02**: Define typography rules, font fallback hierarchy, and border radius variables matching Claude editorial specifications.
+- [x] **TOKEN-01**: Configure CSS custom properties and Tailwind CSS v4 variables in `src/app/globals.css` with Claude design system tokens (terracotta `#cc785c`, ink `#141413`, canvas `#faf9f5`, cards, and dark surfaces).
+- [x] **TOKEN-02**: Define typography rules, font fallback hierarchy, and border radius variables matching Claude editorial specifications.
 
 ### UI & Dashboard Refresh
 
@@ -39,10 +39,10 @@ Requirements for Milestone v1.3: Claude Design System Integration.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| TOOL-01 | Phase 8 | Pending |
-| TOOL-02 | Phase 8 | Pending |
-| TOKEN-01 | Phase 8 | Pending |
-| TOKEN-02 | Phase 8 | Pending |
+| TOOL-01 | Phase 8 | Complete |
+| TOOL-02 | Phase 8 | Complete |
+| TOKEN-01 | Phase 8 | Complete |
+| TOKEN-02 | Phase 8 | Complete |
 | UI-01 | Phase 9 | Pending |
 | UI-02 | Phase 9 | Pending |
 | THEME-01 | Phase 10 | Pending |
