@@ -34,7 +34,7 @@ See: `.planning/ROADMAP.md`
 | Phase | Status | Progress |
 |-------|--------|----------|
 | Phase 13: Invitation Data Model, Migration & Validation Engine | Complete | 100% |
-| Phase 14: Public Invitation Landing Page & NextAuth Integration | Not Started | 0% |
+| Phase 14: Public Invitation Landing Page & NextAuth Integration | Planned | 0% |
 | Phase 15: Dashboard Invitation Management & System Verification | Not Started | 0% |
 
 ## Requirements
@@ -69,27 +69,27 @@ Research exists in `.planning/research/`:
 
 ## Next Action
  
-Execute Phase 13 with `/gsd-plan-phase 13` or implement directly.
+Execute Phase 14 with `/gsd-execute-phase 14` or implement directly.
  
 ---
 *State initialized: 2026-06-26*
  
 ## Session
  
-**Last session:** 2026-09-07T07:48:00.000Z
-**Stopped at:** Milestone v1.5 initialized
-**Resume file:** .planning/ROADMAP.md
+**Last session:** 2026-09-07T07:57:00.000Z
+**Stopped at:** Phase 14 planned
+**Resume file:** .planning/phases/14-public-invitation-landing-page-nextauth-integration/14-01-PLAN.md
  
 ## Current Position
 
-Phase: Phase 13: Invitation Data Model, Migration & Validation Engine
-Plan: Ready to plan
-Status: Milestone v1.5 initialized
-Last activity: 2026-09-07 — Milestone v1.5 started and roadmap created
+Phase: Phase 14: Public Invitation Landing Page & NextAuth Integration
+Plan: 14-01-PLAN.md ready for execution
+Status: Planned
+Last activity: 2026-09-07 — Phase 14 research and plan completed
 
 ## Operator Next Steps
  
-- Run `/gsd-plan-phase 13` to plan Phase 13 implementation.
+- Run `/gsd-execute-phase 14` to execute the planned tasks.
 
 ## Quick Tasks Completed
 
