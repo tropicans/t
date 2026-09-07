@@ -44,13 +44,13 @@ export default function DashboardLayout({
     ];
 
     return (
-        <div className="min-h-screen bg-background flex">
+        <div className="min-h-screen bg-background text-foreground flex">
             {/* Sidebar */}
-            <aside className="w-64 border-r border-border bg-sidebar flex flex-col hidden md:flex">
-                <div className="h-16 flex items-center px-6 border-b border-zinc-800">
-                    <Link href="/dashboard" className="flex items-center gap-2 font-bold text-white text-lg tracking-tight">
-                        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                            <LinkIcon className="w-4 h-4 text-white" />
+            <aside className="w-64 border-r border-sidebar-border bg-sidebar text-sidebar-foreground flex flex-col hidden md:flex">
+                <div className="h-16 flex items-center px-6 border-b border-sidebar-border">
+                    <Link href="/dashboard" className="flex items-center gap-2 font-serif font-bold text-foreground text-lg tracking-tight">
+                        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground shadow-xs">
+                            <LinkIcon className="w-4 h-4 text-primary-foreground" />
                         </div>
                         Taut
                     </Link>
@@ -67,7 +67,7 @@ export default function DashboardLayout({
                                 href={item.href}
                                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${isActive
                                     ? "bg-primary/15 text-primary"
-                                    : "text-muted-foreground hover:text-white hover:bg-muted"
+                                    : "text-muted-foreground hover:text-foreground hover:bg-sidebar-accent"
                                     }`}
                             >
                                 <Icon className="w-5 h-5" />
@@ -77,7 +77,7 @@ export default function DashboardLayout({
                     })}
                 </nav>
 
-                <div className="p-4 border-t border-border">
+                <div className="p-4 border-t border-sidebar-border">
                     <div className="flex items-center gap-3 px-3 py-2 mb-4">
                         {session?.user?.image ? (
                             <Image
@@ -85,21 +85,21 @@ export default function DashboardLayout({
                                 alt="Avatar"
                                 width={32}
                                 height={32}
-                                className="w-8 h-8 rounded-full bg-zinc-800"
+                                className="w-8 h-8 rounded-full bg-sidebar-accent border border-sidebar-border"
                             />
                         ) : (
-                            <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-xs font-medium text-white">
+                            <div className="w-8 h-8 rounded-full bg-sidebar-accent border border-sidebar-border flex items-center justify-center text-xs font-medium text-foreground">
                                 {session?.user?.name?.charAt(0) || "U"}
                             </div>
                         )}
                         <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-white truncate">{session?.user?.name}</p>
-                            <p className="text-xs text-zinc-500 truncate">{session?.user?.email}</p>
+                            <p className="text-sm font-medium text-foreground truncate">{session?.user?.name}</p>
+                            <p className="text-xs text-muted-foreground truncate">{session?.user?.email}</p>
                         </div>
                     </div>
                     <Button
                         variant="ghost"
-                        className="w-full justify-start text-zinc-400 hover:text-white hover:bg-zinc-800"
+                        className="w-full justify-start text-muted-foreground hover:text-foreground hover:bg-sidebar-accent"
                         onClick={() => signOut({ callbackUrl: "/login" })}
                     >
                         <LogOut className="w-4 h-4 mr-2" />
@@ -111,10 +111,10 @@ export default function DashboardLayout({
             {/* Main Content */}
             <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
                 {/* Mobile Header */}
-                <div className="md:hidden h-16 border-b border-border bg-sidebar flex items-center px-4 shrink-0">
-                    <Link href="/dashboard" className="flex items-center gap-2 font-bold text-white text-lg tracking-tight">
-                        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                            <LinkIcon className="w-4 h-4 text-white" />
+                <div className="md:hidden h-16 border-b border-sidebar-border bg-sidebar flex items-center px-4 shrink-0">
+                    <Link href="/dashboard" className="flex items-center gap-2 font-serif font-bold text-foreground text-lg tracking-tight">
+                        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground shadow-xs">
+                            <LinkIcon className="w-4 h-4 text-primary-foreground" />
                         </div>
                         Taut
                     </Link>
