@@ -45,6 +45,7 @@
 3. Typography rules dan border radius tokens didefinisikan dengan fallback font editorial.
 
 ### Phase 9: Dashboard & UI Component Editorial Refresh
+- [x] UI primitives & dashboard layout editorial refresh (2 plans) — completed 2026-09-07
 **Goal:** Terapkan gaya editorial warm terracotta pada tata letak dashboard, navigasi, cards, buttons, badge status, dan form input.
 **Requirements:** UI-01, UI-02
 **Success Criteria:**
