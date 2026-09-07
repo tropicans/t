@@ -67,7 +67,7 @@
 4. Unit test suite memverifikasi logika validasi undangan.
 
 ### Phase 14: Public Invitation Landing Page & NextAuth Integration
-- [ ] Halaman penerimaan undangan `/invite/[token]` dan NextAuth `signIn` callback bridge
+- [x] Halaman penerimaan undangan `/invite/[token]` dan NextAuth `signIn` callback bridge (1 plan) — completed 2026-09-07
 **Goal:** Bangun halaman landing editorial Claude di `/invite/[token]` untuk validasi dan klaim undangan, serta hubungkan dengan callback `signIn` NextAuth agar pemegang undangan valid dapat membuat akun via Google OAuth dan masuk ke dashboard.
 **Requirements:** INV-03, AUTH-01, AUTH-02
 **Success Criteria:**
