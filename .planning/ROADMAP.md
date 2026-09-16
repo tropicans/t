@@ -8,24 +8,14 @@
 - ✅ **v1.3 Claude Design System Integration** — Phases 8-10 (shipped 2026-09-07)
 - ✅ **v1.4 Dashboard UX & Mobile Navigation Polish** — Phases 11-12 (shipped 2026-09-07)
 - ✅ **v1.5 Invitation Link & Dynamic User Onboarding** — Phases 13-15 (shipped 2026-09-07)
-- 🟡 **v1.6 Role-Based Access Control (RBAC) & Audit Activity Trail** — Phases 16-18 (in planning)
+- ✅ **v1.6 Role-Based Access Control (RBAC) & Audit Activity Trail** — Phases 16-18 (shipped 2026-09-16)
 
 ## Phases
 
-### Phase 16: RBAC & Audit Data Model, Migration & Auth Synchronization
-- [x] Prisma schema enum `Role`, model `AuditLog`, migration, dan sinkronisasi role saat login Google OAuth (NextAuth JWT session) (1 plan) — completed 2026-09-16
-- **Requirements**: RBAC-01, RBAC-02, RBAC-03, AUDIT-01, TEST-01
-
-### Phase 17: Activity Audit Logger Engine & Mutations Instrumentation
-- [x] Engine pencatatan log audit `logAuditEvent()` dan instrumentasi pada server actions (ShortLink, Microsite, Invitation, User role) (1 plan) — completed 2026-09-16
-- **Requirements**: RBAC-03, AUDIT-02, AUDIT-03, TEST-01
-
-### Phase 18: Dashboard UI Role Management & Audit Trail Timeline
-- [x] Antarmuka pemilihan role user di tab Users, tampilan linimasa Audit Trail khusus Admin, dan verifikasi menyeluruh (1 plan) — completed 2026-09-16
-- **Requirements**: UI-01, UI-02, TEST-01
+No active phases. Run `/gsd-new-milestone` to start the next milestone.
 
 <details>
-<summary>✅ Shipped Milestones (Phases 1-15)</summary>
+<summary>✅ Shipped Milestones (Phases 1-18)</summary>
 
 ### Phase 1: Microsite Theme Variants
 - [x] Preset themes registry & Selection UI (2 plans) — completed 2026-06-27
@@ -72,11 +62,21 @@
 ### Phase 15: Dashboard Invitation Management & System Verification
 - [x] Antarmuka manajemen undangan di Dashboard dan verifikasi sistem end-to-end (1 plan) — completed 2026-09-07
 
+### Phase 16: RBAC & Audit Data Model, Migration & Auth Synchronization
+- [x] Prisma schema enum `Role`, model `AuditLog`, migration, dan sinkronisasi role saat login Google OAuth (NextAuth JWT session) (1 plan) — completed 2026-09-16
+
+### Phase 17: Activity Audit Logger Engine & Mutations Instrumentation
+- [x] Engine pencatatan log audit `logAuditEvent()` dan instrumentasi pada server actions (ShortLink, Microsite, Invitation, User role) (1 plan) — completed 2026-09-16
+
+### Phase 18: Dashboard UI Role Management & Audit Trail Timeline
+- [x] Antarmuka pemilihan role user di tab Users, tampilan linimasa Audit Trail khusus Admin, dan verifikasi menyeluruh (1 plan) — completed 2026-09-16
+
 </details>
 
 ---
 
 ## Milestone Archive
+- [v1.6 Role-Based Access Control (RBAC) & Audit Activity Trail](.planning/milestones/v1.6-ROADMAP.md) — 3 phases, 3 plans (shipped 2026-09-16)
 - [v1.5 Invitation Link & Dynamic User Onboarding](.planning/milestones/v1.5-ROADMAP.md) — 3 phases, 3 plans (shipped 2026-09-07)
 - [v1.3 Claude Design System Integration](.planning/milestones/v1.3-ROADMAP.md) — 3 phases, 4 plans (shipped 2026-09-07)
 - [v1.2 Edit Link Microsite](.planning/milestones/v1.2-ROADMAP.md) — 1 phase, 1 plan (shipped 2026-08-04)
@@ -84,4 +84,4 @@
 - [v1.0 Theme & Ordering MVP](.planning/milestones/v1.0-ROADMAP.md) — 3 phases, 4 plans (shipped 2026-06-27)
 
 ---
-*Roadmap updated: 2026-09-07 after completing v1.5 milestone*
+*Roadmap updated: 2026-09-16 after completing v1.6 milestone*

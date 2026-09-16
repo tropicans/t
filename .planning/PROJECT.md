@@ -23,7 +23,7 @@ Microsite owners can create a more personalized public page, control link priori
 - Shipped **v1.4** milestone delivering mobile responsive sliding navigation drawer (`layout.tsx`), stat cards micro-interactions with WCAG AA compliant link contrast, editorial onboarding guidance cards for new users, and side-by-side recent activities feeds for microsites and short links.
 - Shipped brand logo quick task delivering the bespoke *Interlocking Tension Weave* vector logo, standalone SVG assets (`logo.svg`, `logo-mark.svg`, `icon.svg`, `favicon.svg`), and reusable `BrandLogo` component.
 - Shipped **v1.5** milestone delivering dynamic user onboarding through hybrid invitation links (multi-use open links with usage limits/expiration, and email-specific links), NextAuth 3-tier sign-in authorization callback bridge, Claude editorial invitation landing page at `/invite/[token]`, dashboard invitation management UI with real-time badges, claimed users accordion, copy-to-clipboard, link revocation, `/invite` reserved route collision protection, and 64 automated Vitest unit tests across 8 test suites.
-- Initializing **v1.6** milestone: Role-Based Access Control (RBAC) & Audit Activity Trail ("siapa melakukan apa").
+- Shipped **v1.6** milestone: Role-Based Access Control (RBAC) across 3 tiers (ADMIN full access, OPERATOR global read-only, MEMBER isolated) & Audit Activity Trail ("siapa melakukan apa") with `AuditLog` engine, non-blocking mutation instrumentation, Users role management with self-lockout protection, and an interactive Audit Trail timeline in the administrator dashboard (97 passing Vitest unit tests, clean production build).
 
 ## Requirements
 
@@ -80,17 +80,18 @@ Microsite owners can create a more personalized public page, control link priori
 - ✓ AUTH-02: Unrestricted login for existing database users and superadmin `ALLOWED_EMAILS` bootstrap allowlist — v1.5.
 - ✓ ADMIN-01: Dashboard invitation management UI (open/email links, quotas, expirations, copy, revocation) — v1.5.
 - ✓ TEST-01: Automated Vitest test suite with 64/64 passing tests across 8 test suites — v1.5.
+- ✓ RBAC-01: Prisma schema `Role` enum (`ADMIN`, `OPERATOR`, `MEMBER`) on `User.role` with default `MEMBER` — v1.6.
+- ✓ RBAC-02: Auth synchronization during Google OAuth sign-in mapping `ALLOWED_EMAILS` to `ADMIN`, `GLOBAL_DASHBOARD_VIEWER_EMAIL` to `OPERATOR`, and invitations/regular users to `MEMBER` — v1.6.
+- ✓ RBAC-03: Role permissions enforcement across app: ADMIN (full access + user management), OPERATOR (global read-only access), and MEMBER (own resources only) — v1.6.
+- ✓ AUDIT-01: Prisma schema `AuditLog` model recording actor, action, entity, metadata JSON, and timestamps — v1.6.
+- ✓ AUDIT-02: Centralized server-side audit logging helper `logAuditEvent` resilient against DB failures — v1.6.
+- ✓ AUDIT-03: Mutations instrumented across ShortLinks, Microsites, Invitations, and User Role changes — v1.6.
+- ✓ UI-01: Role management UI in `/dashboard/invitations` (Users tab) allowing ADMIN to promote/demote with self-lockout protection — v1.6.
+- ✓ UI-02: Audit Trail activity timeline dashboard view restricted to ADMIN displaying searchable/filterable logs of "siapa melakukan apa" — v1.6.
+- ✓ TEST-01: Comprehensive Vitest test suite with 97 passing unit tests across 12 test suites — v1.6.
 
-### Active (Milestone v1.6: RBAC & Audit Activity Trail)
-
-- [ ] **RBAC-01**: Prisma schema `Role` enum (`ADMIN`, `OPERATOR`, `MEMBER`) on `User.role` with default `MEMBER`.
-- [ ] **RBAC-02**: Auth synchronization during Google OAuth sign-in mapping `ALLOWED_EMAILS` to `ADMIN`, `GLOBAL_DASHBOARD_VIEWER_EMAIL` to `OPERATOR`, and invitations/regular users to `MEMBER` (persisted in DB and JWT session).
-- [ ] **RBAC-03**: Role permissions enforcement across app: ADMIN (full access + user management), OPERATOR (global read-only access to all dashboards/links/microsites/analytics), and MEMBER (restricted to own resources).
-- [ ] **AUDIT-01**: Prisma schema `AuditLog` model recording `userId`, `userEmail`, `action`, `entity`, `entityId`, `details`, `ipAddress`, and `createdAt`.
-- [ ] **AUDIT-02**: Centralized server-side audit logging helper `logAuditEvent` instrumented in mutations (ShortLink CRUD, Microsite CRUD, Invitation create/revoke, User role modification).
-- [ ] **UI-01**: Role management UI in `/dashboard/invitations` (Users tab) allowing ADMIN to promote/demote user roles.
-- [ ] **UI-02**: Audit Trail activity timeline dashboard view restricted to ADMIN displaying searchable/filterable logs of "siapa melakukan apa".
-- [ ] **TEST-01**: Comprehensive Vitest test suite covering RBAC permission checks, auth role synchronization, audit event recording, and unauthorized mutation rejection.
+### Next Milestone Goals
+- Defined via `/gsd-new-milestone`.
 
 ### Out of Scope
 
