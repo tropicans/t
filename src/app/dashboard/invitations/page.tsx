@@ -5,9 +5,11 @@ import { prisma } from "@/lib/prisma";
 import { isGlobalDashboardViewer } from "@/lib/microsite-access";
 import { isUserAdmin, getAllUsersForAdmin } from "@/lib/admin";
 import { getUserInvitations } from "@/lib/invitations";
+import { getRecentAuditLogs } from "@/lib/audit";
 import { InvitationForm } from "./invitation-form";
 import { InvitationList } from "./invitation-list";
 import { UserList } from "./user-list";
+import { AuditTrailList } from "./audit-trail-list";
 import { AdminTabs } from "./admin-tabs";
 import { Users, UserPlus, Clock, ShieldCheck } from "lucide-react";
 
@@ -35,10 +37,11 @@ export default async function InvitationsPage({ searchParams }: InvitationsPageP
 
     const isGlobalViewer = isGlobalDashboardViewer(session.user.email);
     
-    // Fetch invitations and registered users in parallel
-    const [invitations, users] = await Promise.all([
+    // Fetch invitations, registered users, and audit trail logs in parallel
+    const [invitations, users, auditLogs] = await Promise.all([
         getUserInvitations(dbUser.id, true), // admins can inspect all invitations
         getAllUsersForAdmin(),
+        getRecentAuditLogs({ limit: 100 }),
     ]);
 
     // Compute overview metrics
@@ -60,7 +63,12 @@ export default async function InvitationsPage({ searchParams }: InvitationsPageP
 
     // Resolve search params safely for Next.js 14 & 15
     const resolvedParams = searchParams instanceof Promise ? await searchParams : searchParams;
-    const defaultTab = resolvedParams?.tab === "invitations" ? "invitations" : "users";
+    let defaultTab: "users" | "invitations" | "audit" = "users";
+    if (resolvedParams?.tab === "invitations") {
+        defaultTab = "invitations";
+    } else if (resolvedParams?.tab === "audit") {
+        defaultTab = "audit";
+    }
 
     return (
         <div className="max-w-5xl mx-auto space-y-8">
@@ -77,10 +85,10 @@ export default async function InvitationsPage({ searchParams }: InvitationsPageP
                     )}
                 </div>
                 <h1 className="text-3xl font-serif font-bold tracking-tight text-foreground">
-                    Pengguna & Undangan
+                    Pengguna, Undangan & Audit
                 </h1>
                 <p className="text-muted-foreground text-sm max-w-2xl">
-                    Pantau semua pengguna yang terdaftar di sistem Taut, kelola hak akses administrator, dan terbitkan tautan undangan akses untuk pengguna baru.
+                    Pantau semua pengguna yang terdaftar di sistem Taut, kelola role dan hak akses pengguna (Admin, Operator, Member), terbitkan tautan undangan, serta pantau linimasa riwayat aktivitas sistem.
                 </p>
             </div>
 
@@ -132,7 +140,8 @@ export default async function InvitationsPage({ searchParams }: InvitationsPageP
                 defaultTab={defaultTab}
                 usersCount={totalUsers}
                 invitationsCount={totalInvitations}
-                usersContent={<UserList initialUsers={users} />}
+                auditCount={auditLogs.length}
+                usersContent={<UserList initialUsers={users} currentUserId={dbUser.id} />}
                 invitationsContent={
                     <div className="space-y-8">
                         {/* Invitation Creation Form */}
@@ -155,6 +164,20 @@ export default async function InvitationsPage({ searchParams }: InvitationsPageP
                                 canManageAll={true}
                             />
                         </div>
+                    </div>
+                }
+                auditContent={
+                    <div className="space-y-4">
+                        <div>
+                            <h2 className="text-xl font-serif font-bold text-foreground">
+                                Linimasa Audit Sistem
+                            </h2>
+                            <p className="text-xs text-muted-foreground">
+                                Rekaman riwayat aktivitas mutasi sistem (&ldquo;siapa melakukan apa&rdquo;) pada short links, microsites, role pengguna, dan undangan.
+                            </p>
+                        </div>
+
+                        <AuditTrailList initialLogs={auditLogs} />
                     </div>
                 }
             />

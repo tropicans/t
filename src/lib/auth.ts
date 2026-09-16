@@ -3,7 +3,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { cookies } from "next/headers";
 import { prisma } from "./prisma";
 import { getInvitationByToken, validateInvitationStatus } from "./invitations";
-import { isUserAdmin, isUserOperator, resolveUserRole } from "./admin";
+import { resolveUserRole } from "./admin";
 
 export interface AuthorizeSignInInput {
     email: string;

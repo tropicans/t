@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { AdminUserItem } from "@/lib/admin";
+import { updateUserRoleAction } from "@/app/actions/users";
 import {
     Search,
     ShieldCheck,
@@ -14,30 +15,38 @@ import {
     Mail,
     UserCheck,
     Users,
-    KeyRound
+    KeyRound,
+    Radio,
+    User,
+    Loader2,
 } from "lucide-react";
 import Image from "next/image";
 
 interface UserListProps {
     initialUsers: AdminUserItem[];
+    currentUserId?: string;
 }
 
-type FilterRole = "ALL" | "ADMIN" | "MEMBER" | "INVITED" | "DIRECT";
+type FilterRole = "ALL" | "ADMIN" | "OPERATOR" | "MEMBER" | "INVITED" | "DIRECT";
 
 const FILTER_TABS: { id: FilterRole; label: string }[] = [
     { id: "ALL", label: "Semua" },
-    { id: "ADMIN", label: "Superadmin" },
+    { id: "ADMIN", label: "Admin" },
+    { id: "OPERATOR", label: "Operator" },
     { id: "MEMBER", label: "Member" },
     { id: "INVITED", label: "Via Undangan" },
     { id: "DIRECT", label: "Allowlist Langsung" },
 ];
 
-export function UserList({ initialUsers }: UserListProps) {
+export function UserList({ initialUsers, currentUserId }: UserListProps) {
+    const [users, setUsers] = useState<AdminUserItem[]>(initialUsers);
     const [searchQuery, setSearchQuery] = useState("");
     const [filterRole, setFilterRole] = useState<FilterRole>("ALL");
+    const [updatingId, setUpdatingId] = useState<string | null>(null);
+    const [actionMessage, setActionMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
     const filteredUsers = useMemo(() => {
-        return initialUsers.filter((user) => {
+        return users.filter((user) => {
             const query = searchQuery.trim().toLowerCase();
             const matchesSearch =
                 !query ||
@@ -49,17 +58,70 @@ export function UserList({ initialUsers }: UserListProps) {
 
             if (!matchesSearch) return false;
 
-            if (filterRole === "ADMIN") return user.isAdmin;
-            if (filterRole === "MEMBER") return !user.isAdmin;
+            if (filterRole === "ADMIN") return user.role === "ADMIN" || user.isAdmin;
+            if (filterRole === "OPERATOR") return user.role === "OPERATOR" || user.isOperator;
+            if (filterRole === "MEMBER") return user.role === "MEMBER" && !user.isAdmin && !user.isOperator;
             if (filterRole === "INVITED") return Boolean(user.invitationId);
             if (filterRole === "DIRECT") return !user.invitationId;
 
             return true;
         });
-    }, [initialUsers, searchQuery, filterRole]);
+    }, [users, searchQuery, filterRole]);
+
+    const handleRoleChange = async (userId: string, newRole: "ADMIN" | "OPERATOR" | "MEMBER") => {
+        setUpdatingId(userId);
+        setActionMessage(null);
+
+        try {
+            const res = await updateUserRoleAction({ userId, newRole });
+            if (res.error) {
+                setActionMessage({ type: "error", text: res.error });
+            } else {
+                setUsers((prev) =>
+                    prev.map((u) => {
+                        if (u.id !== userId) return u;
+                        return {
+                            ...u,
+                            role: newRole,
+                            isAdmin: newRole === "ADMIN",
+                            isOperator: newRole === "OPERATOR",
+                        };
+                    })
+                );
+                setActionMessage({
+                    type: "success",
+                    text: `Role pengguna berhasil diperbarui menjadi ${newRole}.`,
+                });
+            }
+        } catch {
+            setActionMessage({ type: "error", text: "Terjadi kesalahan jaringan." });
+        } finally {
+            setUpdatingId(null);
+        }
+    };
 
     return (
         <div className="space-y-4">
+            {/* Feedback Alert */}
+            {actionMessage && (
+                <div
+                    className={`p-3 rounded-xl text-xs sm:text-sm font-medium border flex items-center justify-between transition-all ${
+                        actionMessage.type === "success"
+                            ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20"
+                            : "bg-destructive/10 text-destructive border-destructive/20"
+                    }`}
+                >
+                    <span>{actionMessage.text}</span>
+                    <button
+                        type="button"
+                        onClick={() => setActionMessage(null)}
+                        className="text-xs opacity-70 hover:opacity-100 ml-2"
+                    >
+                        ✕
+                    </button>
+                </div>
+            )}
+
             {/* Search and Filters */}
             <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
                 <div className="relative flex-1 max-w-md">
@@ -92,10 +154,9 @@ export function UserList({ initialUsers }: UserListProps) {
                 </div>
             </div>
 
-
             <div className="flex items-center justify-between text-xs text-muted-foreground px-1">
                 <span>
-                    Menampilkan {filteredUsers.length} dari {initialUsers.length} pengguna terdaftar
+                    Menampilkan {filteredUsers.length} dari {users.length} pengguna terdaftar
                 </span>
             </div>
 
@@ -110,13 +171,16 @@ export function UserList({ initialUsers }: UserListProps) {
                 <div className="space-y-3">
                     {filteredUsers.map((user) => {
                         const inviterName = user.invitation?.invitedBy?.name || user.invitation?.invitedBy?.email;
+                        const isSelf = user.id === currentUserId;
+                        const currentRole = user.role || (user.isAdmin ? "ADMIN" : user.isOperator ? "OPERATOR" : "MEMBER");
+
                         return (
                             <Card
                                 key={user.id}
                                 className="border-border bg-card shadow-xs rounded-xl overflow-hidden hover:border-border/80 transition-colors"
                             >
                                 <CardContent className="p-4 sm:p-5">
-                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                                         {/* User Identity */}
                                         <div className="flex items-start gap-3.5 min-w-0">
                                             {user.image ? (
@@ -140,13 +204,21 @@ export function UserList({ initialUsers }: UserListProps) {
                                                     </span>
 
                                                     {/* Role Badge */}
-                                                    {user.isAdmin ? (
+                                                    {currentRole === "ADMIN" && (
                                                         <Badge className="bg-primary/15 text-primary border-primary/25 hover:bg-primary/20 text-[11px] font-semibold gap-1 py-0 px-2">
                                                             <ShieldCheck className="w-3 h-3" />
-                                                            Superadmin
+                                                            Admin
                                                         </Badge>
-                                                    ) : (
-                                                        <Badge variant="outline" className="bg-muted/40 text-muted-foreground border-border text-[11px] py-0 px-2">
+                                                    )}
+                                                    {currentRole === "OPERATOR" && (
+                                                        <Badge className="bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/25 text-[11px] font-semibold gap-1 py-0 px-2">
+                                                            <Radio className="w-3 h-3" />
+                                                            Operator
+                                                        </Badge>
+                                                    )}
+                                                    {currentRole === "MEMBER" && (
+                                                        <Badge variant="outline" className="bg-muted/40 text-muted-foreground border-border text-[11px] gap-1 py-0 px-2">
+                                                            <User className="w-3 h-3" />
                                                             Member
                                                         </Badge>
                                                     )}
@@ -180,8 +252,34 @@ export function UserList({ initialUsers }: UserListProps) {
                                             </div>
                                         </div>
 
-                                        {/* Activity & Metadata Metrics */}
-                                        <div className="flex items-center justify-between sm:justify-end gap-4 border-t sm:border-t-0 pt-3 sm:pt-0 border-border/40 text-xs shrink-0">
+                                        {/* Actions and Metrics */}
+                                        <div className="flex flex-wrap sm:flex-nowrap items-center justify-between lg:justify-end gap-3.5 border-t lg:border-t-0 pt-3 lg:pt-0 border-border/40 text-xs shrink-0">
+                                            {/* Role Selector Control */}
+                                            <div className="flex items-center gap-2">
+                                                <label className="text-[11px] text-muted-foreground font-medium">Role:</label>
+                                                {isSelf ? (
+                                                    <span className="text-xs text-muted-foreground italic px-2 py-1 bg-muted/30 rounded-lg border border-border/40">
+                                                        (Akun Anda)
+                                                    </span>
+                                                ) : (
+                                                    <div className="relative flex items-center">
+                                                        <select
+                                                            value={currentRole}
+                                                            disabled={updatingId === user.id}
+                                                            onChange={(e) => handleRoleChange(user.id, e.target.value as "ADMIN" | "OPERATOR" | "MEMBER")}
+                                                            className="text-xs bg-background border border-border rounded-lg px-2.5 py-1 text-foreground focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed font-medium pr-7"
+                                                        >
+                                                            <option value="ADMIN">Admin (Penuh)</option>
+                                                            <option value="OPERATOR">Operator (Baca)</option>
+                                                            <option value="MEMBER">Member (Mandiri)</option>
+                                                        </select>
+                                                        {updatingId === user.id && (
+                                                            <Loader2 className="w-3 h-3 animate-spin absolute right-2 text-primary" />
+                                                        )}
+                                                    </div>
+                                                )}
+                                            </div>
+
                                             {/* Resource Counts */}
                                             <div className="flex items-center gap-3 bg-muted/30 px-3 py-1.5 rounded-lg border border-border/40">
                                                 <div className="flex items-center gap-1.5 text-muted-foreground" title="Total Microsites Dibuat">

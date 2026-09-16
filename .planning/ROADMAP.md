@@ -21,7 +21,7 @@
 - **Requirements**: RBAC-03, AUDIT-02, AUDIT-03, TEST-01
 
 ### Phase 18: Dashboard UI Role Management & Audit Trail Timeline
-- [ ] Antarmuka pemilihan role user di tab Users, tampilan linimasa Audit Trail khusus Admin, dan verifikasi menyeluruh.
+- [x] Antarmuka pemilihan role user di tab Users, tampilan linimasa Audit Trail khusus Admin, dan verifikasi menyeluruh (1 plan) — completed 2026-09-16
 - **Requirements**: UI-01, UI-02, TEST-01
 
 <details>
