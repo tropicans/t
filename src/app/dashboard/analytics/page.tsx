@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Activity, Link as LinkIcon, Globe } from "lucide-react";
 import { AnalyticsCharts } from "./analytics-charts";
 import { parseUserAgent } from "@/lib/user-agent";
+import { isGlobalDashboardViewer } from "@/lib/microsite-access";
 
 export default async function AnalyticsPage({
     searchParams,
@@ -20,6 +21,7 @@ export default async function AnalyticsPage({
     if (!dbUser) return null;
 
     const userId = dbUser.id;
+    const canViewAll = isGlobalDashboardViewer(session.user.email);
     const { range = "7d" } = await searchParams;
 
     // --- Dynamic Time-range calculation ---
@@ -47,23 +49,27 @@ export default async function AnalyticsPage({
         recentShortClicks,
         recentMicrositeClicks,
     ] = await Promise.all([
-        prisma.shortLink.count({ where: { userId } }),
-        prisma.microsite.count({ where: { userId } }),
+        prisma.shortLink.count({ where: canViewAll ? undefined : { userId } }),
+        prisma.microsite.count({ where: canViewAll ? undefined : { userId } }),
         prisma.shortLink.findMany({
-            where: { userId },
+            where: canViewAll ? undefined : { userId },
             include: { _count: { select: { clicks: clicksFilter } } },
         }),
         prisma.microsite.findMany({
-            where: { userId },
+            where: canViewAll ? undefined : { userId },
             include: { _count: { select: { clicks: clicksFilter } } },
             orderBy: { clicks: { _count: "desc" } },
         }),
         prisma.shortLinkClick.findMany({
-            where: { shortLink: { userId }, createdAt: dateFilter },
+            where: canViewAll
+                ? (dateFilter ? { createdAt: dateFilter } : undefined)
+                : { shortLink: { userId }, createdAt: dateFilter },
             select: { createdAt: true, userAgent: true, country: true },
         }),
         prisma.micrositeClick.findMany({
-            where: { microsite: { userId }, createdAt: dateFilter },
+            where: canViewAll
+                ? (dateFilter ? { createdAt: dateFilter } : undefined)
+                : { microsite: { userId }, createdAt: dateFilter },
             select: { createdAt: true, userAgent: true, country: true },
         }),
     ]);
@@ -152,8 +158,21 @@ export default async function AnalyticsPage({
         <div className="max-w-6xl mx-auto space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex flex-col gap-2">
-                    <h1 className="text-3xl font-serif font-bold tracking-tight text-foreground">Analytics</h1>
-                    <p className="text-muted-foreground">Pantau performa Short Links dan Microsites kamu.</p>
+                    <div className="flex items-center gap-3">
+                        <h1 className="text-3xl font-serif font-bold tracking-tight text-foreground">
+                            {canViewAll ? "Global Analytics" : "Analytics"}
+                        </h1>
+                        {canViewAll && (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
+                                Global Viewer
+                            </span>
+                        )}
+                    </div>
+                    <p className="text-muted-foreground">
+                        {canViewAll
+                            ? "Pantau performa seluruh Short Links dan Microsites di sistem secara agregat."
+                            : "Pantau performa Short Links dan Microsites kamu."}
+                    </p>
                 </div>
 
                 {/* Time range selector */}

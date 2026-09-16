@@ -45,6 +45,16 @@ describe("isUserAdmin Helper", () => {
         expect(isUserAdmin("VIEWER@TAUT.DEV")).toBe(true);
     });
 
+    it("returns true when email matches any of multiple comma-separated GLOBAL_DASHBOARD_VIEWER_EMAIL", () => {
+        process.env.ALLOWED_EMAILS = "admin@example.com";
+        process.env.GLOBAL_DASHBOARD_VIEWER_EMAIL = "viewer1@taut.dev, viewer2@taut.dev";
+
+        expect(isUserAdmin("viewer1@taut.dev")).toBe(true);
+        expect(isUserAdmin("viewer2@taut.dev")).toBe(true);
+        expect(isUserAdmin("VIEWER2@TAUT.DEV")).toBe(true);
+        expect(isUserAdmin("viewer3@taut.dev")).toBe(false);
+    });
+
     it("returns false for regular users not in allowlists", () => {
         process.env.ALLOWED_EMAILS = "admin@example.com";
         process.env.GLOBAL_DASHBOARD_VIEWER_EMAIL = "viewer@taut.dev";

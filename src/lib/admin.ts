@@ -22,11 +22,17 @@ export function isUserAdmin(email?: string | null): boolean {
     }
 
     // 2. Check GLOBAL_DASHBOARD_VIEWER_EMAIL or GLOBAL_MICROSITE_VIEWER_EMAIL
-    const viewerEmail =
-        process.env.GLOBAL_DASHBOARD_VIEWER_EMAIL?.trim().toLowerCase() ||
-        process.env.GLOBAL_MICROSITE_VIEWER_EMAIL?.trim().toLowerCase();
-    if (viewerEmail && viewerEmail === normalizedEmail) {
-        return true;
+    const rawViewerEnv =
+        process.env.GLOBAL_DASHBOARD_VIEWER_EMAIL ||
+        process.env.GLOBAL_MICROSITE_VIEWER_EMAIL;
+    if (rawViewerEnv) {
+        const viewerEmails = rawViewerEnv
+            .split(",")
+            .map((e) => e.trim().toLowerCase())
+            .filter(Boolean);
+        if (viewerEmails.includes(normalizedEmail)) {
+            return true;
+        }
     }
 
     return false;

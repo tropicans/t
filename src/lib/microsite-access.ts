@@ -1,14 +1,23 @@
 export function isGlobalDashboardViewer(email?: string | null): boolean {
-    const configuredEmail =
-        process.env.GLOBAL_DASHBOARD_VIEWER_EMAIL?.trim().toLowerCase()
-        || process.env.GLOBAL_MICROSITE_VIEWER_EMAIL?.trim().toLowerCase();
-    const normalizedEmail = email?.trim().toLowerCase();
+    if (!email) {
+        return false;
+    }
+    const normalizedEmail = email.trim().toLowerCase();
 
-    if (!configuredEmail || !normalizedEmail) {
+    const rawEnv =
+        process.env.GLOBAL_DASHBOARD_VIEWER_EMAIL ||
+        process.env.GLOBAL_MICROSITE_VIEWER_EMAIL;
+
+    if (!rawEnv) {
         return false;
     }
 
-    return configuredEmail === normalizedEmail;
+    const viewerEmails = rawEnv
+        .split(",")
+        .map((e) => e.trim().toLowerCase())
+        .filter(Boolean);
+
+    return viewerEmails.includes(normalizedEmail);
 }
 
 export const isGlobalMicrositeViewer = isGlobalDashboardViewer;

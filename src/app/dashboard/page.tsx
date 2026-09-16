@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart3, LinkIcon, Globe } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { isGlobalDashboardViewer } from "@/lib/microsite-access";
 
 export default async function DashboardPage() {
     const session = await getServerSession(authOptions);
@@ -14,6 +15,8 @@ export default async function DashboardPage() {
     const dbUser = session?.user?.email
         ? await prisma.user.findUnique({ where: { email: session.user.email } })
         : null;
+
+    const canViewAll = isGlobalDashboardViewer(session?.user?.email);
 
     const [
         shortLinksCount,
@@ -24,18 +27,18 @@ export default async function DashboardPage() {
         recentShortLinks
     ] = dbUser
         ? await Promise.all([
-            prisma.shortLink.count({ where: { userId: dbUser.id } }),
-            prisma.microsite.count({ where: { userId: dbUser.id } }),
-            prisma.shortLinkClick.count({ where: { shortLink: { userId: dbUser.id } } }),
-            prisma.micrositeClick.count({ where: { microsite: { userId: dbUser.id } } }),
+            prisma.shortLink.count({ where: canViewAll ? undefined : { userId: dbUser.id } }),
+            prisma.microsite.count({ where: canViewAll ? undefined : { userId: dbUser.id } }),
+            prisma.shortLinkClick.count({ where: canViewAll ? undefined : { shortLink: { userId: dbUser.id } } }),
+            prisma.micrositeClick.count({ where: canViewAll ? undefined : { microsite: { userId: dbUser.id } } }),
             prisma.microsite.findMany({
-                where: { userId: dbUser.id },
+                where: canViewAll ? undefined : { userId: dbUser.id },
                 orderBy: { updatedAt: "desc" },
                 take: 3,
                 select: { id: true, slug: true, title: true, theme: true, updatedAt: true },
             }),
             prisma.shortLink.findMany({
-                where: { userId: dbUser.id },
+                where: canViewAll ? undefined : { userId: dbUser.id },
                 orderBy: { createdAt: "desc" },
                 take: 3,
                 select: { id: true, shortCode: true, originalUrl: true, createdAt: true },
@@ -50,9 +53,18 @@ export default async function DashboardPage() {
         <div className="max-w-5xl mx-auto space-y-8">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-serif font-bold tracking-tight text-foreground">Overview</h1>
+                    <div className="flex items-center gap-3">
+                        <h1 className="text-3xl font-serif font-bold tracking-tight text-foreground">
+                            {canViewAll ? "Global Overview" : "Overview"}
+                        </h1>
+                        {canViewAll && (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
+                                Global Viewer
+                            </span>
+                        )}
+                    </div>
                     <p className="text-muted-foreground mt-1">
-                        Selamat datang, {session?.user?.name?.split(" ")[0]}! 👋
+                        Selamat datang, {session?.user?.name?.split(" ")[0]}! 👋 {canViewAll && "— Menampilkan statistik agregat seluruh sistem"}
                     </p>
                 </div>
             </div>
@@ -153,8 +165,12 @@ export default async function DashboardPage() {
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between pb-3">
                             <div className="space-y-0.5">
-                                <CardTitle className="text-base font-serif font-bold text-foreground">Microsite Terkini</CardTitle>
-                                <p className="text-xs text-muted-foreground">Halaman link-in-bio yang terakhir diperbarui</p>
+                                <CardTitle className="text-base font-serif font-bold text-foreground">
+                                    {canViewAll ? "Microsite Terkini (Global)" : "Microsite Terkini"}
+                                </CardTitle>
+                                <p className="text-xs text-muted-foreground">
+                                    {canViewAll ? "Halaman link-in-bio seluruh sistem yang terakhir diperbarui" : "Halaman link-in-bio yang terakhir diperbarui"}
+                                </p>
                             </div>
                             <Link href="/dashboard/microsites" className="text-xs font-medium text-terracotta-active dark:text-primary hover:underline">
                                 Lihat semua →
@@ -187,8 +203,12 @@ export default async function DashboardPage() {
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between pb-3">
                             <div className="space-y-0.5">
-                                <CardTitle className="text-base font-serif font-bold text-foreground">Short Link Terkini</CardTitle>
-                                <p className="text-xs text-muted-foreground">Tautan pendek yang baru dibuat</p>
+                                <CardTitle className="text-base font-serif font-bold text-foreground">
+                                    {canViewAll ? "Short Link Terkini (Global)" : "Short Link Terkini"}
+                                </CardTitle>
+                                <p className="text-xs text-muted-foreground">
+                                    {canViewAll ? "Tautan pendek seluruh sistem yang baru dibuat" : "Tautan pendek yang baru dibuat"}
+                                </p>
                             </div>
                             <Link href="/dashboard/links" className="text-xs font-medium text-terracotta-active dark:text-primary hover:underline">
                                 Lihat semua →
