@@ -2,16 +2,19 @@
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { isGlobalDashboardViewer } from "@/lib/microsite-access";
+import { isUserAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { normalizeMicrositeTheme } from "@/lib/microsite-themes";
 import { validateAndCorrectUrl, validateSlugCollision } from "@/lib/validators";
+import { logAuditEvent } from "@/lib/audit";
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
 interface CurrentUserAccess {
     userId: string;
+    email: string;
+    name?: string | null;
     canManageAllMicrosites: boolean;
 }
 
@@ -24,7 +27,9 @@ async function getCurrentUserAccess(): Promise<CurrentUserAccess> {
 
     return {
         userId: user.id,
-        canManageAllMicrosites: isGlobalDashboardViewer(session.user.email),
+        email: user.email ?? session.user.email,
+        name: user.name ?? session.user.name,
+        canManageAllMicrosites: isUserAdmin(session.user.email, user.role),
     };
 }
 
@@ -53,7 +58,7 @@ async function getEditableMicrositeLink(linkId: string, access: CurrentUserAcces
 // ── Microsite CRUD ─────────────────────────────────────────────────────────────
 
 export async function createMicrosite(formData: FormData) {
-    const { userId } = await getCurrentUserAccess();
+    const access = await getCurrentUserAccess();
     const slugRaw = formData.get("slug") as string;
     const slug = await validateSlugCollision(slugRaw, undefined, true);
     const title = (formData.get("title") as string)?.trim();
@@ -65,7 +70,17 @@ export async function createMicrosite(formData: FormData) {
     if (!title) throw new Error("Title is required");
 
     const microsite = await prisma.microsite.create({
-        data: { slug, title, description, theme, userId, coverImage, avatarImage },
+        data: { slug, title, description, theme, userId: access.userId, coverImage, avatarImage },
+    });
+
+    await logAuditEvent({
+        userId: access.userId,
+        userEmail: access.email,
+        userName: access.name,
+        action: "MICROSITE_CREATE",
+        entity: "Microsite",
+        entityId: microsite.id,
+        details: { slug: microsite.slug, title: microsite.title },
     });
 
     revalidatePath("/dashboard/microsites");
@@ -95,6 +110,16 @@ export async function updateMicrosite(id: string, formData: FormData) {
         data: { slug, title, description, theme, isPublished, coverImage, avatarImage },
     });
 
+    await logAuditEvent({
+        userId: access.userId,
+        userEmail: access.email,
+        userName: access.name,
+        action: "MICROSITE_UPDATE",
+        entity: "Microsite",
+        entityId: updated.id,
+        details: { slug: updated.slug, title: updated.title, isPublished: updated.isPublished },
+    });
+
     revalidatePath(`/dashboard/microsites/${id}`);
     if (oldSlug !== updated.slug) {
         revalidatePath(`/${oldSlug}`);
@@ -105,9 +130,20 @@ export async function updateMicrosite(id: string, formData: FormData) {
 
 export async function deleteMicrosite(id: string) {
     const access = await getCurrentUserAccess();
-    await getEditableMicrosite(id, access);
+    const microsite = await getEditableMicrosite(id, access);
 
     await prisma.microsite.delete({ where: { id } });
+
+    await logAuditEvent({
+        userId: access.userId,
+        userEmail: access.email,
+        userName: access.name,
+        action: "MICROSITE_DELETE",
+        entity: "Microsite",
+        entityId: id,
+        details: { slug: microsite.slug, title: microsite.title },
+    });
+
     revalidatePath("/dashboard/microsites");
     return { success: true };
 }
@@ -135,6 +171,16 @@ export async function createMicrositeLink(micrositeId: string, formData: FormDat
         data: { title, url, icon, micrositeId, order: (maxOrder._max.order ?? -1) + 1 },
     });
 
+    await logAuditEvent({
+        userId: access.userId,
+        userEmail: access.email,
+        userName: access.name,
+        action: "MICROSITE_LINK_CREATE",
+        entity: "MicrositeLink",
+        entityId: link.id,
+        details: { micrositeId, title: link.title, url: link.url },
+    });
+
     revalidatePath(`/dashboard/microsites/${micrositeId}`);
     return { success: true, link };
 }
@@ -156,6 +202,16 @@ export async function updateMicrositeLink(linkId: string, formData: FormData) {
         data: { title, url, icon, isActive },
     });
 
+    await logAuditEvent({
+        userId: access.userId,
+        userEmail: access.email,
+        userName: access.name,
+        action: "MICROSITE_LINK_UPDATE",
+        entity: "MicrositeLink",
+        entityId: updated.id,
+        details: { micrositeId: link.micrositeId, title: updated.title, url: updated.url, isActive: updated.isActive },
+    });
+
     revalidatePath(`/dashboard/microsites/${link.micrositeId}`);
     return { success: true, link: updated };
 }
@@ -165,6 +221,17 @@ export async function deleteMicrositeLink(linkId: string) {
     const link = await getEditableMicrositeLink(linkId, access);
 
     await prisma.micrositeLink.delete({ where: { id: linkId } });
+
+    await logAuditEvent({
+        userId: access.userId,
+        userEmail: access.email,
+        userName: access.name,
+        action: "MICROSITE_LINK_DELETE",
+        entity: "MicrositeLink",
+        entityId: linkId,
+        details: { micrositeId: link.micrositeId, title: link.title },
+    });
+
     revalidatePath(`/dashboard/microsites/${link.micrositeId}`);
     return { success: true };
 }
@@ -192,6 +259,16 @@ export async function reorderMicrositeLinks(micrositeId: string, orderedIds: str
             prisma.micrositeLink.update({ where: { id }, data: { order: index } })
         )
     );
+
+    await logAuditEvent({
+        userId: access.userId,
+        userEmail: access.email,
+        userName: access.name,
+        action: "MICROSITE_LINK_REORDER",
+        entity: "Microsite",
+        entityId: micrositeId,
+        details: { slug: microsite.slug, count: orderedIds.length },
+    });
 
     revalidatePath(`/dashboard/microsites/${micrositeId}`);
     revalidatePath(`/${microsite.slug}`);

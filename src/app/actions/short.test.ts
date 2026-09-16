@@ -80,6 +80,12 @@ describe("short link actions", () => {
       vi.mocked(prisma.shortLink.findUnique).mockResolvedValue(null);
       vi.mocked(prisma.microsite.findUnique).mockResolvedValue(null);
 
+      vi.mocked(prisma.shortLink.create).mockResolvedValue({
+        id: "link_new",
+        shortCode: "google",
+        originalUrl: "https://google.com",
+      } as any);
+
       const formData = new FormData();
       formData.append("originalUrl", "https://google.com");
       formData.append("customAlias", "google");
@@ -95,14 +101,37 @@ describe("short link actions", () => {
   describe("deleteShortLink", () => {
     it("should delete link if user owns it", async () => {
       vi.mocked(getServerSession).mockResolvedValue({ user: { email: "test@example.com" } });
-      vi.mocked(prisma.user.findUnique).mockResolvedValue({ id: "user_1", email: "test@example.com" } as unknown as User);
+      vi.mocked(prisma.user.findUnique).mockResolvedValue({ id: "user_1", email: "test@example.com", role: "MEMBER" } as unknown as User);
+      vi.mocked(prisma.shortLink.findUnique).mockResolvedValue({ id: "link_1", userId: "user_1", shortCode: "abc", originalUrl: "https://google.com" } as unknown as ShortLink);
 
       const res = await deleteShortLink("link_1");
       expect(res).toEqual({ success: "Short link deleted" });
       expect(prisma.shortLink.delete).toHaveBeenCalledWith({
-        where: { id: "link_1", userId: "user_1" },
+        where: { id: "link_1" },
       });
       expect(revalidatePath).toHaveBeenCalledWith("/dashboard/links");
+    });
+
+    it("should reject deletion if user does not own link and is not admin", async () => {
+      vi.mocked(getServerSession).mockResolvedValue({ user: { email: "other@example.com" } });
+      vi.mocked(prisma.user.findUnique).mockResolvedValue({ id: "user_2", email: "other@example.com", role: "MEMBER" } as unknown as User);
+      vi.mocked(prisma.shortLink.findUnique).mockResolvedValue({ id: "link_1", userId: "user_1", shortCode: "abc", originalUrl: "https://google.com" } as unknown as ShortLink);
+
+      const res = await deleteShortLink("link_1");
+      expect(res).toEqual({ error: "Unauthorized" });
+      expect(prisma.shortLink.delete).not.toHaveBeenCalled();
+    });
+
+    it("should allow admin to delete any link", async () => {
+      vi.mocked(getServerSession).mockResolvedValue({ user: { email: "admin@example.com" } });
+      vi.mocked(prisma.user.findUnique).mockResolvedValue({ id: "admin_1", email: "admin@example.com", role: "ADMIN" } as unknown as User);
+      vi.mocked(prisma.shortLink.findUnique).mockResolvedValue({ id: "link_1", userId: "user_1", shortCode: "abc", originalUrl: "https://google.com" } as unknown as ShortLink);
+
+      const res = await deleteShortLink("link_1");
+      expect(res).toEqual({ success: "Short link deleted" });
+      expect(prisma.shortLink.delete).toHaveBeenCalledWith({
+        where: { id: "link_1" },
+      });
     });
   });
 });

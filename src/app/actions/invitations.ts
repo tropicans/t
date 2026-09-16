@@ -7,6 +7,7 @@ import { revalidatePath } from "next/cache";
 import { createInvitation, revokeInvitation } from "@/lib/invitations";
 import { isGlobalDashboardViewer } from "@/lib/microsite-access";
 import { isUserAdmin } from "@/lib/admin";
+import { logAuditEvent } from "@/lib/audit";
 
 // Helper: get DB user from session email
 async function getCurrentUser() {
@@ -27,7 +28,7 @@ export async function createInvitationAction(input: CreateInvitationInput) {
         return { error: "Sesi tidak valid atau tidak terotentikasi." };
     }
 
-    if (!isUserAdmin(user.email)) {
+    if (!isUserAdmin(user.email, user.role)) {
         return { error: "Hanya admin yang memiliki izin untuk membuat undangan." };
     }
 
@@ -49,6 +50,21 @@ export async function createInvitationAction(input: CreateInvitationInput) {
             email: cleanedEmail,
             maxUses,
             expiresInDays,
+        });
+
+        await logAuditEvent({
+            userId: user.id,
+            userEmail: user.email,
+            userName: user.name,
+            action: "INVITATION_CREATE",
+            entity: "Invitation",
+            entityId: invitation.id,
+            details: {
+                token: invitation.token,
+                email: invitation.email,
+                maxUses: invitation.maxUses,
+                expiresAt: invitation.expiresAt?.toISOString() || null,
+            },
         });
 
         revalidatePath("/dashboard/invitations");
@@ -77,7 +93,7 @@ export async function revokeInvitationAction(invitationId: string) {
         return { error: "Sesi tidak valid atau tidak terotentikasi." };
     }
 
-    if (!isUserAdmin(user.email)) {
+    if (!isUserAdmin(user.email, user.role)) {
         return { error: "Hanya admin yang memiliki izin untuk mencabut undangan." };
     }
 
@@ -108,6 +124,19 @@ export async function revokeInvitationAction(invitationId: string) {
             });
         }
 
+        await logAuditEvent({
+            userId: user.id,
+            userEmail: user.email,
+            userName: user.name,
+            action: "INVITATION_REVOKE",
+            entity: "Invitation",
+            entityId: invitationId,
+            details: {
+                token: invitation.token,
+                email: invitation.email,
+            },
+        });
+
         revalidatePath("/dashboard/invitations");
         return { success: true };
     } catch (error) {
@@ -115,3 +144,4 @@ export async function revokeInvitationAction(invitationId: string) {
         return { error: error instanceof Error ? error.message : "Gagal mencabut undangan." };
     }
 }
+

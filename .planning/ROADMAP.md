@@ -17,7 +17,7 @@
 - **Requirements**: RBAC-01, RBAC-02, RBAC-03, AUDIT-01, TEST-01
 
 ### Phase 17: Activity Audit Logger Engine & Mutations Instrumentation
-- [ ] Engine pencatatan log audit `logAuditEvent()` dan instrumentasi pada server actions (ShortLink, Microsite, Invitation, User role).
+- [x] Engine pencatatan log audit `logAuditEvent()` dan instrumentasi pada server actions (ShortLink, Microsite, Invitation, User role) (1 plan) — completed 2026-09-16
 - **Requirements**: RBAC-03, AUDIT-02, AUDIT-03, TEST-01
 
 ### Phase 18: Dashboard UI Role Management & Audit Trail Timeline

@@ -7,6 +7,8 @@ import { revalidatePath } from "next/cache";
 import bcrypt from "bcrypt";
 import { nanoid } from "nanoid";
 import { validateAndCorrectUrl, validateSlugCollision } from "@/lib/validators";
+import { isUserAdmin } from "@/lib/admin";
+import { logAuditEvent } from "@/lib/audit";
 
 // Helper: get DB user from session email (reliable across hot reloads)
 async function getCurrentUser() {
@@ -69,13 +71,23 @@ export async function createShortLink(formData: FormData) {
             passwordHash = await bcrypt.hash(rawPassword, 10);
         }
 
-        await prisma.shortLink.create({
+        const newLink = await prisma.shortLink.create({
             data: {
                 userId: user.id,
                 originalUrl,
                 shortCode,
                 password: passwordHash,
             },
+        });
+
+        await logAuditEvent({
+            userId: user.id,
+            userEmail: user.email,
+            userName: user.name,
+            action: "SHORT_LINK_CREATE",
+            entity: "ShortLink",
+            entityId: newLink?.id ?? null,
+            details: { shortCode, originalUrl },
         });
 
         revalidatePath("/dashboard/links");
@@ -90,9 +102,33 @@ export async function deleteShortLink(id: string) {
     const user = await getCurrentUser();
     if (!user) return { error: "Unauthorized" };
 
+    const isAdmin = isUserAdmin(user.email, user.role);
+
     try {
+        const link = await prisma.shortLink.findUnique({
+            where: { id },
+        });
+
+        if (!link) {
+            return { error: "Short link not found" };
+        }
+
+        if (link.userId !== user.id && !isAdmin) {
+            return { error: "Unauthorized" };
+        }
+
         await prisma.shortLink.delete({
-            where: { id, userId: user.id },
+            where: { id },
+        });
+
+        await logAuditEvent({
+            userId: user.id,
+            userEmail: user.email,
+            userName: user.name,
+            action: "SHORT_LINK_DELETE",
+            entity: "ShortLink",
+            entityId: id,
+            details: { shortCode: link.shortCode, originalUrl: link.originalUrl },
         });
 
         revalidatePath("/dashboard/links");
