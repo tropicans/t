@@ -1,37 +1,40 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.5
-milestone_name: Invitation Link & Dynamic User Onboarding
-status: complete
-last_updated: "2026-09-07T08:30:00.000Z"
-last_activity: 2026-09-07
+milestone: v1.6
+milestone_name: Role-Based Access Control (RBAC) & Audit Activity Trail
+status: planning
+last_updated: "2026-09-16T16:44:00.000Z"
+last_activity: 2026-09-16
 progress:
   total_phases: 3
-  completed_phases: 3
-  total_plans: 3
-  completed_plans: 3
-  percent: 100
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
 
 **Project:** Taut Microsite Enhancements
 **Initialized:** 2026-06-26
-**Current Milestone:** Milestone v1.5 — Invitation Link & Dynamic User Onboarding (Shipped)
-**Status:** Complete
+**Current Milestone:** Milestone v1.6 — Role-Based Access Control (RBAC) & Audit Activity Trail
+**Status:** In Planning
 
 ## Project Reference
 
-See: `.planning/PROJECT.md` (updated 2026-09-07 after completing v1.5 milestone)
+See: `.planning/PROJECT.md` (updated 2026-09-16 for v1.6 milestone)
 
 **Core value:** Microsite owners can create a more personalized public page, control link priority, and experience fast, secure dashboard routing and analytics performance.
-**Current focus:** Planning next milestone
+**Current focus:** Ready for Phase 16 execution
 
 ## Active Roadmap
 
 See: `.planning/ROADMAP.md`
 
-All phases in v1.5 (Phases 13, 14, and 15) are complete and archived in `.planning/milestones/v1.5-ROADMAP.md`.
+Phases 16-18 defined:
+- Phase 16: RBAC & Audit Data Model, Migration & Auth Synchronization
+- Phase 17: Activity Audit Logger Engine & Mutations Instrumentation
+- Phase 18: Dashboard UI Role Management & Audit Trail Timeline
 
 ## Requirements
 

@@ -8,8 +8,21 @@
 - ✅ **v1.3 Claude Design System Integration** — Phases 8-10 (shipped 2026-09-07)
 - ✅ **v1.4 Dashboard UX & Mobile Navigation Polish** — Phases 11-12 (shipped 2026-09-07)
 - ✅ **v1.5 Invitation Link & Dynamic User Onboarding** — Phases 13-15 (shipped 2026-09-07)
+- 🟡 **v1.6 Role-Based Access Control (RBAC) & Audit Activity Trail** — Phases 16-18 (in planning)
 
 ## Phases
+
+### Phase 16: RBAC & Audit Data Model, Migration & Auth Synchronization
+- [ ] Prisma schema enum `Role`, model `AuditLog`, migration, dan sinkronisasi role saat login Google OAuth (NextAuth JWT session).
+- **Requirements**: RBAC-01, RBAC-02, RBAC-03, AUDIT-01, TEST-01
+
+### Phase 17: Activity Audit Logger Engine & Mutations Instrumentation
+- [ ] Engine pencatatan log audit `logAuditEvent()` dan instrumentasi pada server actions (ShortLink, Microsite, Invitation, User role).
+- **Requirements**: RBAC-03, AUDIT-02, AUDIT-03, TEST-01
+
+### Phase 18: Dashboard UI Role Management & Audit Trail Timeline
+- [ ] Antarmuka pemilihan role user di tab Users, tampilan linimasa Audit Trail khusus Admin, dan verifikasi menyeluruh.
+- **Requirements**: UI-01, UI-02, TEST-01
 
 <details>
 <summary>✅ Shipped Milestones (Phases 1-15)</summary>
