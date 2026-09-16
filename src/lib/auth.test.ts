@@ -53,6 +53,7 @@ describe("authorizeUserSignIn (AUTH-01 & AUTH-02)", () => {
                 image: "https://example.com/photo.jpg",
                 emailVerified: null,
                 invitationId: null,
+                role: "MEMBER",
                 createdAt: new Date(),
             });
             vi.mocked(prisma.user.update).mockResolvedValue({} as any);
@@ -67,7 +68,7 @@ describe("authorizeUserSignIn (AUTH-01 & AUTH-02)", () => {
             expect(result.user?.id).toBe("user_existing_123");
             expect(prisma.user.update).toHaveBeenCalledWith({
                 where: { id: "user_existing_123" },
-                data: { name: "Updated Name", image: undefined },
+                data: { name: "Updated Name", image: undefined, role: undefined },
             });
         });
 
@@ -79,6 +80,7 @@ describe("authorizeUserSignIn (AUTH-01 & AUTH-02)", () => {
                 image: null,
                 emailVerified: null,
                 invitationId: null,
+                role: "MEMBER",
                 createdAt: new Date(),
             });
             vi.mocked(prisma.user.update).mockResolvedValue({} as any);
@@ -108,6 +110,7 @@ describe("authorizeUserSignIn (AUTH-01 & AUTH-02)", () => {
                 image: "",
                 emailVerified: null,
                 invitationId: null,
+                role: "ADMIN",
                 createdAt: new Date(),
             });
 
@@ -125,10 +128,12 @@ describe("authorizeUserSignIn (AUTH-01 & AUTH-02)", () => {
                     email: "admin@taut.id",
                     name: "Admin User",
                     image: "",
+                    role: "ADMIN",
                 },
                 update: {
                     name: "Admin User",
                     image: undefined,
+                    role: "ADMIN",
                 },
             });
         });
@@ -184,6 +189,7 @@ describe("authorizeUserSignIn (AUTH-01 & AUTH-02)", () => {
                     name: "Invited User",
                     image: "",
                     invitationId: "inv_token_123",
+                    role: "MEMBER",
                 },
             });
         });

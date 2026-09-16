@@ -13,7 +13,7 @@
 ## Phases
 
 ### Phase 16: RBAC & Audit Data Model, Migration & Auth Synchronization
-- [ ] Prisma schema enum `Role`, model `AuditLog`, migration, dan sinkronisasi role saat login Google OAuth (NextAuth JWT session).
+- [x] Prisma schema enum `Role`, model `AuditLog`, migration, dan sinkronisasi role saat login Google OAuth (NextAuth JWT session) (1 plan) — completed 2026-09-16
 - **Requirements**: RBAC-01, RBAC-02, RBAC-03, AUDIT-01, TEST-01
 
 ### Phase 17: Activity Audit Logger Engine & Mutations Instrumentation

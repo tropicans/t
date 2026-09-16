@@ -3,7 +3,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { cookies } from "next/headers";
 import { prisma } from "./prisma";
 import { getInvitationByToken, validateInvitationStatus } from "./invitations";
-import { isUserAdmin } from "./admin";
+import { isUserAdmin, isUserOperator, resolveUserRole } from "./admin";
 
 export interface AuthorizeSignInInput {
     email: string;
@@ -48,12 +48,14 @@ export async function authorizeUserSignIn({
         });
 
         if (existingUser) {
-            // Update profile info if provided
+            const effectiveRole = resolveUserRole(userEmail, existingUser.role);
+            // Update profile info and ensure role matches bootstrap allowlists if elevated
             await prisma.user.update({
                 where: { id: existingUser.id },
                 data: {
                     name: name || undefined,
                     image: image || undefined,
+                    role: effectiveRole !== existingUser.role ? effectiveRole : undefined,
                 },
             });
             return {
@@ -88,10 +90,12 @@ export async function authorizeUserSignIn({
                     email: userEmail,
                     name: name || "User",
                     image: image || "",
+                    role: "ADMIN",
                 },
                 update: {
                     name: name || undefined,
                     image: image || undefined,
+                    role: "ADMIN",
                 },
             });
             return {
@@ -117,6 +121,7 @@ export async function authorizeUserSignIn({
             const validation = validateInvitationStatus(invitation, userEmail);
 
             if (validation.valid && invitation) {
+                const initialRole = resolveUserRole(userEmail, "MEMBER");
                 // Execute atomic transaction to claim invitation and create user
                 const result = await prisma.$transaction(async (tx) => {
                     const newUsesCount = invitation.usesCount + 1;
@@ -136,6 +141,7 @@ export async function authorizeUserSignIn({
                             name: name || "User",
                             image: image || "",
                             invitationId: invitation.id,
+                            role: initialRole,
                         },
                     });
 
@@ -223,17 +229,28 @@ export const authOptions: NextAuthOptions = {
         },
         async jwt({ token, user }) {
             const email = user?.email || token?.email;
-            if (email) {
-                token.isAdmin = isUserAdmin(email);
-            }
             if (user?.email) {
                 try {
                     const dbUser = await prisma.user.findUnique({ where: { email: user.email } });
                     if (dbUser) {
                         token.id = dbUser.id;
+                        token.role = resolveUserRole(dbUser.email, dbUser.role);
+                        token.isAdmin = token.role === "ADMIN";
+                        token.isOperator = token.role === "OPERATOR";
                     }
                 } catch {
                     // Catch DB errors
+                }
+            } else if (email && (!token.role || token.isAdmin === undefined)) {
+                try {
+                    const dbUser = await prisma.user.findUnique({ where: { email } });
+                    token.role = resolveUserRole(email, dbUser?.role);
+                    token.isAdmin = token.role === "ADMIN";
+                    token.isOperator = token.role === "OPERATOR";
+                } catch {
+                    token.role = resolveUserRole(email, null);
+                    token.isAdmin = token.role === "ADMIN";
+                    token.isOperator = token.role === "OPERATOR";
                 }
             }
             return token;
@@ -241,7 +258,9 @@ export const authOptions: NextAuthOptions = {
         async session({ session, token }) {
             if (token && session.user) {
                 session.user.id = token.id as string;
+                session.user.role = token.role;
                 session.user.isAdmin = Boolean(token.isAdmin);
+                session.user.isOperator = Boolean(token.isOperator);
             }
             return session;
         },

@@ -34,12 +34,19 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+enum Role {
+  ADMIN
+  OPERATOR
+  MEMBER
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String?
   email         String?   @unique
   emailVerified DateTime?
   image         String?
+  role          Role      @default(MEMBER)
   
   // Custom app fields
   createdAt     DateTime  @default(now())
@@ -51,6 +58,7 @@ model User {
   createdInvitations Invitation[] @relation("CreatedInvitations")
   invitationId       String?
   invitation         Invitation?  @relation("ClaimedInvitations", fields: [invitationId], references: [id], onDelete: SetNull)
+  auditLogs          AuditLog[]
 }
 
 
@@ -158,6 +166,25 @@ model Invitation {
   @@index([token])
   @@index([email])
   @@index([status])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userEmail  String?
+  userName   String?
+  action     String   // e.g. "SHORT_LINK_CREATE", "SHORT_LINK_DELETE", "MICROSITE_UPDATE", "USER_ROLE_CHANGE"
+  entity     String   // e.g. "ShortLink", "Microsite", "Invitation", "User"
+  entityId   String?
+  details    Json?    // Contextual payload
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@index([entity])
+  @@index([createdAt])
 }
 
 
