@@ -15,11 +15,11 @@ export default async function EditMicrositePage({ params }: Props) {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) redirect("/login");
 
-    const canManageAllMicrosites = isGlobalMicrositeViewer(session.user.email);
-
     // Use email-based lookup for reliability (id may not be in token if DB query failed)
     const dbUser = await prisma.user.findUnique({ where: { email: session.user.email } });
     if (!dbUser) redirect("/login");
+
+    const canManageAllMicrosites = isGlobalMicrositeViewer(session.user.email, dbUser.role);
 
     const { id } = await params;
 

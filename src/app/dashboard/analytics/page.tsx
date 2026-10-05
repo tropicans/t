@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Activity, Link as LinkIcon, Globe } from "lucide-react";
 import { AnalyticsCharts } from "./analytics-charts";
 import { parseUserAgent } from "@/lib/user-agent";
-import { isGlobalDashboardViewer } from "@/lib/microsite-access";
+import { isGlobalMicrositeViewer } from "@/lib/microsite-access";
 
 export default async function AnalyticsPage({
     searchParams,
@@ -21,7 +21,7 @@ export default async function AnalyticsPage({
     if (!dbUser) return null;
 
     const userId = dbUser.id;
-    const canViewAll = isGlobalDashboardViewer(session.user.email);
+    const canViewAll = isGlobalMicrositeViewer(session.user.email, dbUser.role);
     const { range = "7d" } = await searchParams;
 
     // --- Dynamic Time-range calculation ---

@@ -229,28 +229,25 @@ export const authOptions: NextAuthOptions = {
         },
         async jwt({ token, user }) {
             const email = user?.email || token?.email;
-            if (user?.email) {
+            if (email) {
                 try {
-                    const dbUser = await prisma.user.findUnique({ where: { email: user.email } });
+                    const dbUser = await prisma.user.findUnique({ where: { email } });
                     if (dbUser) {
                         token.id = dbUser.id;
                         token.role = resolveUserRole(dbUser.email, dbUser.role);
                         token.isAdmin = token.role === "ADMIN";
                         token.isOperator = token.role === "OPERATOR";
+                    } else {
+                        token.role = resolveUserRole(email, null);
+                        token.isAdmin = token.role === "ADMIN";
+                        token.isOperator = token.role === "OPERATOR";
                     }
                 } catch {
-                    // Catch DB errors
-                }
-            } else if (email && (!token.role || token.isAdmin === undefined)) {
-                try {
-                    const dbUser = await prisma.user.findUnique({ where: { email } });
-                    token.role = resolveUserRole(email, dbUser?.role);
-                    token.isAdmin = token.role === "ADMIN";
-                    token.isOperator = token.role === "OPERATOR";
-                } catch {
-                    token.role = resolveUserRole(email, null);
-                    token.isAdmin = token.role === "ADMIN";
-                    token.isOperator = token.role === "OPERATOR";
+                    if (!token.role) {
+                        token.role = resolveUserRole(email, null);
+                        token.isAdmin = token.role === "ADMIN";
+                        token.isOperator = token.role === "OPERATOR";
+                    }
                 }
             }
             return token;

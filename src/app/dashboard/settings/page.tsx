@@ -9,7 +9,7 @@ import { UserPlus, ArrowRight } from "lucide-react";
 
 export default async function SettingsPage() {
     const session = await getServerSession(authOptions);
-    const isAdmin = isUserAdmin(session?.user?.email);
+    const isAdmin = isUserAdmin(session?.user?.email, session?.user?.role);
 
     return (
         <div className="max-w-3xl mx-auto space-y-6">

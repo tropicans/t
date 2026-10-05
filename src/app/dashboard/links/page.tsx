@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { isGlobalDashboardViewer } from "@/lib/microsite-access";
+import { isGlobalMicrositeViewer } from "@/lib/microsite-access";
 import { ShortLinkForm } from "./short-link-form";
 import { ShortLinkList } from "./short-link-list";
 
@@ -16,7 +16,7 @@ export default async function ShortLinksPage() {
         return null;
     }
 
-    const canViewAllLinks = isGlobalDashboardViewer(session.user.email);
+    const canViewAllLinks = isGlobalMicrositeViewer(session.user.email, dbUser.role);
     const links = await prisma.shortLink.findMany({
         where: canViewAllLinks ? undefined : { userId: dbUser.id },
         include: {

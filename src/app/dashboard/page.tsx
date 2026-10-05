@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart3, LinkIcon, Globe } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { isGlobalDashboardViewer } from "@/lib/microsite-access";
+import { isGlobalMicrositeViewer } from "@/lib/microsite-access";
 
 export default async function DashboardPage() {
     const session = await getServerSession(authOptions);
@@ -16,7 +16,7 @@ export default async function DashboardPage() {
         ? await prisma.user.findUnique({ where: { email: session.user.email } })
         : null;
 
-    const canViewAll = isGlobalDashboardViewer(session?.user?.email);
+    const canViewAll = isGlobalMicrositeViewer(session?.user?.email, dbUser?.role);
 
     const [
         shortLinksCount,

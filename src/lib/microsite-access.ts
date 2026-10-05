@@ -1,3 +1,5 @@
+import { isUserAdmin, isUserOperator } from "./admin";
+
 export function isGlobalDashboardViewer(email?: string | null): boolean {
     if (!email) {
         return false;
@@ -20,4 +22,14 @@ export function isGlobalDashboardViewer(email?: string | null): boolean {
     return viewerEmails.includes(normalizedEmail);
 }
 
-export const isGlobalMicrositeViewer = isGlobalDashboardViewer;
+export function isGlobalMicrositeViewer(email?: string | null, dbRole?: string | null): boolean {
+    if (isUserAdmin(email, dbRole)) {
+        return true;
+    }
+    if (isUserOperator(email, dbRole)) {
+        return true;
+    }
+    return isGlobalDashboardViewer(email);
+}
+
+

@@ -17,7 +17,7 @@ export default async function MicrositesPage() {
     const dbUser = await prisma.user.findUnique({ where: { email: session.user.email } });
     if (!dbUser) redirect("/login");
 
-    const canViewAllMicrosites = isGlobalMicrositeViewer(session.user.email);
+    const canViewAllMicrosites = isGlobalMicrositeViewer(session.user.email, dbUser.role);
 
     const microsites = await prisma.microsite.findMany({
         where: canViewAllMicrosites ? undefined : { userId: dbUser.id },

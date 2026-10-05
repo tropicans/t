@@ -337,4 +337,72 @@ describe("authorizeUserSignIn (AUTH-01 & AUTH-02)", () => {
             expect(result.reason).toBe("UNAUTHORIZED");
         });
     });
+
+    describe("JWT and Session Callbacks", () => {
+        it("dynamically updates role and isAdmin when user role in DB changes to ADMIN", async () => {
+            const { authOptions } = await import("./auth");
+            const jwtCallback = authOptions.callbacks?.jwt;
+            expect(jwtCallback).toBeDefined();
+
+            // Simulate user existing in DB with ADMIN role (e.g. promoted from MEMBER)
+            vi.mocked(prisma.user.findUnique).mockResolvedValue({
+                id: "user_promoted_1",
+                email: "promoted@example.com",
+                name: "Promoted Admin",
+                image: null,
+                emailVerified: null,
+                invitationId: "inv_123",
+                role: "ADMIN",
+                createdAt: new Date(),
+            });
+
+            // Initial token had MEMBER role
+            const staleToken: Record<string, unknown> = {
+                id: "user_promoted_1",
+                email: "promoted@example.com",
+                role: "MEMBER",
+                isAdmin: false,
+                isOperator: false,
+            };
+
+            const updatedToken = await jwtCallback!({
+                token: staleToken as never,
+                user: undefined as never,
+                account: null,
+            });
+
+            expect(updatedToken.role).toBe("ADMIN");
+            expect(updatedToken.isAdmin).toBe(true);
+            expect(updatedToken.isOperator).toBe(false);
+        });
+
+        it("populates session.user with role and isAdmin from token", async () => {
+            const { authOptions } = await import("./auth");
+            const sessionCallback = authOptions.callbacks?.session;
+            expect(sessionCallback).toBeDefined();
+
+            const token: Record<string, unknown> = {
+                id: "user_promoted_1",
+                role: "ADMIN",
+                isAdmin: true,
+                isOperator: false,
+            };
+
+            const session: Record<string, unknown> = {
+                user: {
+                    name: "Promoted Admin",
+                    email: "promoted@example.com",
+                },
+            };
+
+            const result = (await ((sessionCallback as unknown as (args: unknown) => Promise<Record<string, unknown>>)({
+                session,
+                token,
+            }))) as { user?: { role?: string; isAdmin?: boolean; isOperator?: boolean } };
+            expect(result.user?.role).toBe("ADMIN");
+            expect(result.user?.isAdmin).toBe(true);
+            expect(result.user?.isOperator).toBe(false);
+        });
+    });
 });
+

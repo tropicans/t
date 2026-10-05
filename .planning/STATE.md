@@ -92,3 +92,4 @@ Last activity: 2026-09-16 — Milestone v1.6 complete
 | Design and integrate brand logo | brand-logo-design | 2026-09-07 | Complete |
 | Restrict invitation management to admin only | admin-only-invitations | 2026-09-07 | Complete |
 | Microsites search and pagination | microsites-search-and-pagination | 2026-09-16 | Complete |
+| Invited admin microsite and resource visibility | invited-admin-microsite-visibility | 2026-10-05 | Complete |

@@ -23,15 +23,11 @@ export default async function InvitationsPage({ searchParams }: InvitationsPageP
         redirect("/login");
     }
 
-    if (!isUserAdmin(session.user.email)) {
-        redirect("/dashboard");
-    }
-
     const dbUser = await prisma.user.findUnique({
         where: { email: session.user.email },
     });
 
-    if (!dbUser) {
+    if (!dbUser || !isUserAdmin(session.user.email, dbUser.role)) {
         redirect("/dashboard");
     }
 
